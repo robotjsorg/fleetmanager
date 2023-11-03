@@ -1,4 +1,4 @@
-// build: "cargo build --target wasm32-unknown-unknown -p demo-reducer --release"
+// build: "cargo build --target wasm32-unknown-unknown -p reducer --release"
 
 use serde::Deserialize;
 use sqlsync_reducer::{execute, init_reducer, types::ReducerError};

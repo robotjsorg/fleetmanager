@@ -12,6 +12,7 @@
   },
   "include": [
     "vite.config.ts",
+    "tailwind.config.js",
     "vite-plugin-wasm.d.ts",
     "postcss.config.js"
   ]
