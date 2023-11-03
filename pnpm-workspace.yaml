@@ -1,5 +1,0 @@
-packages:
-  # - "../sqlsync/demo/cloudflare-backend"
-  - "./frontend"
-  - "../sqlsync/lib/sqlsync-react"
-  - "../sqlsync/lib/sqlsync-worker"
