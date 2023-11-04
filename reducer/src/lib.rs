@@ -8,7 +8,15 @@ use sqlsync_reducer::{execute, init_reducer, types::ReducerError};
 enum Mutation {
     InitSchema,
 
-    CreateTask { id: String, description: String },
+    CreateLocation { id: String, description: String },
+
+    DeleteLocation { id: String },
+
+    CreateRobot { id: String, locationid: String, description: String },
+
+    DeleteRobot { id: String },
+
+    CreateTask { id: String, robotid: String, description: String },
 
     DeleteTask { id: String },
 
@@ -22,22 +30,102 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
     match mutation {
         Mutation::InitSchema => {
             execute!(
+                "CREATE TABLE IF NOT EXISTS locations (
+                    id TEXT PRIMARY KEY,
+                    description TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                )"
+            )
+            .await;
+            execute!(
+                "CREATE TABLE IF NOT EXISTS robots (
+                    id TEXT PRIMARY KEY,
+                    locationid TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                )"
+            )
+            .await;
+            execute!(
                 "CREATE TABLE IF NOT EXISTS tasks (
                     id TEXT PRIMARY KEY,
+                    robotid TEXT NOT NULL,
                     description TEXT NOT NULL,
                     completed BOOLEAN NOT NULL,
                     created_at TEXT NOT NULL
                 )"
             )
             .await;
+            // execute!(
+            //     "insert into robots (id, locationid, description, created_at)
+            //         values (?, ?, ?, datetime('now'))",
+            //     "24db4c5b-1e3a-4853-8316-1d6ad07beed1",
+            //     "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
+            //     "ABB IRB 52 001"
+            // )
+            // .await;
+            // execute!(
+            //     "insert into robots (id, locationid, description, created_at)
+            //         values (?, ?, ?, datetime('now'))",
+            //     "402e7545-512b-4b7d-b570-e94311b38ab6",
+            //     "944c987c-5ee8-45a8-9c9c-cada1977b5ff",
+            //     "ABB IRB 52 002"
+            // )
+            // .await;
+            // execute!(
+            //     "insert into robots (id, locationid, description, created_at)
+            //         values (?, ?, ?, datetime('now'))",
+            //     "f7a3408d-6329-47fd-ada9-72e6f249c3e2",
+            //     "8a75aeb2-f9e2-4242-ad40-7d6042551726",
+            //     "ABB IRB 52 003"
+            // )
+            // .await;
+            // execute!(
+            //     "insert into robots (id, locationid, description, created_at)
+            //         values (?, ?, ?, datetime('now'))",
+            //     "c583ab7f-fd7d-4100-9c3e-aa343ea1c232",
+            //     "0e4fdf72-d3aa-4cf4-ae27-60318c567e83",
+            //     "ABB IRB 52 004"
+            // )
+            // .await;
         }
 
-        Mutation::CreateTask { id, description } => {
-            log::debug!("appending task({}): {}", id, description);
-            execute!(
-                "insert into tasks (id, description, completed, created_at)
-                    values (?, ?, false, datetime('now'))",
+        Mutation::CreateLocation { id, description } => {
+            log::debug!("appending location({}): {}", id, description);
+            futures::join!(execute!(
+                "insert into locations (id, description, created_at)
+                    values (?, ?, datetime('now'))",
                 id,
+                description
+            ));
+        }
+
+        Mutation::DeleteLocation { id } => {
+            futures::join!(execute!("delete from locations where id = ?", id));
+        }
+
+        Mutation::CreateRobot { id, locationid, description } => {
+            log::debug!("appending robot({}): {}", id, description);
+            futures::join!(execute!(
+                "insert into robots (id, locationid, description, created_at)
+                    values (?, ?, ?, datetime('now'))",
+                id,
+                locationid,
+                description
+            ));
+        }
+
+        Mutation::DeleteRobot { id } => {
+            futures::join!(execute!("delete from robots where id = ?", id));
+        }
+
+        Mutation::CreateTask { id, robotid, description } => {
+            log::debug!("appending task({}) to robot({}): {}", id, robotid, description);
+            execute!(
+                "insert into tasks (id, robotid, description, completed, created_at)
+                    values (?, ?, ?, false, datetime('now'))",
+                id,
+                robotid,
                 description
             )
             .await;

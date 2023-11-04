@@ -7,12 +7,32 @@ const REDUCER_URL = new URL(
 
 // matches the Mutation type in demo/demo-reducer
 export type Mutation =
-  | {
+    {
       tag: "InitSchema";
+  }
+  | {
+      tag: "CreateLocation";
+      id: string;
+      description: string;
+  }
+  | {
+      tag: "DeleteLocation";
+      id: string;
+  }
+  | {
+      tag: "CreateRobot";
+      id: string;
+      locationid: string;
+      description: string;
+    }
+  | {
+      tag: "DeleteRobot";
+      id: string;
     }
   | {
       tag: "CreateTask";
       id: string;
+      robotid: string;
       description: string;
     }
   | {
@@ -22,7 +42,7 @@ export type Mutation =
   | {
       tag: "ToggleCompleted";
       id: string;
-    };
+  };
 
 export const TaskDocType: DocType<Mutation> = {
   reducerUrl: REDUCER_URL,

@@ -22,7 +22,8 @@ export const TaskForm = ({ mutate }: TaskFormProps) => {
     useCallback(
       ({ description }) => {
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
-        mutate({ tag: "CreateTask", id, description })
+        const robotid = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
+        mutate({ tag: "CreateTask", id, robotid, description })
           .then(() => {
             form.reset();
           })
