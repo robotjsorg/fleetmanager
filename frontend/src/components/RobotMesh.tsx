@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 import { useRef, useState, useContext } from "react";
 import { useFrame, ThreeElements } from "@react-three/fiber"; // Vector3
 // import { useThree } from "@react-three/fiber";
@@ -28,7 +29,7 @@ type GLTFResult = GLTF & {
   };
 };
 
-const RobotMesh = (props: ThreeElements['mesh']) => {
+export const RobotMesh = (props: ThreeElements['mesh']) => {
   const ref = useRef<THREE.Mesh>(null!);
   const [ hovered, hover ] = useState(false);
   
@@ -124,5 +125,3 @@ const RobotMesh = (props: ThreeElements['mesh']) => {
 }
 
 useGLTF.preload("abb_irb52_7_120.gltf");
-
-export default RobotMesh;

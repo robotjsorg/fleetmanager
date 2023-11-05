@@ -1,19 +1,14 @@
 import { Text, ActionIcon, Checkbox, Flex } from "@mantine/core";
 import { useCallback } from "react";
-import { Mutation } from "../doctype";
 import { IconX } from "@tabler/icons-react";
-
-export interface Task {
-  id: string;
-  description: string;
-  completed: boolean;
-}
+import { Mutation } from "../doctype";
+import { ITask } from "../@types/task";
 
 export const TaskItem = ({
   task,
   mutate,
 }: {
-  task: Task;
+  task: ITask;
   mutate: (m: Mutation) => Promise<void>;
 }) => {
   const handleDelete = useCallback(() => {
@@ -29,10 +24,10 @@ export const TaskItem = ({
   }, [task.id, mutate]);
 
   return (
-    <Flex style={{ alignItems: "center" }} gap="sm">
-      <Checkbox checked={task.completed} onChange={handleToggleCompleted} />
+    <Flex style={{ alignItems: "center" }} gap="sm" pb={2}>
+      <Checkbox checked={task.completed} onChange={handleToggleCompleted} disabled={task.completed} />
       <Text style={{ flex: 1 }}>{task.description}</Text>
-      <ActionIcon color="red" variant="subtle" onClick={handleDelete}>
+      <ActionIcon color="red" variant="subtle" onClick={handleDelete} mr={20}>
         <IconX />
       </ActionIcon>
     </Flex>

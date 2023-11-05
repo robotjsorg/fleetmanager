@@ -1,17 +1,20 @@
 import { CodeHighlight } from "@mantine/code-highlight";
-import { Alert, Button, Code, Collapse, Paper, Textarea } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { Alert, Center, Code, Flex, Paper, ScrollArea, Stack, Title, Text } from "@mantine/core"; //, Button, Collapse
+import { useViewportSize } from '@mantine/hooks'; // , useDisclosure
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { IconAlertCircle, IconCaretDownFilled, IconCaretRightFilled } from "@tabler/icons-react";
-import { useMemo, useState } from "react";
+import { IconAlertCircle } from "@tabler/icons-react"; //, IconCaretDownFilled, IconCaretRightFilled
+import { useContext, useMemo } from "react";
 import { useQuery } from "../doctype";
+import selectionContext from "../context/selectionContext";
 
 interface Props {
   docId: JournalId;
 }
 
 export const QueryViewerInner = ({ docId }: Props) => {
-  const [inputValue, setInputValue] = useState("select * from tasks");
+  const { selection } = useContext(selectionContext);
+
+  const inputValue = ("select description, created_at from robots where id is '" + selection + "'");
   const result = useQuery(docId, inputValue);
 
   const rowsJson = useMemo(() => {
@@ -42,26 +45,35 @@ export const QueryViewerInner = ({ docId }: Props) => {
 
   return (
     <>
-      <Textarea
+      <Text size="xs">
+        {selection}
+      </Text>
+      {/* <Textarea
         mb="sm"
         autosize
         description="Run any SQL query. Available tables: tasks"
         value={inputValue}
         styles={{ input: { fontFamily: "monospace" } }}
         onChange={(e) => setInputValue(e.currentTarget.value)}
-      />
+      /> */}
       {output}
     </>
   );
 };
 
-export const QueryViewer = (props: Props) => {
-  const [visible, { toggle }] = useDisclosure();
-  const icon = visible ? <IconCaretDownFilled /> : <IconCaretRightFilled />;
+export const Selection = (props: Props) => {
+  // const [visible, { toggle }] = useDisclosure();
+  // const icon = visible ? <IconCaretDownFilled /> : <IconCaretRightFilled />;
+  const { height } = useViewportSize();
 
   return (
-    <Paper>
-      <Button
+    <Paper component={Stack} shadow="xs" p="xs" h={(height-80)/3-20}>
+      <Flex>
+        <Center component={Title} order={5}>
+          Selection
+        </Center>
+      </Flex>
+      {/* <Button
         variant="subtle"
         fullWidth
         leftSection={icon}
@@ -71,10 +83,12 @@ export const QueryViewer = (props: Props) => {
         mb="sm"
       >
         Query Viewer
-      </Button>
-      <Collapse in={visible}>
+      </Button> */}
+      {/* <Collapse in={visible}> */}
+      <ScrollArea type="auto">
         <QueryViewerInner {...props} />
-      </Collapse>
+      </ScrollArea>
+      {/* </Collapse> */}
     </Paper>
   );
 };
