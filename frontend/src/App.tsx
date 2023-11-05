@@ -28,7 +28,7 @@ export const App = ({ docId }: { docId: JournalId }) => {
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false);
   const { height } = useViewportSize();
 
-  const [selection, setSelection] = useState("empty");
+  const [selection, setSelection] = useState("no selection");
   const { rows: robots } = useQuery<IRobot>(
     docId,
     sql`select * from robots order by description`

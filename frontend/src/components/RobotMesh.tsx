@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unknown-property */
-import { useRef, useContext } from "react";
+import { useRef, useContext, useState } from "react";
 import { useFrame, Vector3 } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { Select } from "@react-three/postprocessing";
@@ -50,12 +50,16 @@ export const RobotMesh = (props: RobotMeshProps) => {
     ref.current.children[0].children[0].children[0].children[0].children[0].children[0].rotation.x += delta
   ));
 
+  const [hovered, hover] = useState(false);
+
   return (
-    <Select enabled={props.selected}>
+    <Select enabled={props.selected || hovered}>
       <group dispose={null}>
         <mesh
           {...props}
           ref={ref}
+          onPointerOver={() => hover(true)}
+          onPointerOut={() => hover(false)}
           onClick={(e) => (e.stopPropagation(), setSelection(props.robotid))}
           castShadow
           receiveShadow

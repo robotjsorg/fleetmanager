@@ -9,9 +9,11 @@ import { selectionContext } from "../context/selectionContext";
 export const RobotItem = ({
   robot,
   mutate,
+  selected,
 }: {
   robot: IRobot;
   mutate: (m: Mutation) => Promise<void>;
+  selected: boolean;
 }) => {
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteRobot", id: robot.id })
@@ -27,7 +29,7 @@ export const RobotItem = ({
   const { hovered, ref } = useHover();
 
   return (
-    <Flex ref={ref} style={{ alignItems: "center" }} gap="sm" px={12} py={4} onClick={handleSelect} bg={hovered ? "#f8f9fa" : "none"}>
+    <Flex ref={ref} style={{ alignItems: "center" }} gap="sm" px={12} py={4} onClick={handleSelect} bg={hovered || selected ? "#f8f9fa" : "none"}>
       <Text style={{ flex: 1 }}>{robot.description}</Text>
       <ActionIcon color="red" variant="subtle" onClick={handleDelete}>
         <IconX />

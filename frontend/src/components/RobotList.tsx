@@ -6,6 +6,8 @@ import { useMutate, useQuery } from "../doctype";
 import { IRobot } from "../@types/robot";
 import { RobotItem } from "./RobotItem";
 import { RobotForm } from "./RobotForm";
+import { useContext } from "react";
+import { selectionContext } from "../context/selectionContext";
 
 export const RobotList = ({ docId }: { docId: JournalId }) => {
   const { rows: robots } = useQuery<IRobot>(
@@ -15,6 +17,7 @@ export const RobotList = ({ docId }: { docId: JournalId }) => {
 
   const mutate = useMutate(docId);
   const { height } = useViewportSize();
+  const { selection } = useContext(selectionContext)!;
 
   return (
     <Paper component={Stack} shadow="xs" p="xs" h={(height-80)/3-20}>
@@ -25,7 +28,7 @@ export const RobotList = ({ docId }: { docId: JournalId }) => {
       </Flex>
       <ScrollArea type="auto">
         {(robots ?? []).map((robot) => (
-          <RobotItem key={robot.id} robot={robot} mutate={mutate} />
+          <RobotItem key={robot.id} robot={robot} mutate={mutate} selected={selection == robot.id ? true : false} />
         ))}
       </ScrollArea>
       <RobotForm mutate={mutate} />
