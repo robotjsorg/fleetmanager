@@ -1,28 +1,40 @@
-import { Button, Flex, TextInput } from "@mantine/core";
+import { JournalId } from "@orbitinghail/sqlsync-worker";
+import { Button, Flex, Select } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useCallback } from "react";
-import { Mutation } from "../doctype";
+import { Mutation, useQuery } from "../doctype";
 import { v4 as uuidv4 } from "uuid";
+import { IRobot } from "../@types/robot";
+import { sql } from "@orbitinghail/sqlsync-react";
 
 interface TaskFormProps {
+  docId: JournalId;
   mutate: (m: Mutation) => Promise<void>;
 }
 
-export const TaskForm = ({ mutate }: TaskFormProps) => {
+export const TaskForm = ({ docId, mutate }: TaskFormProps) => {
   const form = useForm({
     initialValues: {
+      robot: "",
       description: "",
     },
     validate: {
+      robot: (value) => (value.trim().length === 0 ? "Valid robot must be selected" : null),
       description: (value) => (value.trim().length === 0 ? "Description is too short" : null),
     },
   });
 
+  const { rows: robots } = useQuery<IRobot>(
+    docId,
+    sql`select * from robots order by description`
+  );
+
   const handleSubmit = form.onSubmit(
     useCallback(
-      ({ description }) => {
+      ({ robot, description }) => {
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
         const robotid = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
+        description = robot + ": " + description;
         mutate({ tag: "CreateTask", id, robotid, description })
           .then(() => {
             form.reset();
@@ -38,11 +50,22 @@ export const TaskForm = ({ mutate }: TaskFormProps) => {
   return (
     <form onSubmit={handleSubmit}>
       <Flex gap="xs">
-        <TextInput
+       <Select
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           required
-          placeholder="Add a task"
+          placeholder="Pick robot"
+          data={(robots ?? []).map((robot) => (
+            robot.description
+          ))}
+          {...form.getInputProps("robot")}
+        />
+       <Select
+          style={{ flex: 1 }}
+          styles={{ input: { fontSize: "16px" } }}
+          required
+          placeholder="Pick task"
+          data={['Manual', 'Automatic', 'Home', 'Move A', 'Move B', 'Clamp', 'Unclamp']}
           {...form.getInputProps("description")}
         />
         <Button type="submit">Add</Button>

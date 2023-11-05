@@ -27,7 +27,7 @@ export const TaskList = ({ docId }: { docId: JournalId }) => {
           <TaskItem key={task.id} task={task} mutate={mutate} />
         ))}
       </ScrollArea>
-      <TaskForm mutate={mutate} />
+      <TaskForm docId={docId} mutate={mutate} />
     </Paper>
   );
 };

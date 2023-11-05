@@ -84,7 +84,7 @@ export const App = ({ docId }: { docId: JournalId }) => {
       </AppShell.Navbar>
       <AppShell.Main>
         <Grid p="sm">
-          <RobotProvider robots={robots} >
+          <RobotProvider robots={robots ?? []} >
             <selectionContext.Provider value={{ selection, setSelection }}>
               <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
                 <Paper component={Stack} shadow="xs" p="xs" gap="sm" h={height-108}>

@@ -1,4 +1,4 @@
-import { CodeHighlight } from "@mantine/code-highlight";
+import { CodeHighlight, InlineCodeHighlight } from "@mantine/code-highlight";
 import { Alert, Center, Code, Flex, Paper, ScrollArea, Stack, Title, Text } from "@mantine/core"; //, Button, Collapse
 import { useViewportSize } from '@mantine/hooks'; // , useDisclosure
 import { JournalId } from "@orbitinghail/sqlsync-worker";
@@ -14,7 +14,7 @@ interface Props {
 export const QueryViewerInner = ({ docId }: Props) => {
   const { selection } = useContext(selectionContext);
 
-  const inputValue = ("select description, created_at from robots where id is '" + selection + "'");
+  const inputValue = ("select description, created_at, locationid from robots where id is '" + selection + "'");
   const result = useQuery(docId, inputValue);
 
   const rowsJson = useMemo(() => {
@@ -40,7 +40,7 @@ export const QueryViewerInner = ({ docId }: Props) => {
       </Alert>
     );
   } else {
-    output = <CodeHighlight code={rowsJson} language="json" withCopyButton={false} />;
+    output = <InlineCodeHighlight code={rowsJson} language="json" />;
   }
 
   return (
