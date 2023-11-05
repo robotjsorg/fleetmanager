@@ -24,10 +24,10 @@ export const TaskItem = ({
   }, [task.id, mutate]);
 
   return (
-    <Flex style={{ alignItems: "center" }} gap="sm" pb={2}>
+    <Flex style={{ alignItems: "center" }} gap="sm" px={12} py={4}>
       <Checkbox checked={task.completed} onChange={handleToggleCompleted} disabled={task.completed} />
       <Text style={{ flex: 1 }}>{task.description}</Text>
-      <ActionIcon color="red" variant="subtle" onClick={handleDelete} mr={20}>
+      <ActionIcon color="red" variant="subtle" onClick={handleDelete}>
         <IconX />
       </ActionIcon>
     </Flex>

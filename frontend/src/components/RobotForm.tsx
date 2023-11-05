@@ -1,4 +1,4 @@
-import { Button, Flex, TextInput } from "@mantine/core";
+import { Button, Flex, TextInput } from "@mantine/core"; // , Select
 import { useForm } from "@mantine/form";
 import { useCallback } from "react";
 import { Mutation } from "../doctype";
@@ -9,19 +9,20 @@ interface RobotFormProps {
 }
 
 export const RobotForm = ({ mutate }: RobotFormProps) => {
-
   const form = useForm({
     initialValues: {
+      type: "",
       description: "",
     },
     validate: {
-      description: (value) => (value.trim().length === 0 ? "Description is too short" : null),
+      type: (value) => (value.trim().length === 0 ? "Select Type" : null),
+      description: (value) => (value.trim().length === 0 ? "Enter Description" : null),
     },
   });
 
   const handleSubmit = form.onSubmit(
     useCallback(
-      ({ description }) => {
+      ({ description }) => { // type,
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
         const locationid = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
         mutate({ tag: "CreateRobot", id, locationid, description })
@@ -39,11 +40,20 @@ export const RobotForm = ({ mutate }: RobotFormProps) => {
   return (
     <form onSubmit={handleSubmit}>
       <Flex gap="xs">
+        {/* <Select
+          style={{ flex: 1 }}
+          styles={{ input: { fontSize: "16px" } }}
+          required
+          allowDeselect
+          placeholder="Type"
+          data={['ABB IRB 52']}
+          {...form.getInputProps("type")}
+        /> */}
         <TextInput
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           required
-          placeholder="Add a robot"
+          placeholder="Desc"
           {...form.getInputProps("description")}
         />
         <Button type="submit">Add</Button>

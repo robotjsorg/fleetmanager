@@ -17,16 +17,17 @@
     "@mantine/hooks": "^7.1.5",
     "@orbitinghail/sqlsync-react": "0.1.0",
     "@orbitinghail/sqlsync-worker": "0.1.0",
+    "@react-three/drei": "^9.88.0",
+    "@react-three/fiber": "^8.14.5",
+    "@react-three/postprocessing": "^2.15.10",
     "@tabler/icons-react": "^2.39.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-github-btn": "^1.4.0",
     "react-qr-code": "^2.0.12",
     "react-router-dom": "^6.17.0",
-    "uuid": "^9.0.1",
-    "@react-three/drei": "^9.88.0",
-    "@react-three/fiber": "^8.14.5",
-    "three-stdlib": "^2.28.3"
+    "three-stdlib": "^2.28.3",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.8.8",

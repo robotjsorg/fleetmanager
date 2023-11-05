@@ -12,6 +12,7 @@ export const RobotList = ({ docId }: { docId: JournalId }) => {
     docId,
     sql`select * from robots order by description`
   );
+
   const mutate = useMutate(docId);
   const { height } = useViewportSize();
 

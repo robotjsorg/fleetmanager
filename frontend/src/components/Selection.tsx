@@ -1,11 +1,12 @@
-import { CodeHighlight, InlineCodeHighlight } from "@mantine/code-highlight";
-import { Alert, Center, Code, Flex, Paper, ScrollArea, Stack, Title, Text } from "@mantine/core"; //, Button, Collapse
-import { useViewportSize } from '@mantine/hooks'; // , useDisclosure
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+import { InlineCodeHighlight } from "@mantine/code-highlight";
+import { Alert, Center, Code, Flex, Paper, ScrollArea, Stack, Title, Text } from "@mantine/core";
+import { useViewportSize } from '@mantine/hooks';
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { IconAlertCircle } from "@tabler/icons-react"; //, IconCaretDownFilled, IconCaretRightFilled
+import { IconAlertCircle } from "@tabler/icons-react";
 import { useContext, useMemo } from "react";
 import { useQuery } from "../doctype";
-import selectionContext from "../context/selectionContext";
+import { selectionContext } from "../context/selectionContext";
 
 interface Props {
   docId: JournalId;
@@ -21,11 +22,9 @@ export const QueryViewerInner = ({ docId }: Props) => {
     return JSON.stringify(
       result.rows ?? [],
       (_, value) => {
-        // handle bigint values
         if (typeof value === "bigint") {
           return value.toString();
         }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return value;
       },
       2
@@ -48,22 +47,12 @@ export const QueryViewerInner = ({ docId }: Props) => {
       <Text size="xs">
         {selection}
       </Text>
-      {/* <Textarea
-        mb="sm"
-        autosize
-        description="Run any SQL query. Available tables: tasks"
-        value={inputValue}
-        styles={{ input: { fontFamily: "monospace" } }}
-        onChange={(e) => setInputValue(e.currentTarget.value)}
-      /> */}
       {output}
     </>
   );
 };
 
 export const Selection = (props: Props) => {
-  // const [visible, { toggle }] = useDisclosure();
-  // const icon = visible ? <IconCaretDownFilled /> : <IconCaretRightFilled />;
   const { height } = useViewportSize();
 
   return (
@@ -73,22 +62,9 @@ export const Selection = (props: Props) => {
           Selection
         </Center>
       </Flex>
-      {/* <Button
-        variant="subtle"
-        fullWidth
-        leftSection={icon}
-        size="compact-md"
-        styles={{ inner: { justifyContent: "left" } }}
-        onClick={toggle}
-        mb="sm"
-      >
-        Query Viewer
-      </Button> */}
-      {/* <Collapse in={visible}> */}
       <ScrollArea type="auto">
         <QueryViewerInner {...props} />
       </ScrollArea>
-      {/* </Collapse> */}
     </Paper>
   );
 };

@@ -13,7 +13,6 @@ import { journalIdFromString, journalIdToString } from "@orbitinghail/sqlsync-wo
 import { SQLSyncProvider } from "@orbitinghail/sqlsync-react";
 import { MantineProvider } from "@mantine/core";
 
-// import stylesheets
 import "@mantine/core/styles.css";
 import "@mantine/code-highlight/styles.css";
 import { MANTINE_THEME } from "./theme";

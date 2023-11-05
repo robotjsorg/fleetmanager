@@ -11,10 +11,9 @@ import { Selection } from "./components/Selection";
 import { ConnectionStatus } from "./components/ConnectionStatus";
 import { Fleetmanager } from "./components/Fleetmanager";
 import { RobotProvider } from "./context/robotContext";
-import selectionContext from "./context/selectionContext";
+import { selectionContext } from "./context/selectionContext";
 import { IRobot } from "./@types/robot";
 import { sql } from "@orbitinghail/sqlsync-react";
-
 
 export const App = ({ docId }: { docId: JournalId }) => {
   const mutate = useMutate(docId);
@@ -86,7 +85,7 @@ export const App = ({ docId }: { docId: JournalId }) => {
         <Grid p="sm">
           <RobotProvider robots={robots ?? []} >
             <selectionContext.Provider value={{ selection, setSelection }}>
-              <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
+              <Grid.Col span={{ base: 12, xs: 12, sm: 8, md: 8, lg: 9 }}>
                 <Paper component={Stack} shadow="xs" p="xs" gap="sm" h={height-108}>
                   <Center component={Title} style={{ justifyContent: "left" }} order={5}>
                     Location &gt; Fleetmanager
@@ -94,7 +93,7 @@ export const App = ({ docId }: { docId: JournalId }) => {
                   <Fleetmanager />
                 </Paper>
               </Grid.Col>
-              <Grid.Col span={{ base: 8, md: 4, lg: 3 }}>
+              <Grid.Col span={{ base: 12, xs: 12, sm: 4, md: 4, lg: 3 }}>
                 <Stack>
                   <RobotList docId={docId} />
                   <TaskList docId={docId} />

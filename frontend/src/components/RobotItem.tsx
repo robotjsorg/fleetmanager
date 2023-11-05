@@ -1,9 +1,10 @@
 import { Text, ActionIcon, Flex } from "@mantine/core";
+import { useHover } from '@mantine/hooks';
 import { useCallback, useContext } from "react";
 import { IconX } from "@tabler/icons-react";
 import { Mutation } from "../doctype";
 import { IRobot } from "../@types/robot";
-import selectionContext from "../context/selectionContext";
+import { selectionContext } from "../context/selectionContext";
 
 export const RobotItem = ({
   robot,
@@ -23,10 +24,12 @@ export const RobotItem = ({
     setSelection(robot.id);
   };
 
+  const { hovered, ref } = useHover();
+
   return (
-    <Flex style={{ alignItems: "center" }} gap="sm" pb={2} onClick={handleSelect}>
+    <Flex ref={ref} style={{ alignItems: "center" }} gap="sm" px={12} py={4} onClick={handleSelect} bg={hovered ? "#f8f9fa" : "none"}>
       <Text style={{ flex: 1 }}>{robot.description}</Text>
-      <ActionIcon color="red" variant="subtle" onClick={handleDelete} mr={20}>
+      <ActionIcon color="red" variant="subtle" onClick={handleDelete}>
         <IconX />
       </ActionIcon>
     </Flex>

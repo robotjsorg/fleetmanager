@@ -12,7 +12,7 @@ enum Mutation {
 
     DeleteLocation { id: String },
 
-    CreateRobot { id: String, locationid: String, description: String },
+    CreateRobot { id: String, locationid: String, description: String }, // position: Vec<i32>
 
     DeleteRobot { id: String },
 
@@ -56,67 +56,63 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 )"
             )
             .await;
-            // execute!(
-            //     "insert into robots (id, locationid, description, created_at)
-            //         values (?, ?, ?, datetime('now'))",
-            //     "24db4c5b-1e3a-4853-8316-1d6ad07beed1",
-            //     "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
-            //     "ABB IRB 52 001"
-            // )
-            // .await;
-            // execute!(
-            //     "insert into robots (id, locationid, description, created_at)
-            //         values (?, ?, ?, datetime('now'))",
-            //     "402e7545-512b-4b7d-b570-e94311b38ab6",
-            //     "944c987c-5ee8-45a8-9c9c-cada1977b5ff",
-            //     "ABB IRB 52 002"
-            // )
-            // .await;
-            // execute!(
-            //     "insert into robots (id, locationid, description, created_at)
-            //         values (?, ?, ?, datetime('now'))",
-            //     "f7a3408d-6329-47fd-ada9-72e6f249c3e2",
-            //     "8a75aeb2-f9e2-4242-ad40-7d6042551726",
-            //     "ABB IRB 52 003"
-            // )
-            // .await;
-            // execute!(
-            //     "insert into robots (id, locationid, description, created_at)
-            //         values (?, ?, ?, datetime('now'))",
-            //     "c583ab7f-fd7d-4100-9c3e-aa343ea1c232",
-            //     "0e4fdf72-d3aa-4cf4-ae27-60318c567e83",
-            //     "ABB IRB 52 004"
-            // )
-            // .await;
+            execute!(
+                "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
+                "24db4c5b-1e3a-4853-8316-1d6ad07beed1",
+                "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
+                "ABB IRB 52 001"
+            ).await;
+            execute!(
+                "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
+                "402e7545-512b-4b7d-b570-e94311b38ab6",
+                "944c987c-5ee8-45a8-9c9c-cada1977b5ff",
+                "ABB IRB 52 002"
+            ).await;
+            execute!(
+                "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
+                "f7a3408d-6329-47fd-ada9-72e6f249c3e2",
+                "8a75aeb2-f9e2-4242-ad40-7d6042551726",
+                "ABB IRB 52 003"
+            ).await;
+            execute!(
+                "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
+                "c583ab7f-fd7d-4100-9c3e-aa343ea1c232",
+                "0e4fdf72-d3aa-4cf4-ae27-60318c567e83",
+                "ABB IRB 52 004"
+            ).await;
         }
 
         Mutation::CreateLocation { id, description } => {
             log::debug!("appending location({}): {}", id, description);
-            futures::join!(execute!(
+            execute!(
                 "insert into locations (id, description, created_at)
                     values (?, ?, datetime('now'))",
                 id,
                 description
-            ));
+            ).await;
         }
 
         Mutation::DeleteLocation { id } => {
-            futures::join!(execute!("delete from locations where id = ?", id));
+            execute!(
+                "delete from locations where id = ?", id
+            ).await;
         }
 
         Mutation::CreateRobot { id, locationid, description } => {
             log::debug!("appending robot({}): {}", id, description);
-            futures::join!(execute!(
+            execute!(
                 "insert into robots (id, locationid, description, created_at)
                     values (?, ?, ?, datetime('now'))",
                 id,
                 locationid,
                 description
-            ));
+            ).await;
         }
 
         Mutation::DeleteRobot { id } => {
-            futures::join!(execute!("delete from robots where id = ?", id));
+            execute!(
+                "delete from robots where id = ?", id
+            ).await;
         }
 
         Mutation::CreateTask { id, robotid, description } => {

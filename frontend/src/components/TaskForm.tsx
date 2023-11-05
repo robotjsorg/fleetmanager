@@ -19,8 +19,8 @@ export const TaskForm = ({ docId, mutate }: TaskFormProps) => {
       description: "",
     },
     validate: {
-      robot: (value) => (value.trim().length === 0 ? "Valid robot must be selected" : null),
-      description: (value) => (value.trim().length === 0 ? "Description is too short" : null),
+      robot: (value) => (value.trim().length === 0 ? "Select Robot" : null),
+      description: (value) => (value.trim().length === 0 ? "Select Task" : null),
     },
   });
 
@@ -54,9 +54,9 @@ export const TaskForm = ({ docId, mutate }: TaskFormProps) => {
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           required
-          placeholder="Pick robot"
+          placeholder="Robot"
           data={(robots ?? []).map((robot) => (
-            robot.description
+            robot.id
           ))}
           {...form.getInputProps("robot")}
         />
@@ -64,7 +64,7 @@ export const TaskForm = ({ docId, mutate }: TaskFormProps) => {
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           required
-          placeholder="Pick task"
+          placeholder="Task"
           data={['Manual', 'Automatic', 'Home', 'Move A', 'Move B', 'Clamp', 'Unclamp']}
           {...form.getInputProps("description")}
         />
