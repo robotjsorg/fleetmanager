@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { InlineCodeHighlight } from "@mantine/code-highlight";
-import { Alert, Center, Code, Flex, Paper, ScrollArea, Stack, Title, Text } from "@mantine/core";
-import { useViewportSize } from '@mantine/hooks';
+import { Alert, Center, Code, Flex, ScrollArea, Title, Text } from "@mantine/core";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { useContext, useMemo } from "react";
@@ -53,10 +52,8 @@ export const QueryViewerInner = ({ docId }: Props) => {
 };
 
 export const Selection = (props: Props) => {
-  const { height } = useViewportSize();
-
   return (
-    <Paper component={Stack} shadow="xs" p="xs" h={(height-80)/3-20}>
+    <>
       <Flex>
         <Center component={Title} order={5}>
           Selection
@@ -65,6 +62,6 @@ export const Selection = (props: Props) => {
       <ScrollArea type="auto">
         <QueryViewerInner {...props} />
       </ScrollArea>
-    </Paper>
+    </>
   );
 };

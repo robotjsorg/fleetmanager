@@ -1,26 +1,24 @@
-import { Center, Flex, Paper, ScrollArea, Stack, Title } from "@mantine/core";
-import { useViewportSize } from '@mantine/hooks';
+import { Center, Flex, ScrollArea, Title } from "@mantine/core";
 import { sql } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
+import { useContext } from "react";
 import { useMutate, useQuery } from "../doctype";
 import { IRobot } from "../@types/robot";
 import { RobotItem } from "./RobotItem";
 import { RobotForm } from "./RobotForm";
-import { useContext } from "react";
 import { selectionContext } from "../context/selectionContext";
 
 export const RobotList = ({ docId }: { docId: JournalId }) => {
   const { rows: robots } = useQuery<IRobot>(
     docId,
-    sql`select * from robots order by description`
+    sql`SELECT * FROM robots ORDER BY locationid`
   );
 
   const mutate = useMutate(docId);
-  const { height } = useViewportSize();
   const { selection } = useContext(selectionContext)!;
 
   return (
-    <Paper component={Stack} shadow="xs" p="xs" h={(height-80)/3-20}>
+    <>
       <Flex>
         <Center component={Title} style={{ flex: 1, justifyContent: "left" }} order={5}>
           Robots
@@ -32,6 +30,6 @@ export const RobotList = ({ docId }: { docId: JournalId }) => {
         ))}
       </ScrollArea>
       <RobotForm mutate={mutate} />
-    </Paper>
+    </>
   );
 };

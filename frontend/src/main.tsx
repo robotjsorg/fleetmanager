@@ -1,14 +1,12 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter, redirect, useParams } from "react-router-dom";
 
 // HACK: switch to the .ts version for nicer local dev
 // import workerUrl from "@orbitinghail/sqlsync-worker/worker.ts?url";
 import workerUrl from "@orbitinghail/sqlsync-worker/worker.js?url";
-
 import sqlSyncWasmUrl from "@orbitinghail/sqlsync-worker/sqlsync.wasm?url";
-import { App } from "./App";
+
 import { journalIdFromString, journalIdToString } from "@orbitinghail/sqlsync-worker";
 import { SQLSyncProvider } from "@orbitinghail/sqlsync-react";
 import { MantineProvider } from "@mantine/core";
@@ -16,6 +14,12 @@ import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/code-highlight/styles.css";
 import { MANTINE_THEME } from "./theme";
+
+import { App } from "./App";
+import { LocationList } from "./components/LocationList";
+import { RobotList } from "./components/RobotList";
+import { TaskList } from "./components/TaskList";
+import { Nav } from "./components/Nav";
 
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168");
 
@@ -46,6 +50,51 @@ export const DocRoute = () => {
   }
 };
 
+export const LocationsRoute = () => {
+  const { docId } = useParams();
+
+  if (!docId) {
+    console.error("doc id not found in params");
+    return <pre style={{ color: "red" }}>ERROR: doc id not found in params</pre>;
+  } else {
+    return (
+      <Nav docId={journalIdFromString(docId)} title="Locations">
+        <LocationList docId={journalIdFromString(docId)} />
+      </Nav>
+    )
+  }
+};
+
+export const RobotsRoute = () => {
+  const { docId } = useParams();
+
+  if (!docId) {
+    console.error("doc id not found in params");
+    return <pre style={{ color: "red" }}>ERROR: doc id not found in params</pre>;
+  } else {
+    return (
+      <Nav docId={journalIdFromString(docId)} title="Robots" >
+        <RobotList docId={journalIdFromString(docId)} />
+      </Nav>
+    )
+  }
+};
+
+export const TasksRoute = () => {
+  const { docId } = useParams();
+
+  if (!docId) {
+    console.error("doc id not found in params");
+    return <pre style={{ color: "red" }}>ERROR: doc id not found in params</pre>;
+  } else {
+    return (
+      <Nav docId={journalIdFromString(docId)} title="Tasks" >
+        <TaskList docId={journalIdFromString(docId)} />
+      </Nav>
+    )
+  }
+};
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -65,10 +114,22 @@ const router = createBrowserRouter([
     path: "/:docId",
     element: <DocRoute />,
   },
+  {
+    path: "/:docId/settings",
+    element: <LocationsRoute />,
+  },
+  {
+    path: "/:docId/robots",
+    element: <RobotsRoute />,
+  },
+  {
+    path: "/:docId/tasks",
+    element: <TasksRoute />,
+  },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
     <MantineProvider theme={MANTINE_THEME}>
       <SQLSyncProvider
         wasmUrl={sqlSyncWasmUrl}
@@ -78,5 +139,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <RouterProvider router={router} />
       </SQLSyncProvider>
     </MantineProvider>
-  </React.StrictMode>
+  </StrictMode>
 );

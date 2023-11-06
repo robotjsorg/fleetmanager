@@ -27,6 +27,7 @@
     "react-qr-code": "^2.0.12",
     "react-router-dom": "^6.17.0",
     "three-stdlib": "^2.28.3",
+    "urdf-loader": "^0.12.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

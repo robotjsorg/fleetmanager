@@ -1,5 +1,4 @@
-import { Center, Flex, Paper, ScrollArea, Stack, Title } from "@mantine/core";
-import { useViewportSize } from '@mantine/hooks';
+import { Center, Flex, ScrollArea, Title } from "@mantine/core";
 import { sql } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { useMutate, useQuery } from "../doctype";
@@ -13,10 +12,9 @@ export const TaskList = ({ docId }: { docId: JournalId }) => {
     sql`select id, description, completed from tasks order by description`
   );
   const mutate = useMutate(docId);
-  const { height } = useViewportSize();
 
   return (
-    <Paper component={Stack} shadow="xs" p="xs" h={(height-80)/3-20}>
+    <>
       <Flex>
         <Center component={Title} style={{ flex: 1, justifyContent: "left" }} order={5}>
           Tasks
@@ -28,6 +26,6 @@ export const TaskList = ({ docId }: { docId: JournalId }) => {
         ))}
       </ScrollArea>
       <TaskForm docId={docId} mutate={mutate} />
-    </Paper>
+    </>
   );
 };

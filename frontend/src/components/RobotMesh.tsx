@@ -38,8 +38,9 @@ interface RobotMeshProps {
 
 export const RobotMesh = (props: RobotMeshProps) => {
   const ref = useRef<THREE.Mesh>(null!);
-  const { nodes, materials } = useGLTF("abb_irb52_7_120.gltf") as GLTFResult;
+  const { nodes, materials } = useGLTF("../abb_irb52_7_120.gltf") as GLTFResult;
   const { setSelection } = useContext(selectionContext);
+  const [hovered, hover] = useState(false);
 
   useFrame((_state, delta) => (
     ref.current.children[0].rotation.z += delta,
@@ -49,8 +50,6 @@ export const RobotMesh = (props: RobotMeshProps) => {
     ref.current.children[0].children[0].children[0].children[0].children[0].rotation.y += delta,
     ref.current.children[0].children[0].children[0].children[0].children[0].children[0].rotation.x += delta
   ));
-
-  const [hovered, hover] = useState(false);
 
   return (
     <Select enabled={props.selected || hovered}>
@@ -119,4 +118,4 @@ export const RobotMesh = (props: RobotMeshProps) => {
   );
 }
 
-useGLTF.preload("abb_irb52_7_120.gltf");
+useGLTF.preload("../abb_irb52_7_120.gltf");

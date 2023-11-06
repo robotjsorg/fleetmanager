@@ -56,7 +56,7 @@ export const TaskForm = ({ docId, mutate }: TaskFormProps) => {
           required
           placeholder="Robot"
           data={(robots ?? []).map((robot) => (
-            robot.id
+            robot.id // description is more user friendly but breaks because it's not unique
           ))}
           {...form.getInputProps("robot")}
         />
