@@ -24,9 +24,11 @@ export const App = ({ docId }: { docId: JournalId }) => {
     sql`SELECT * FROM locations ORDER BY created_at`
   );
   
+  let location = null;
   let locationid = "";
   let locationtitle = "";
   if(Array.isArray(locations)){
+    location = locations[0];
     locationid = locations[0].id;
     locationtitle = locations[0].description;
   }
@@ -57,12 +59,12 @@ export const App = ({ docId }: { docId: JournalId }) => {
             <Grid.Col span={{ base: 12, xs: 12, sm: 4, md: 4, lg: 3 }}>
               <Stack>
                 <Paper component={Stack} shadow="xs" p="xs" h={(height-80)/3-20}>
-                  <RobotList docId={docId} />
+                  <RobotList docId={docId} location={location}/>
                 </Paper>
-                <Paper component={Stack} shadow="xs" p="xs" h={(height-80)/3-20}>
+                <Paper component={Stack} shadow="xs" p="xs" h={(height-80)/3-20} onClick={() => setSelection("no selection")}>
                   <TaskList docId={docId} />
                 </Paper>
-                <Paper component={Stack} shadow="xs" p="xs" h={(height-80)/3-20}>
+                <Paper component={Stack} shadow="xs" p="xs" h={(height-80)/3-20} onClick={() => setSelection("no selection")}>
                   <Selection docId={docId} />
                 </Paper>
               </Stack>

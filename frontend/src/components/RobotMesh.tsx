@@ -30,8 +30,13 @@ type GLTFResult = GLTF & {
   };
 };
 
+const randomPosition = () => {
+  const x = 4 * (Math.random() - 0.5);
+  const z = 2 * (Math.random() - 0.5);
+  return [x, 0, z] as Vector3;
+};
+
 interface RobotMeshProps {
-  position: Vector3;
   robotid: string;
   selected: boolean;
 }
@@ -41,6 +46,8 @@ export const RobotMesh = (props: RobotMeshProps) => {
   const { nodes, materials } = useGLTF("../abb_irb52_7_120.gltf") as GLTFResult;
   const { setSelection } = useContext(selectionContext);
   const [hovered, hover] = useState(false);
+
+  const [ position ] = useState(randomPosition());
 
   useFrame((_state, delta) => (
     ref.current.children[0].rotation.z += delta,
@@ -65,6 +72,7 @@ export const RobotMesh = (props: RobotMeshProps) => {
           geometry={nodes.base_link.geometry}
           material={materials.gkmodel0_base_link_geom0}
           rotation={[-Math.PI / 2, 0, 0]}
+          position={position}
         >
           <mesh
             castShadow

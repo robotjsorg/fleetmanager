@@ -74,7 +74,7 @@ export const RobotsRoute = () => {
   } else {
     return (
       <Nav docId={journalIdFromString(docId)} title="Robots" >
-        <RobotList docId={journalIdFromString(docId)} />
+        <RobotList docId={journalIdFromString(docId)} location={null} />
       </Nav>
     )
   }

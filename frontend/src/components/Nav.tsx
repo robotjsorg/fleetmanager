@@ -4,8 +4,6 @@ import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
 import { ReactNode, useEffect } from "react";
 import { IconSettings, IconSun } from '@tabler/icons-react'
 import { Link } from "react-router-dom";
-
-import { useMutate } from "../doctype";
 import { ConnectionStatus } from "../components/ConnectionStatus";
 import { LocationList } from "../components/LocationList";
 
@@ -16,15 +14,8 @@ interface NavProps {
 }
 
 export const Nav = (props: NavProps) => {
-  const mutate = useMutate(props.docId);
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false);
-
-  useEffect(() => {
-    mutate({ tag: "InitSchema" }).catch((err) => {
-      console.error("Failed to init schema", err);
-    });
-  }, [mutate]);
 
   return (
     <AppShell
