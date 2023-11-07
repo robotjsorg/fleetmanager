@@ -1,8 +1,11 @@
+import { useCallback } from "react";
+
 import { Button, Flex, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useCallback } from "react";
-import { Mutation } from "../doctype";
+
 import { v4 as uuidv4 } from "uuid";
+
+import { Mutation } from "../doctype";
 
 interface LocationFormProps {
   mutate: (m: Mutation) => Promise<void>;

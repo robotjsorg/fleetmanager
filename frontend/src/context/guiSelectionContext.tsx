@@ -3,7 +3,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createContext } from "react";
 
-export const selectionContext = createContext({
-  selection: "empty",
-  setSelection: (_foo: any) => {}
+export const guiSelectionContext = createContext({
+  guiSelection: "no selection",
+  setGuiSelection: (_foo: any) => {},
+  locationSelection: "no selection",
+  setLocationSelection: (_foo: any) => {}
 });

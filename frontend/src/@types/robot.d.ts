@@ -10,7 +10,3 @@ export interface IRobot {
 export interface RobotContextType {
   robots: IRobot[];
 }
-
-export interface SelectionType {
-  selection: string;
-}

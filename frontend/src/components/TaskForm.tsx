@@ -1,11 +1,14 @@
+import { useCallback } from "react";
+
+import { sql } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Button, Flex, Select } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useCallback } from "react";
-import { Mutation, useQuery } from "../doctype";
+
 import { v4 as uuidv4 } from "uuid";
+
+import { Mutation, useQuery } from "../doctype";
 import { IRobot } from "../@types/robot";
-import { sql } from "@orbitinghail/sqlsync-react";
 
 interface TaskFormProps {
   docId: JournalId;

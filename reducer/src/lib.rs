@@ -8,6 +8,8 @@ use sqlsync_reducer::{execute, init_reducer, types::ReducerError};
 enum Mutation {
     InitSchema,
 
+    PopulateDB,
+
     CreateLocation { id: String, description: String },
 
     DeleteLocation { id: String },
@@ -56,6 +58,9 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 )"
             )
             .await;
+        }
+
+        Mutation::PopulateDB => {
             execute!(
                 "INSERT OR IGNORE INTO locations (id, description, created_at) VALUES (?, ?, datetime('now'))",
                 "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",

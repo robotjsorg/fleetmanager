@@ -1,19 +1,21 @@
-import { Center, Flex, Paper, ScrollArea, Stack, Title } from "@mantine/core";
-import { useViewportSize } from '@mantine/hooks';
 import { sql } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
+import { Center, Flex, Paper, ScrollArea, Stack, Title } from "@mantine/core";
+import { useViewportSize } from '@mantine/hooks';
+
 import { useMutate, useQuery } from "../doctype";
 import { ILocation } from "../@types/location";
-import { LocationItem } from "./LocationItem";
-import { LocationForm } from "./LocationForm";
 
-export const LocationList = ({ docId }: { docId: JournalId }) => {
+import { LocationItem } from "../components/LocationItem";
+import { LocationForm } from "../components/LocationForm";
+
+export const LocationsView = ({ docId }: { docId: JournalId }) => {
   const { rows: locations } = useQuery<ILocation>(
     docId,
     sql`select * from locations order by description`
   );
 
-  const mutate = useMutate(docId);
+  const mutate = useMutate( docId );
   const { height } = useViewportSize();
 
   return (

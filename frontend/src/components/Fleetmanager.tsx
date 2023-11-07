@@ -1,20 +1,21 @@
 import { useContext } from "react";
+
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment, ContactShadows } from "@react-three/drei";
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
 
-import { selectionContext } from "../context/selectionContext";
 import { RobotContext } from "../context/robotContext";
-import { RobotMesh } from "../components/RobotMesh";
+import { guiSelectionContext } from "../context/guiSelectionContext";
 
+import { RobotMesh } from "../components/RobotMesh";
 // import { Urdf } from "../components/Urdf";
 
 export const Fleetmanager = () => {
   const { robots } = useContext(RobotContext)!;
-  const { selection, setSelection } = useContext(selectionContext)!;
+  const { guiSelection, setGuiSelection } = useContext(guiSelectionContext);
 
   return (
-    <Canvas camera={{ position: [0, 3, 3], near: 0.01, far: 20 }} onPointerMissed={() => setSelection("no selection")}> 
+    <Canvas camera={{ position: [0, 3, 3], near: 0.01, far: 20 }} onPointerMissed={() => setGuiSelection("no selection")}> 
       <Environment preset="warehouse" background ground={{ height: 10, radius: 43, scale: 6 }} />
       {/* <Urdf /> */}
       <Selection>
@@ -22,7 +23,7 @@ export const Fleetmanager = () => {
           <Outline blur edgeStrength={100} width={1000} />
         </EffectComposer>
         {robots.map((robot) => (
-          <RobotMesh key={robot.id} robotid={robot.id} selected={selection == robot.id ? true : false} />
+          <RobotMesh key={robot.id} robotid={robot.id} selected={guiSelection == robot.id ? true : false} />
         ))}
       </Selection>
       <ContactShadows scale={150} position={[0.33, -0.33, 0.33]} opacity={1.5} />

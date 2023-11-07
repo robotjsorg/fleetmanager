@@ -11,6 +11,9 @@ export type Mutation =
       tag: "InitSchema";
   }
   | {
+      tag: "PopulateDB";
+  }
+  | {
       tag: "CreateLocation";
       id: string;
       description: string;

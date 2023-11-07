@@ -1,17 +1,19 @@
-import { Center, Flex, ScrollArea, Title } from "@mantine/core";
 import { sql } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
+import { Center, Flex, ScrollArea, Title } from "@mantine/core";
+
 import { useMutate, useQuery } from "../doctype";
 import { ITask } from "../@types/task";
-import { TaskItem } from "./TaskItem";
-import { TaskForm } from "./TaskForm";
 
-export const TaskList = ({ docId }: { docId: JournalId }) => {
+import { TaskItem } from "../components/TaskItem";
+import { TaskForm } from "../components/TaskForm";
+
+export const TasksView = ({ docId }: { docId: JournalId }) => {
   const { rows: tasks } = useQuery<ITask>(
     docId,
     sql`select id, description, completed from tasks order by description`
   );
-  const mutate = useMutate(docId);
+  const mutate = useMutate( docId );
 
   return (
     <>

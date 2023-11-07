@@ -1,10 +1,14 @@
+import { useCallback, useContext } from "react";
+
 import { Text, ActionIcon, Flex } from "@mantine/core";
 import { useHover } from '@mantine/hooks';
-import { useCallback, useContext } from "react";
+
 import { IconX } from "@tabler/icons-react";
+
 import { Mutation } from "../doctype";
 import { IRobot } from "../@types/robot";
-import { selectionContext } from "../context/selectionContext";
+
+import { guiSelectionContext } from "../context/guiSelectionContext";
 
 export const RobotItem = ({
   robot,
@@ -21,9 +25,9 @@ export const RobotItem = ({
         console.error("Failed to delete", err);
       });
   }, [robot.id, mutate]);
-  const { setSelection } = useContext(selectionContext);
+  const { setGuiSelection } = useContext(guiSelectionContext);
   const handleSelect = () => {
-    setSelection(robot.id);
+    setGuiSelection(robot.id);
   };
 
   const { hovered, ref } = useHover();

@@ -1,13 +1,16 @@
-import { rem, Button } from "@mantine/core";
+import { useCallback } from "react";
+
 import { useConnectionStatus } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { useCallback } from "react";
-import { useSetConnectionEnabled } from "../doctype";
+import { rem, Button } from "@mantine/core";
+
 import { IconWifi, IconWifiOff } from "@tabler/icons-react";
+
+import { useSetConnectionEnabled } from "../doctype";
 
 export const ConnectionStatus = ({ docId }: { docId: JournalId }) => {
   const status = useConnectionStatus();
-  const setConnectionEnabled = useSetConnectionEnabled(docId);
+  const setConnectionEnabled = useSetConnectionEnabled( docId );
 
   const handleClick = useCallback(() => {
     if (status === "disabled") {

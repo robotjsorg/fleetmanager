@@ -1,18 +1,21 @@
+import { useCallback, useContext } from "react";
+
 import { Button, Flex, TextInput } from "@mantine/core"; // , Select
 import { useForm } from "@mantine/form";
-import { useCallback, useContext } from "react";
-import { Mutation } from "../doctype";
+
 import { v4 as uuidv4 } from "uuid";
-import { selectionContext } from "../context/selectionContext";
-import { ILocation } from "../@types/location";
+
+import { Mutation } from "../doctype";
+
+import { guiSelectionContext } from "../context/guiSelectionContext";
 
 interface RobotFormProps {
   mutate: (m: Mutation) => Promise<void>;
-  location: ILocation | null;
+  locationid: string;
 }
 
 export const RobotForm = (props: RobotFormProps) => {
-  const { setSelection } = useContext(selectionContext);
+  const { setGuiSelection } = useContext(guiSelectionContext);
 
   const form = useForm({
     initialValues: {
@@ -29,23 +32,23 @@ export const RobotForm = (props: RobotFormProps) => {
     useCallback(
       ({ description }) => { // type,
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
-        const locationid = props.location ? props.location.id : crypto.randomUUID ? crypto.randomUUID() : uuidv4();
+        const locationid = props.locationid;
         props.mutate({ tag: "CreateRobot", id, locationid, description })
           .then(() => {
             form.reset();
-            setSelection(id);
+            setGuiSelection(id);
           })
           .catch((err) => {
             console.error("Failed to create robot", err);
           });
       },
-      [props, form, setSelection]
+      [props, form, setGuiSelection]
     )
   );
 
   return (
     <form onSubmit={handleSubmit}>
-      <Flex gap="xs" onClick={() => setSelection("no selection")}>
+      <Flex gap="xs" onClick={() => setGuiSelection("no selection")}>
         {/* <Select
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}

@@ -1,11 +1,12 @@
 /* eslint-disable react/no-unknown-property */
 import { useRef, useContext, useState } from "react";
+
 import { useFrame, Vector3 } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { Select } from "@react-three/postprocessing";
 import { GLTF } from "three-stdlib";
 
-import { selectionContext } from "../context/selectionContext";
+import { guiSelectionContext } from "../context/guiSelectionContext";
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -44,7 +45,7 @@ interface RobotMeshProps {
 export const RobotMesh = (props: RobotMeshProps) => {
   const ref = useRef<THREE.Mesh>(null!);
   const { nodes, materials } = useGLTF("../abb_irb52_7_120.gltf") as GLTFResult;
-  const { setSelection } = useContext(selectionContext);
+  const { setGuiSelection } = useContext(guiSelectionContext);
   const [hovered, hover] = useState(false);
 
   const [ position ] = useState(randomPosition());
@@ -66,7 +67,7 @@ export const RobotMesh = (props: RobotMeshProps) => {
           ref={ref}
           onPointerOver={() => hover(true)}
           onPointerOut={() => hover(false)}
-          onClick={(e) => (e.stopPropagation(), setSelection(props.robotid))}
+          onClick={(e) => (e.stopPropagation(), setGuiSelection(props.robotid))}
           castShadow
           receiveShadow
           geometry={nodes.base_link.geometry}

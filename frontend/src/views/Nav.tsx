@@ -1,11 +1,15 @@
+import { ReactNode } from "react";
+import { Link } from "react-router-dom";
+
+import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
 import { Center, Title, ScrollArea, AppShell, Burger, Group, Button } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
-import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
-import { ReactNode, useEffect } from "react";
+
 import { IconSettings, IconSun } from '@tabler/icons-react'
-import { Link } from "react-router-dom";
+
+import { LocationsView } from "../views/LocationsView";
+
 import { ConnectionStatus } from "../components/ConnectionStatus";
-import { LocationList } from "../components/LocationList";
 
 interface NavProps {
   children: ReactNode;
@@ -51,7 +55,7 @@ export const Nav = (props: NavProps) => {
       </AppShell.Header>
       <AppShell.Navbar p="md">
         <AppShell.Section grow my="md" component={ScrollArea}>
-          <LocationList docId={props.docId} />
+          <LocationsView docId={props.docId} />
         </AppShell.Section>
         <AppShell.Section>
           <Group justify="center">

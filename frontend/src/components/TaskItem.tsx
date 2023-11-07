@@ -1,6 +1,9 @@
-import { Text, ActionIcon, Checkbox, Flex } from "@mantine/core";
 import { useCallback } from "react";
+
+import { Text, ActionIcon, Checkbox, Flex } from "@mantine/core";
+
 import { IconX } from "@tabler/icons-react";
+
 import { Mutation } from "../doctype";
 import { ITask } from "../@types/task";
 

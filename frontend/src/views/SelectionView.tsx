@@ -1,20 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
+import { useContext, useMemo } from "react";
+
+import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { InlineCodeHighlight } from "@mantine/code-highlight";
 import { Alert, Center, Code, Flex, ScrollArea, Title, Text } from "@mantine/core";
-import { JournalId } from "@orbitinghail/sqlsync-worker";
+
 import { IconAlertCircle } from "@tabler/icons-react";
-import { useContext, useMemo } from "react";
+
 import { useQuery } from "../doctype";
-import { selectionContext } from "../context/selectionContext";
+
+import { guiSelectionContext } from "../context/guiSelectionContext";
 
 interface Props {
   docId: JournalId;
 }
 
 export const QueryViewerInner = ({ docId }: Props) => {
-  const { selection } = useContext(selectionContext);
+  const { guiSelection } = useContext(guiSelectionContext);
 
-  const inputValue = ("select description, created_at, locationid from robots where id is '" + selection + "'");
+  const inputValue = ("select description, created_at, locationid from robots where id is '" + guiSelection + "'");
   const result = useQuery(docId, inputValue);
 
   const rowsJson = useMemo(() => {
@@ -44,14 +48,14 @@ export const QueryViewerInner = ({ docId }: Props) => {
   return (
     <>
       <Text size="xs">
-        {selection}
+        {guiSelection}
       </Text>
       {output}
     </>
   );
 };
 
-export const Selection = (props: Props) => {
+export const SelectionView = (props: Props) => {
   return (
     <>
       <Flex>

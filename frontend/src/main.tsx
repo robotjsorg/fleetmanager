@@ -16,10 +16,11 @@ import "@mantine/code-highlight/styles.css";
 import { MANTINE_THEME } from "./theme";
 
 import { App } from "./App";
-import { LocationList } from "./components/LocationList";
-import { RobotList } from "./components/RobotList";
-import { TaskList } from "./components/TaskList";
-import { Nav } from "./components/Nav";
+
+import { LocationsView } from "./views/LocationsView";
+import { RobotsView } from "./views/RobotsView";
+import { TasksView } from "./views/TasksView";
+import { Nav } from "./views/Nav";
 
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168");
 
@@ -46,7 +47,7 @@ export const DocRoute = () => {
     console.error("doc id not found in params");
     return <pre style={{ color: "red" }}>ERROR: doc id not found in params</pre>;
   } else {
-    return <App docId={journalIdFromString(docId)} />;
+    return <App docId={journalIdFromString( docId )} />;
   }
 };
 
@@ -58,8 +59,8 @@ export const LocationsRoute = () => {
     return <pre style={{ color: "red" }}>ERROR: doc id not found in params</pre>;
   } else {
     return (
-      <Nav docId={journalIdFromString(docId)} title="Locations">
-        <LocationList docId={journalIdFromString(docId)} />
+      <Nav docId={journalIdFromString( docId )} title="Locations">
+        <LocationsView docId={journalIdFromString( docId )} />
       </Nav>
     )
   }
@@ -73,8 +74,8 @@ export const RobotsRoute = () => {
     return <pre style={{ color: "red" }}>ERROR: doc id not found in params</pre>;
   } else {
     return (
-      <Nav docId={journalIdFromString(docId)} title="Robots" >
-        <RobotList docId={journalIdFromString(docId)} location={null} />
+      <Nav docId={journalIdFromString( docId )} title="Robots" >
+        <RobotsView docId={journalIdFromString( docId )} locationid={"c0f67f5f-3414-4e50-9ea7-9ae053aa1f99"} />
       </Nav>
     )
   }
@@ -88,8 +89,8 @@ export const TasksRoute = () => {
     return <pre style={{ color: "red" }}>ERROR: doc id not found in params</pre>;
   } else {
     return (
-      <Nav docId={journalIdFromString(docId)} title="Tasks" >
-        <TaskList docId={journalIdFromString(docId)} />
+      <Nav docId={journalIdFromString( docId )} title="Tasks" >
+        <TasksView docId={journalIdFromString( docId )} />
       </Nav>
     )
   }
@@ -100,14 +101,14 @@ const router = createBrowserRouter([
     path: "/",
     loader: async () => {
       const docId = await newDocumentId();
-      return redirect("/" + journalIdToString(docId));
+      return redirect("/" + journalIdToString( docId ));
     },
   },
   {
     path: "/named/:name",
     loader: async ({ params }) => {
       const docId = await newDocumentId(params.name);
-      return redirect("/" + journalIdToString(docId));
+      return redirect("/" + journalIdToString( docId ));
     },
   },
   {
