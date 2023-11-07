@@ -1,4 +1,3 @@
-import { useContext, useEffect } from "react";
 import { sql } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Center, Flex, Paper, ScrollArea, Stack, Title } from "@mantine/core";
