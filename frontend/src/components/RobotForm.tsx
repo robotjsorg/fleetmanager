@@ -5,17 +5,14 @@ import { useForm } from "@mantine/form";
 
 import { v4 as uuidv4 } from "uuid";
 
-import { Mutation } from "../doctype";
+import { useMutate } from "../doctype";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locationSelectionContext } from "../context/locationSelectionContext";
+import { JournalId } from "@orbitinghail/sqlsync-worker";
 
-interface RobotFormProps {
-  mutate: (m: Mutation) => Promise<void>;
-  locationid: string;
-}
-
-export const RobotForm = (props: RobotFormProps) => {
+export const RobotForm = ({ docId }: { docId: JournalId }) => {
+  const mutate = useMutate( docId );
   const { setGuiSelection } = useContext(guiSelectionContext);
   const { locationSelection } = useContext(locationSelectionContext);
 
@@ -35,7 +32,7 @@ export const RobotForm = (props: RobotFormProps) => {
       ({ description }) => { // type,
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
         const locationid = locationSelection;
-        props.mutate({ tag: "CreateRobot", id, locationid, description })
+        mutate({ tag: "CreateRobot", id, locationid, description })
           .then(() => {
             form.reset();
             setGuiSelection(id);
@@ -44,7 +41,7 @@ export const RobotForm = (props: RobotFormProps) => {
             console.error("Failed to create robot", err);
           });
       },
-      [locationSelection, props, form, setGuiSelection]
+      [locationSelection, mutate, form, setGuiSelection]
     )
   );
 

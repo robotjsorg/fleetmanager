@@ -2,17 +2,16 @@ import { sql } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Center, Flex, ScrollArea, Title } from "@mantine/core";
 
-import { useMutate, useQuery } from "../doctype";
+import { useQuery } from "../doctype";
 import { ITask } from "../@types/task";
 
 import { TaskItem } from "../components/TaskItem";
 import { TaskForm } from "../components/TaskForm";
 
 export const TasksView = ({ docId }: { docId: JournalId }) => {
-  const mutate = useMutate( docId );
   const { rows: tasks } = useQuery<ITask>(
     docId,
-    sql`select id, description, completed from tasks order by description`
+    sql`SELECT id, description, completed FROM tasks ORDER BY description`
   );
 
   return (
@@ -24,10 +23,10 @@ export const TasksView = ({ docId }: { docId: JournalId }) => {
       </Flex>
       <ScrollArea type="auto">
         {(tasks ?? []).map((task) => (
-          <TaskItem key={task.id} task={task} mutate={mutate} />
+          <TaskItem docId={docId} key={task.id} task={task} />
         ))}
       </ScrollArea>
-      <TaskForm docId={docId} mutate={mutate} />
+      <TaskForm docId={docId} />
     </>
   );
 };

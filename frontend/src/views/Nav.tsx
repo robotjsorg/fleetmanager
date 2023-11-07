@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useContext } from "react";
 import { Link } from "react-router-dom";
 
 import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
@@ -7,9 +7,12 @@ import { useDisclosure } from '@mantine/hooks';
 
 import { IconSettings, IconSun } from '@tabler/icons-react'
 
+import { guiSelectionContext } from "../context/guiSelectionContext";
+
 import { LocationsView } from "../views/LocationsView";
 
 import { ConnectionStatus } from "../components/ConnectionStatus";
+
 
 interface NavProps {
   children: ReactNode;
@@ -18,6 +21,7 @@ interface NavProps {
 }
 
 export const Nav = (props: NavProps) => {
+  const { setGuiSelection } = useContext( guiSelectionContext );
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false);
 
@@ -31,7 +35,7 @@ export const Nav = (props: NavProps) => {
       }}
       padding="sm"
     >
-      <AppShell.Header>
+      <AppShell.Header onClick={() => (setGuiSelection("no selection"))}>
         <Group h="100%" px="md" justify="space-between">
           <Group>
             <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
@@ -53,7 +57,7 @@ export const Nav = (props: NavProps) => {
           <ConnectionStatus docId={props.docId} />
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar p="md">
+      <AppShell.Navbar p="md" onClick={() => (setGuiSelection("no selection"))}>
         <AppShell.Section grow my="md" component={ScrollArea}>
           <LocationsView docId={props.docId} />
         </AppShell.Section>

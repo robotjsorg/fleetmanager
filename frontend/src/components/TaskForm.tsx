@@ -7,15 +7,11 @@ import { useForm } from "@mantine/form";
 
 import { v4 as uuidv4 } from "uuid";
 
-import { Mutation, useQuery } from "../doctype";
+import { useMutate, useQuery } from "../doctype";
 import { IRobot } from "../@types/robot";
 
-interface TaskFormProps {
-  docId: JournalId;
-  mutate: (m: Mutation) => Promise<void>;
-}
-
-export const TaskForm = ({ docId, mutate }: TaskFormProps) => {
+export const TaskForm = ({ docId }: { docId: JournalId }) => {
+  const mutate = useMutate( docId );
   const form = useForm({
     initialValues: {
       robot: "",
@@ -26,10 +22,11 @@ export const TaskForm = ({ docId, mutate }: TaskFormProps) => {
       description: (value) => (value.trim().length === 0 ? "Select Task" : null),
     },
   });
+  
 
   const { rows: robots } = useQuery<IRobot>(
     docId,
-    sql`select * from robots order by description`
+    sql`SELECT * FROM robots ORDER BY description`
   );
 
   const handleSubmit = form.onSubmit(

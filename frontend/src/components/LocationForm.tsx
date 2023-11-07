@@ -5,16 +5,14 @@ import { useForm } from "@mantine/form";
 
 import { v4 as uuidv4 } from "uuid";
 
-import { Mutation } from "../doctype";
+import { useMutate } from "../doctype";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locationSelectionContext } from "../context/locationSelectionContext";
+import { JournalId } from "@orbitinghail/sqlsync-worker";
 
-interface LocationFormProps {
-  mutate: (m: Mutation) => Promise<void>;
-}
-
-export const LocationForm = ({ mutate }: LocationFormProps) => {
+export const LocationForm = ({ docId }: { docId: JournalId }) => {
+  const mutate = useMutate( docId );
   const { setGuiSelection } = useContext( guiSelectionContext );
   const { setLocationSelection } = useContext( locationSelectionContext );
 

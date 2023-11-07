@@ -4,7 +4,7 @@ import { sql } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Center, Flex, ScrollArea, Title } from "@mantine/core";
 
-import { useMutate, useQuery } from "../doctype";
+import { useQuery } from "../doctype";
 import { IRobot } from "../@types/robot";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
@@ -13,16 +13,11 @@ import { RobotItem } from "../components/RobotItem";
 import { RobotForm } from "../components/RobotForm";
 import { locationSelectionContext } from "../context/locationSelectionContext";
 
-interface RobotsViewProps {
-  docId: JournalId;
-}
-
-export const RobotsView = ( props: RobotsViewProps ) => {
-  const mutate = useMutate( props.docId );
+export const RobotsView = ({ docId }: { docId: JournalId }) => {
   const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
   const { locationSelection } = useContext( locationSelectionContext );
   const { rows: robots } = useQuery<IRobot>(
-    props.docId,
+    docId,
     sql`SELECT * FROM robots WHERE locationid = ${locationSelection} ORDER BY description`
   );
 
@@ -35,10 +30,10 @@ export const RobotsView = ( props: RobotsViewProps ) => {
       </Flex>
       <ScrollArea type="auto">
         {(robots ?? []).map((robot) => (
-          <RobotItem key={robot.id} robot={robot} mutate={mutate} selected={guiSelection == robot.id ? true : false} />
+          <RobotItem docId={docId} key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} />
         ))}
       </ScrollArea>
-      <RobotForm mutate={mutate} locationid={locationSelection}/>
+      <RobotForm docId={docId}/>
     </>
   );
 };

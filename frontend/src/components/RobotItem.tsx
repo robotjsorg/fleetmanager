@@ -5,26 +5,29 @@ import { useHover } from '@mantine/hooks';
 
 import { IconX } from "@tabler/icons-react";
 
-import { Mutation } from "../doctype";
+import { useMutate } from "../doctype";
 import { IRobot } from "../@types/robot";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
+import { JournalId } from "@orbitinghail/sqlsync-worker";
 
 export const RobotItem = ({
+  docId,
   robot,
-  mutate,
-  selected,
+  selected
 }: {
+  docId: JournalId;
   robot: IRobot;
-  mutate: (m: Mutation) => Promise<void>;
   selected: boolean;
 }) => {
+  const mutate = useMutate( docId );
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteRobot", id: robot.id })
       .catch((err) => {
         console.error("Failed to delete", err);
       });
   }, [robot.id, mutate]);
+
   const { setGuiSelection } = useContext(guiSelectionContext);
   const handleSelect = () => {
     setGuiSelection(robot.id);

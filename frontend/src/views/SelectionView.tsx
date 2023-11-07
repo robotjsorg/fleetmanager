@@ -17,7 +17,7 @@ interface Props {
 
 export const QueryViewerInner = ({ docId }: Props) => {
   const { guiSelection } = useContext(guiSelectionContext);
-  const inputValue = ("select description, created_at, locationid from robots where id is '" + guiSelection + "'");
+  const inputValue = ("SELECT description, created_at, locationid FROM robots WHERE id IS '" + guiSelection + "'");
   const result = useQuery(docId, inputValue);
   const rowsJson = useMemo(() => {
     return JSON.stringify(

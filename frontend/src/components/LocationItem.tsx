@@ -6,21 +6,20 @@ import { Text, ActionIcon, Group } from "@mantine/core";
 
 import { IconX } from "@tabler/icons-react";
 
-import { Mutation } from "../doctype";
+import { useMutate } from "../doctype";
 import { ILocation } from "../@types/location";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locationSelectionContext } from "../context/locationSelectionContext";
 
 export const LocationItem = ({
-  location,
-  mutate,
-  docId
+  docId,
+  location
 }: {
-  location: ILocation;
-  mutate: ( m: Mutation ) => Promise<void>;
   docId: JournalId;
+  location: ILocation;
 }) => {
+  const mutate = useMutate( docId );
   const { setGuiSelection } = useContext( guiSelectionContext );
   const { locationSelection, setLocationSelection } = useContext( locationSelectionContext );
 

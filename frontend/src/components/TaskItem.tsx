@@ -4,16 +4,18 @@ import { Text, ActionIcon, Checkbox, Flex } from "@mantine/core";
 
 import { IconX } from "@tabler/icons-react";
 
-import { Mutation } from "../doctype";
+import { useMutate } from "../doctype";
 import { ITask } from "../@types/task";
+import { JournalId } from "@orbitinghail/sqlsync-worker";
 
 export const TaskItem = ({
-  task,
-  mutate,
+  docId,
+  task
 }: {
+  docId: JournalId;
   task: ITask;
-  mutate: (m: Mutation) => Promise<void>;
 }) => {
+  const mutate = useMutate( docId );
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteTask", id: task.id }).catch((err) => {
       console.error("Failed to delete", err);
