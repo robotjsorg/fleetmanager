@@ -2,29 +2,30 @@ import { ReactNode, useContext } from "react";
 import { Link } from "react-router-dom";
 
 import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
-import { Center, Title, ScrollArea, AppShell, Burger, Group, Button } from "@mantine/core";
+import { Center, Title, ScrollArea, AppShell, Burger, Group, Button, useMantineColorScheme } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 
-import { IconSettings } from '@tabler/icons-react'; // , IconSun
+import { IconSettings, IconSun, IconMoon } from '@tabler/icons-react';
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
-import { LocationsView } from "./LocationsView";
-
 import { ConnectionStatus } from "../components/ConnectionStatus";
+import { LocationListContext } from "../components/LocationListContext";
 
-export const Nav = ({
+export const NavView = ({
   children,
   docId,
   title
 }: {
   children: ReactNode;
   docId: JournalId;
-  title: string;
+  title: ReactNode;
 }) => {
   const { setGuiSelection } = useContext( guiSelectionContext );
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false);
+  
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
 
   return (
     <AppShell
@@ -42,12 +43,12 @@ export const Nav = ({
             <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
             <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
             <Link to={"/" + journalIdToString(docId) + "/robots"}>
-              <Button variant="transparent" color="black">
+              <Button color="gray" variant="transparent">
                 Robots
               </Button>
             </Link>
             <Link to={"/" + journalIdToString(docId) + "/tasks"}>
-              <Button variant="transparent" color="black">
+              <Button color="gray" variant="transparent">
                 Tasks
               </Button>
             </Link>
@@ -60,7 +61,7 @@ export const Nav = ({
       </AppShell.Header>
       <AppShell.Navbar p="md" onClick={() => (setGuiSelection("no selection"))}>
         <AppShell.Section grow my="md" component={ScrollArea}>
-          <LocationsView docId={docId} />
+          <LocationListContext docId={docId} />
         </AppShell.Section>
         <AppShell.Section>
           <Group justify="center">
@@ -69,9 +70,11 @@ export const Nav = ({
                 Settings
               </Button>
             </Link>
-            {/* <Button leftSection={<IconSun size={14} />} variant="default">
+            <Button variant="default"
+              onClick={() => setColorScheme( colorScheme == 'light' ? 'dark' : 'light' )}
+              leftSection={ colorScheme == 'light' ? <IconMoon size={14} /> : <IconSun size={14} /> }>
               Theme
-            </Button> */}
+            </Button>
           </Group>
         </AppShell.Section>
       </AppShell.Navbar>

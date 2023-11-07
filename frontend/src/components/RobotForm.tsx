@@ -35,9 +35,12 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
           .then(() => {
             form.reset();
             setGuiSelection(id);
+            form.setValues( { description: "" } );
           })
           .catch(( err ) => {
+            form.setFieldError('description', String(err));
             console.error("Failed to create robot", err);
+            form.setValues( { description: "" } );
           });
       },
       [locationSelection, mutate, form, setGuiSelection]
@@ -61,6 +64,7 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
             style={{ flex: 1 }}
             styles={{ input: { fontSize: "16px" } }}
             required
+            
             disabled
             placeholder="Desc"
             {...form.getInputProps("description")}
@@ -74,7 +78,7 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
             {...form.getInputProps("description")}
           />
         }
-        <Button type="submit">Add</Button>
+        <Button color="gray" type="submit">Add</Button>
       </Flex>
     </form>
   );

@@ -1,8 +1,8 @@
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Center, Flex, Title } from "@mantine/core";
 
-import { TaskForm } from "../components/TaskForm";
 import { TaskList } from "../components/TaskList";
+import { TaskForm } from "../components/TaskForm";
 
 export const TasksView = ({ docId }: { docId: JournalId }) => {
   return (

@@ -14,26 +14,29 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
   
   const form = useForm({
     initialValues: {
-      robot: "",
-      description: "",
+      robotid: "",
+      description: ""
     },
     validate: {
-      robot: (value) => (value.trim().length === 0 ? "Select Robot" : null),
-      description: (value) => (value.trim().length === 0 ? "Select Task" : null),
-    },
+      robotid: (value) => (value.trim().length === 0 ? "Select Robot" : null),
+      description: (value) => (value.trim().length === 0 ? "Select Task" : null)
+    }
   });
   const mutate = useMutate( docId );
+
   const handleSubmit = form.onSubmit(
     useCallback(
-      ({ robot, description }) => {
+      ({ robotid, description }) => {
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
-        const robotid = robot; // TODO: handle robot.id and robot.description
-        description = robot + ": " + description;
+        description = robotid + ": " + description;
         mutate({ tag: "CreateTask", id, robotid, description })
           .then(() => {
             form.reset();
+            form.setValues( { robotid: "", description: "" } );
           })
           .catch((err) => {
+            form.setFieldError('description', String(err));
+            form.setErrors({ robot: String(err), description: String(err) });
             console.error("Failed to create task", err);
           });
       },
@@ -52,7 +55,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           data={(robots).map((robot) => (
             { value: robot.id, label: robot.description }
           ))}
-          {...form.getInputProps("robot")}
+          {...form.getInputProps("robotid")}
         />
        <Select
           style={{ flex: 1 }}
@@ -62,7 +65,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           data={['Manual', 'Automatic', 'Home', 'Move A', 'Move B', 'Clamp', 'Unclamp']}
           {...form.getInputProps("description")}
         />
-        <Button type="submit">Add</Button>
+        <Button color="gray" type="submit">Add</Button>
       </Flex>
     </form>
   );

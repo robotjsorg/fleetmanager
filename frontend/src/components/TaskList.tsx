@@ -16,7 +16,7 @@ export const TaskList = ({ docId }: { docId: JournalId }) => {
   return (
     <ScrollArea type="auto">
       {(tasks ?? []).map((task) => (
-        <TaskItem docId={docId} key={task.id} task={task} deleteAction={false} />
+        <TaskItem docId={docId} key={task.id} task={task} deleteDisabled={false} />
       ))}
     </ScrollArea>
   );

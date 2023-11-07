@@ -11,7 +11,7 @@ import { useQuery } from "../doctype";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
-export const SelectionView = ({docId}: {docId: JournalId}) => {
+export const GuiSelection = ({docId}: {docId: JournalId}) => {
   const { guiSelection } = useContext(guiSelectionContext);
   const inputValue = ("SELECT description, created_at, locationid FROM robots WHERE id IS '" + guiSelection + "'");
   const result = useQuery(docId, inputValue);

@@ -1,21 +1,18 @@
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Center, Flex, Paper, Stack, Title } from "@mantine/core";
+import { Paper, ScrollArea, Stack } from "@mantine/core";
 import { useViewportSize } from '@mantine/hooks';
 
-import { LocationForm } from "../components/LocationForm";
 import { LocationList } from "../components/LocationList";
+import { LocationForm } from "../components/LocationForm";
 
 export const LocationsView = ({ docId }: { docId: JournalId }) => {
   const { height } = useViewportSize();
 
   return (
     <Paper component={Stack} p="xs" h={(height-164)}>
-      <Flex>
-        <Center component={Title} style={{ flex: 1, justifyContent: "left" }} order={5}>
-          Locations
-        </Center>
-      </Flex>
-      <LocationList docId={docId} />
+      <ScrollArea type="auto">
+        <LocationList docId={docId} />
+      </ScrollArea>
       <LocationForm docId={docId} />
     </Paper>
   );

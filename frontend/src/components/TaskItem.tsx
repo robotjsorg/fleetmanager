@@ -11,11 +11,11 @@ import { JournalId } from "@orbitinghail/sqlsync-worker";
 export const TaskItem = ({
   docId,
   task,
-  deleteAction
+  deleteDisabled
 }: {
   docId: JournalId;
   task: ITask;
-  deleteAction: boolean;
+  deleteDisabled: boolean;
 }) => {
   const mutate = useMutate( docId );
   const handleDelete = useCallback(() => {
@@ -35,8 +35,8 @@ export const TaskItem = ({
       <Text style={{ flex: 1 }}>
         { task.description }
       </Text>
-      { deleteAction ? <></> : 
-        <ActionIcon onClick={ handleDelete } color="red" variant="subtle">
+      { deleteDisabled ? <></> : 
+        <ActionIcon onClick={ handleDelete } color="gray" variant="subtle">
           <IconX />
         </ActionIcon>
       }

@@ -16,7 +16,7 @@ export const RobotList = ({ docId }: { docId: JournalId }) => {
   return (
     <ScrollArea type="auto">
       {(robots ?? []).map((robot) => (
-        <RobotItem docId={docId} key={robot.id} robot={robot} deleteAction={false} />
+        <RobotItem docId={docId} key={robot.id} robot={robot} deleteDisabled={false} />
       ))}
     </ScrollArea>
   );

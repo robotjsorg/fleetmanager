@@ -7,12 +7,10 @@ import { v4 as uuidv4 } from "uuid";
 
 import { useMutate } from "../doctype";
 
-import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locationSelectionContext } from "../context/locationSelectionContext";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 
-export const LocationForm = ({ docId }: { docId: JournalId }) => {
-  const { setGuiSelection } = useContext( guiSelectionContext );
+export const LocationForm = ({ docId }: { docId: JournalId; }) => {
   const { setLocationSelection } = useContext( locationSelectionContext );
 
   const form = useForm({
@@ -32,13 +30,13 @@ export const LocationForm = ({ docId }: { docId: JournalId }) => {
           .then(() => {
             form.reset();
             setLocationSelection( id );
-            setGuiSelection("no selection");
           })
           .catch((err) => {
+            form.setFieldError('description', String(err));
             console.error("Failed to create location", err);
           });
       },
-      [mutate, form, setLocationSelection, setGuiSelection]
+      [mutate, form, setLocationSelection]
     )
   );
 
@@ -52,7 +50,7 @@ export const LocationForm = ({ docId }: { docId: JournalId }) => {
           placeholder="Desc"
           {...form.getInputProps("description")}
         />
-        <Button type="submit">Add</Button>
+        <Button color="gray" type="submit">Add</Button>
       </Flex>
     </form>
   );

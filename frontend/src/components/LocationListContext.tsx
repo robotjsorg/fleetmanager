@@ -7,7 +7,7 @@ import { ILocation } from "../@types/location";
 
 import { LocationItem } from "./LocationItem";
 
-export const LocationList = ({ docId }: { docId: JournalId }) => {
+export const LocationListContext = ({ docId }: { docId: JournalId }) => {
   const { rows: locations } = useQuery<ILocation>(
     docId,
     sql`SELECT * FROM locations ORDER BY created_at`
@@ -22,7 +22,7 @@ export const LocationList = ({ docId }: { docId: JournalId }) => {
       </Flex>
       <ScrollArea type="auto">
         {(locations ?? []).map((location) => (
-          <LocationItem docId={docId} key={location.id} location={location} deleteDisabled={false} />
+          <LocationItem docId={docId} key={location.id} location={location} deleteDisabled={true} />
         ))}
       </ScrollArea>
     </>

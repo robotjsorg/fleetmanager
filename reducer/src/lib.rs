@@ -34,7 +34,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
             execute!(
                 "CREATE TABLE IF NOT EXISTS locations (
                     id TEXT PRIMARY KEY,
-                    description TEXT NOT NULL,
+                    description TEXT UNIQUE NOT NULL,
                     created_at TEXT NOT NULL
                 )"
             )

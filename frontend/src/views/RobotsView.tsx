@@ -5,20 +5,20 @@ import { Center, Flex, Title } from "@mantine/core";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
+import { RobotList } from "../components/RobotList";
 import { RobotForm } from "../components/RobotForm";
-import { RobotListContext } from "../components/RobotListContext";
 
 export const RobotsView = ({ docId }: { docId: JournalId }) => {
   const { setGuiSelection } = useContext( guiSelectionContext );
 
   return (
     <>
-      <Flex>
-        <Center component={Title} style={{ flex: 1, justifyContent: "left" }} order={5} onClick={() => setGuiSelection("no selection")}>
+      <Flex onClick={() => setGuiSelection("no selection")}>
+        <Center component={Title} style={{ flex: 1, justifyContent: "left" }} order={5}>
           Robots
         </Center>
       </Flex>
-      <RobotListContext docId={docId}/>
+      <RobotList docId={docId}/>
       <RobotForm docId={docId}/>
     </>
   );
