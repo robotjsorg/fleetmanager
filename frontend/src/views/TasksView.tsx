@@ -1,19 +1,10 @@
-import { sql } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Center, Flex, ScrollArea, Title } from "@mantine/core";
+import { Center, Flex, Title } from "@mantine/core";
 
-import { useQuery } from "../doctype";
-import { ITask } from "../@types/task";
-
-import { TaskItem } from "../components/TaskItem";
 import { TaskForm } from "../components/TaskForm";
+import { TaskList } from "../components/TaskList";
 
 export const TasksView = ({ docId }: { docId: JournalId }) => {
-  const { rows: tasks } = useQuery<ITask>(
-    docId,
-    sql`SELECT id, description, completed FROM tasks ORDER BY description`
-  );
-
   return (
     <>
       <Flex>
@@ -21,11 +12,7 @@ export const TasksView = ({ docId }: { docId: JournalId }) => {
           Tasks
         </Center>
       </Flex>
-      <ScrollArea type="auto">
-        {(tasks ?? []).map((task) => (
-          <TaskItem docId={docId} key={task.id} task={task} />
-        ))}
-      </ScrollArea>
+      <TaskList docId={docId} />
       <TaskForm docId={docId} />
     </>
   );

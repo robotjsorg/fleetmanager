@@ -18,8 +18,8 @@ import { MANTINE_THEME } from "./theme";
 import { App } from "./App";
 
 import { LocationsView } from "./views/LocationsView";
-import { RobotsView } from "./views/RobotsView";
-import { TasksView } from "./views/TasksView";
+import { RobotList } from "./components/RobotList";
+import { TaskList } from "./components/TaskList";
 import { Nav } from "./views/Nav";
 
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168");
@@ -75,7 +75,7 @@ export const RobotsRoute = () => {
   } else {
     return (
       <Nav docId={journalIdFromString( docId )} title="Robots" >
-        <RobotsView docId={journalIdFromString( docId )} />
+        <RobotList docId={journalIdFromString( docId )} />
       </Nav>
     )
   }
@@ -90,7 +90,7 @@ export const TasksRoute = () => {
   } else {
     return (
       <Nav docId={journalIdFromString( docId )} title="Tasks" >
-        <TasksView docId={journalIdFromString( docId )} />
+        <TaskList docId={journalIdFromString( docId )} />
       </Nav>
     )
   }

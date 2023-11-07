@@ -11,11 +11,7 @@ import { useQuery } from "../doctype";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
-interface Props {
-  docId: JournalId;
-}
-
-export const QueryViewerInner = ({ docId }: Props) => {
+export const SelectionView = ({docId}: {docId: JournalId}) => {
   const { guiSelection } = useContext(guiSelectionContext);
   const inputValue = ("SELECT description, created_at, locationid FROM robots WHERE id IS '" + guiSelection + "'");
   const result = useQuery(docId, inputValue);
@@ -45,24 +41,16 @@ export const QueryViewerInner = ({ docId }: Props) => {
 
   return (
     <>
-      <Text size="xs">
-        {guiSelection}
-      </Text>
-      {output}
-    </>
-  );
-};
-
-export const SelectionView = (props: Props) => {
-  return (
-    <>
       <Flex>
         <Center component={Title} order={5}>
           Selection
         </Center>
       </Flex>
       <ScrollArea type="auto">
-        <QueryViewerInner {...props} />
+        <Text size="xs">
+          {guiSelection}
+        </Text>
+        {output}
       </ScrollArea>
     </>
   );

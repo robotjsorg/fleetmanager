@@ -1,17 +1,17 @@
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 
-import { sql } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Button, Flex, Select } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 import { v4 as uuidv4 } from "uuid";
 
-import { useMutate, useQuery } from "../doctype";
-import { IRobot } from "../@types/robot";
+import { useMutate } from "../doctype";
+import { RobotContext } from "../context/robotContext";
 
 export const TaskForm = ({ docId }: { docId: JournalId }) => {
-  const mutate = useMutate( docId );
+  const { robots } = useContext(RobotContext)!;
+  
   const form = useForm({
     initialValues: {
       robot: "",
@@ -22,18 +22,12 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
       description: (value) => (value.trim().length === 0 ? "Select Task" : null),
     },
   });
-  
-
-  const { rows: robots } = useQuery<IRobot>(
-    docId,
-    sql`SELECT * FROM robots ORDER BY description`
-  );
-
+  const mutate = useMutate( docId );
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ robot, description }) => {
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
-        const robotid = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
+        const robotid = robot; // TODO: handle robot.id and robot.description
         description = robot + ": " + description;
         mutate({ tag: "CreateTask", id, robotid, description })
           .then(() => {
@@ -55,8 +49,8 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           styles={{ input: { fontSize: "16px" } }}
           required
           placeholder="Robot"
-          data={(robots ?? []).map((robot) => (
-            robot.id // description is more user friendly but breaks because it's not unique
+          data={(robots).map((robot) => (
+            { value: robot.id, label: robot.description }
           ))}
           {...form.getInputProps("robot")}
         />

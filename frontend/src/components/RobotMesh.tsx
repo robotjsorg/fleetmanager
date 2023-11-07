@@ -37,12 +37,13 @@ const randomPosition = () => {
   return [x, 0, z] as Vector3;
 };
 
-interface RobotMeshProps {
+export const RobotMesh = ({
+  robotid,
+  selected
+} : {
   robotid: string;
   selected: boolean;
-}
-
-export const RobotMesh = (props: RobotMeshProps) => {
+}) => {
   const ref = useRef<THREE.Mesh>(null!);
   const { nodes, materials } = useGLTF("../abb_irb52_7_120.gltf") as GLTFResult;
   const { setGuiSelection } = useContext(guiSelectionContext);
@@ -60,14 +61,13 @@ export const RobotMesh = (props: RobotMeshProps) => {
   ));
 
   return (
-    <Select enabled={props.selected || hovered}>
+    <Select enabled={selected || hovered}>
       <group dispose={null}>
         <mesh
-          {...props}
           ref={ref}
           onPointerOver={() => hover(true)}
           onPointerOut={() => hover(false)}
-          onClick={(e) => (e.stopPropagation(), setGuiSelection(props.robotid))}
+          onClick={(e) => (e.stopPropagation(), setGuiSelection(robotid))}
           castShadow
           receiveShadow
           geometry={nodes.base_link.geometry}

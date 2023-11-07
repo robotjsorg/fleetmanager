@@ -12,7 +12,6 @@ import { locationSelectionContext } from "../context/locationSelectionContext";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 
 export const LocationForm = ({ docId }: { docId: JournalId }) => {
-  const mutate = useMutate( docId );
   const { setGuiSelection } = useContext( guiSelectionContext );
   const { setLocationSelection } = useContext( locationSelectionContext );
 
@@ -24,7 +23,7 @@ export const LocationForm = ({ docId }: { docId: JournalId }) => {
       description: (value) => (value.trim().length === 0 ? "Enter Description" : null),
     },
   });
-
+  const mutate = useMutate( docId );
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ description }) => {

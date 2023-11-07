@@ -5,22 +5,23 @@ import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
 import { Center, Title, ScrollArea, AppShell, Burger, Group, Button } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 
-import { IconSettings, IconSun } from '@tabler/icons-react'
+import { IconSettings } from '@tabler/icons-react'; // , IconSun
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
-import { LocationsView } from "../views/LocationsView";
+import { LocationsView } from "./LocationsView";
 
 import { ConnectionStatus } from "../components/ConnectionStatus";
 
-
-interface NavProps {
+export const Nav = ({
+  children,
+  docId,
+  title
+}: {
   children: ReactNode;
   docId: JournalId;
   title: string;
-}
-
-export const Nav = (props: NavProps) => {
+}) => {
   const { setGuiSelection } = useContext( guiSelectionContext );
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false);
@@ -40,42 +41,42 @@ export const Nav = (props: NavProps) => {
           <Group>
             <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
             <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
-            <Link to={"/" + journalIdToString(props.docId) + "/robots"}>
+            <Link to={"/" + journalIdToString(docId) + "/robots"}>
               <Button variant="transparent" color="black">
                 Robots
               </Button>
             </Link>
-            <Link to={"/" + journalIdToString(props.docId) + "/tasks"}>
+            <Link to={"/" + journalIdToString(docId) + "/tasks"}>
               <Button variant="transparent" color="black">
                 Tasks
               </Button>
             </Link>
           </Group>
           <Center component={Title} order={5} visibleFrom="sm">
-            {props.title}
+            {title}
           </Center>
-          <ConnectionStatus docId={props.docId} />
+          <ConnectionStatus docId={docId} />
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md" onClick={() => (setGuiSelection("no selection"))}>
         <AppShell.Section grow my="md" component={ScrollArea}>
-          <LocationsView docId={props.docId} />
+          <LocationsView docId={docId} />
         </AppShell.Section>
         <AppShell.Section>
           <Group justify="center">
-            <Link to={"/" + journalIdToString(props.docId) + "/settings"}>
+            <Link to={"/" + journalIdToString(docId) + "/settings"}>
               <Button leftSection={<IconSettings size={14} />} variant="default">
                 Settings
               </Button>
             </Link>
-            <Button leftSection={<IconSun size={14} />} variant="default">
+            {/* <Button leftSection={<IconSun size={14} />} variant="default">
               Theme
-            </Button>
+            </Button> */}
           </Group>
         </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main>
-        {props.children}
+        {children}
       </AppShell.Main>
     </AppShell>
   );

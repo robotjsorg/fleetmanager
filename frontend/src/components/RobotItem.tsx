@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react";
 
-import { Text, ActionIcon, Flex } from "@mantine/core";
+import { Text, ActionIcon, Group } from "@mantine/core";
 import { useHover } from '@mantine/hooks';
 
 import { IconX } from "@tabler/icons-react";
@@ -14,11 +14,11 @@ import { JournalId } from "@orbitinghail/sqlsync-worker";
 export const RobotItem = ({
   docId,
   robot,
-  selected
+  deleteAction
 }: {
   docId: JournalId;
   robot: IRobot;
-  selected: boolean;
+  deleteAction: boolean;
 }) => {
   const mutate = useMutate( docId );
   const handleDelete = useCallback(() => {
@@ -28,19 +28,26 @@ export const RobotItem = ({
       });
   }, [robot.id, mutate]);
 
-  const { setGuiSelection } = useContext(guiSelectionContext);
+  const { guiSelection, setGuiSelection } = useContext(guiSelectionContext);
   const handleSelect = () => {
     setGuiSelection(robot.id);
   };
 
   const { hovered, ref } = useHover();
-
+  const selected = () => { 
+    return guiSelection == robot.id;
+  };
+  
   return (
-    <Flex ref={ref} style={{ alignItems: "center" }} gap="sm" px={12} py={4} onClick={handleSelect} bg={hovered || selected ? "#f8f9fa" : "none"}>
-      <Text style={{ flex: 1 }}>{robot.description}</Text>
-      <ActionIcon color="red" variant="subtle" onClick={handleDelete}>
-        <IconX />
-      </ActionIcon>
-    </Flex>
+    <Group ref={ref} onClick={ handleSelect } justify="space-between" gap="sm" px={12} py={4} bg={ hovered || selected() ? "#f8f9fa" : "none" }>
+      <Text style={{ flex: 1 }}>
+        { robot.description }
+      </Text>
+      { deleteAction ? <></> : 
+        <ActionIcon onClick={ handleDelete } color="red" variant="subtle">
+          <IconX />
+        </ActionIcon>
+      }
+    </Group>
   );
 };
