@@ -21,6 +21,7 @@ import { LocationsView } from "./views/LocationsView";
 import { RobotsView } from "./views/RobotsView";
 import { TasksView } from "./views/TasksView";
 import { Nav } from "./views/Nav";
+import { useMutate } from "./doctype";
 
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168");
 
@@ -42,6 +43,14 @@ const newDocumentId = async (name = "") => {
 
 export const DocRoute = () => {
   const { docId } = useParams();
+  const mutate = useMutate( journalIdFromString( docId! ) );
+  
+  mutate({ tag: "InitSchema" }).catch(( err ) => {
+    console.error( "Failed to init schema", err );
+  });
+  mutate({ tag: "PopulateDB" }).catch(( err ) => {
+    console.error( "Failed to populate database", err );
+  });
 
   if (!docId) {
     console.error("doc id not found in params");
@@ -75,7 +84,7 @@ export const RobotsRoute = () => {
   } else {
     return (
       <Nav docId={journalIdFromString( docId )} title="Robots" >
-        <RobotsView docId={journalIdFromString( docId )} locationid={"c0f67f5f-3414-4e50-9ea7-9ae053aa1f99"} />
+        <RobotsView docId={journalIdFromString( docId )} />
       </Nav>
     )
   }

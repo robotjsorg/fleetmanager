@@ -12,5 +12,5 @@ interface RobotProviderProps {
 export const RobotProvider: FC<RobotProviderProps> = ( props: RobotProviderProps ) => {
   let [robots] = useState<IRobot[]>();
   robots = props.robots;
-  return <RobotContext.Provider value={{ robots }} >{props.children}</RobotContext.Provider>;
+  return <RobotContext.Provider value={{ robots }} >{props.children}</RobotContext.Provider>; // , location 
 };

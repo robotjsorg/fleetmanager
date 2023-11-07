@@ -9,11 +9,11 @@ import { TaskItem } from "../components/TaskItem";
 import { TaskForm } from "../components/TaskForm";
 
 export const TasksView = ({ docId }: { docId: JournalId }) => {
+  const mutate = useMutate( docId );
   const { rows: tasks } = useQuery<ITask>(
     docId,
     sql`select id, description, completed from tasks order by description`
   );
-  const mutate = useMutate( docId );
 
   return (
     <>

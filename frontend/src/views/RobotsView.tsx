@@ -11,20 +11,20 @@ import { guiSelectionContext } from "../context/guiSelectionContext";
 
 import { RobotItem } from "../components/RobotItem";
 import { RobotForm } from "../components/RobotForm";
+import { locationSelectionContext } from "../context/locationSelectionContext";
 
 interface RobotsViewProps {
   docId: JournalId;
-  locationid: string;
 }
 
 export const RobotsView = ( props: RobotsViewProps ) => {
-  const { rows: robots } = useQuery<IRobot>(
-    props.docId,
-    sql`SELECT * FROM robots WHERE locationid = ${props.locationid} ORDER BY description`
-  );
-
   const mutate = useMutate( props.docId );
   const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
+  const { locationSelection } = useContext( locationSelectionContext );
+  const { rows: robots } = useQuery<IRobot>(
+    props.docId,
+    sql`SELECT * FROM robots WHERE locationid = ${locationSelection} ORDER BY description`
+  );
 
   return (
     <>
@@ -38,8 +38,7 @@ export const RobotsView = ( props: RobotsViewProps ) => {
           <RobotItem key={robot.id} robot={robot} mutate={mutate} selected={guiSelection == robot.id ? true : false} />
         ))}
       </ScrollArea>
-      {/* { locations ?? locations![0] } */}
-      <RobotForm mutate={mutate} locationid={props.locationid}/>
+      <RobotForm mutate={mutate} locationid={locationSelection}/>
     </>
   );
 };

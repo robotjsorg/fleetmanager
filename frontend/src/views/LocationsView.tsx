@@ -1,3 +1,4 @@
+import { useContext, useEffect } from "react";
 import { sql } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Center, Flex, Paper, ScrollArea, Stack, Title } from "@mantine/core";
@@ -10,13 +11,12 @@ import { LocationItem } from "../components/LocationItem";
 import { LocationForm } from "../components/LocationForm";
 
 export const LocationsView = ({ docId }: { docId: JournalId }) => {
+  const { height } = useViewportSize();
+  const mutate = useMutate( docId );
   const { rows: locations } = useQuery<ILocation>(
     docId,
     sql`select * from locations order by description`
   );
-
-  const mutate = useMutate( docId );
-  const { height } = useViewportSize();
 
   return (
     <Paper component={Stack} p="xs" h={(height-164)}>

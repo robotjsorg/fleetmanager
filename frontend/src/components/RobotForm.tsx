@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Mutation } from "../doctype";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
+import { locationSelectionContext } from "../context/locationSelectionContext";
 
 interface RobotFormProps {
   mutate: (m: Mutation) => Promise<void>;
@@ -16,6 +17,7 @@ interface RobotFormProps {
 
 export const RobotForm = (props: RobotFormProps) => {
   const { setGuiSelection } = useContext(guiSelectionContext);
+  const { locationSelection } = useContext(locationSelectionContext);
 
   const form = useForm({
     initialValues: {
@@ -32,17 +34,17 @@ export const RobotForm = (props: RobotFormProps) => {
     useCallback(
       ({ description }) => { // type,
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
-        const locationid = props.locationid;
+        const locationid = locationSelection;
         props.mutate({ tag: "CreateRobot", id, locationid, description })
           .then(() => {
             form.reset();
             setGuiSelection(id);
           })
-          .catch((err) => {
+          .catch(( err ) => {
             console.error("Failed to create robot", err);
           });
       },
-      [props, form, setGuiSelection]
+      [locationSelection, props, form, setGuiSelection]
     )
   );
 
@@ -58,13 +60,24 @@ export const RobotForm = (props: RobotFormProps) => {
           data={['ABB IRB 52']}
           {...form.getInputProps("type")}
         /> */}
-        <TextInput
-          style={{ flex: 1 }}
-          styles={{ input: { fontSize: "16px" } }}
-          required
-          placeholder="Desc"
-          {...form.getInputProps("description")}
-        />
+        { locationSelection == "no selection" ?
+          <TextInput
+            style={{ flex: 1 }}
+            styles={{ input: { fontSize: "16px" } }}
+            required
+            disabled
+            placeholder="Desc"
+            {...form.getInputProps("description")}
+          />
+        : 
+          <TextInput
+            style={{ flex: 1 }}
+            styles={{ input: { fontSize: "16px" } }}
+            required
+            placeholder="Desc"
+            {...form.getInputProps("description")}
+          />
+        }
         <Button type="submit">Add</Button>
       </Flex>
     </form>
