@@ -2,7 +2,7 @@
 This is a homemade, open-source Fleetmanager application, for monitoring and controlling warehouse and factory robots.
 
 ## SQLSync Wrapper
-These are instructions for wrapping SQLSync, so that a custom reducer and frontend may easily be created. That way, when SQLSync updates in the future, the custom software in the wrapper does not have to dramatically change.
+These are instructions for wrapping [SQLSync](https://github.com/orbitinghail/sqlsync) by [orbitinghail](https://github.com/orbitinghail).
 
 ### Build SQLSync
 * Clone SQLSync: `git clone https://github.com/orbitinghail/sqlsync`
