@@ -3,7 +3,7 @@ import { useContext, useMemo } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { InlineCodeHighlight } from "@mantine/code-highlight";
-import { Alert, Center, Code, Flex, ScrollArea, Title, Text } from "@mantine/core";
+import { Alert, Center, Code, Flex, ScrollArea, Title } from "@mantine/core";
 
 import { IconAlertCircle } from "@tabler/icons-react";
 
@@ -13,7 +13,7 @@ import { guiSelectionContext } from "../context/guiSelectionContext";
 
 export const GuiSelection = ({docId}: {docId: JournalId}) => {
   const { guiSelection } = useContext(guiSelectionContext);
-  const inputValue = ("SELECT description, created_at, locationid FROM robots WHERE id IS '" + guiSelection + "'");
+  const inputValue = ("SELECT id, description, created_at, locationid FROM robots WHERE id IS '" + guiSelection + "'");
   const result = useQuery(docId, inputValue);
   const rowsJson = useMemo(() => {
     return JSON.stringify(
@@ -47,9 +47,6 @@ export const GuiSelection = ({docId}: {docId: JournalId}) => {
         </Center>
       </Flex>
       <ScrollArea type="auto">
-        <Text size="xs">
-          {guiSelection}
-        </Text>
         {output}
       </ScrollArea>
     </>
