@@ -1,7 +1,7 @@
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Center, Flex, Title } from "@mantine/core";
 
-import { TaskList } from "../components/TaskList";
+import { TaskListQuery } from "../components/TaskListQuery";
 import { TaskForm } from "../components/TaskForm";
 
 export const TasksView = ({ docId }: { docId: JournalId }) => {
@@ -12,7 +12,7 @@ export const TasksView = ({ docId }: { docId: JournalId }) => {
           Tasks
         </Center>
       </Flex>
-      <TaskList docId={docId} />
+      <TaskListQuery docId={docId} />
       <TaskForm docId={docId} />
     </>
   );

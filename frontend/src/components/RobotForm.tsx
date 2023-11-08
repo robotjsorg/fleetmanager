@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react";
 
-import { Button, Flex, TextInput } from "@mantine/core"; // , Select
+import { Button, Flex, Select, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 import { v4 as uuidv4 } from "uuid";
@@ -17,18 +17,18 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
 
   const form = useForm({
     initialValues: {
-      // type: "",
+      location: "",
       description: "",
     },
     validate: {
-      // type: (value) => (value.trim().length === 0 ? "Select Type" : null),
+      location: (value) => (value.trim().length === 0 ? "Select Location" : null),
       description: (value) => (value.trim().length === 0 ? "Enter Description" : null),
     },
   });
   const mutate = useMutate( docId );
   const handleSubmit = form.onSubmit(
     useCallback(
-      ({ description }) => { // type,
+      ({ description }) => {
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
         const locationid = locationSelection;
         mutate({ tag: "CreateRobot", id, locationid, description })
@@ -50,15 +50,15 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
   return (
     <form onSubmit={handleSubmit}>
       <Flex gap="xs" onClick={() => setGuiSelection("no selection")}>
-        {/* <Select
+        <Select
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           required
           allowDeselect
-          placeholder="Type"
-          data={['ABB IRB 52']}
-          {...form.getInputProps("type")}
-        /> */}
+          placeholder="Location"
+          data={["Warehouse"]}
+          {...form.getInputProps("location")}
+        />
         { locationSelection == "no selection" ?
           <TextInput
             style={{ flex: 1 }}

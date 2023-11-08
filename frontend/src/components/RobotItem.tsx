@@ -10,7 +10,6 @@ import { IRobot } from "../@types/robot";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { SMAA } from "@react-three/postprocessing";
 
 export const RobotItem = ({
   docId,

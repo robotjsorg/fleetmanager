@@ -5,7 +5,7 @@ import { Center, Flex, Title } from "@mantine/core";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
-import { RobotList } from "../components/RobotList";
+import { RobotListQuery } from "../components/RobotListQuery";
 import { RobotForm } from "../components/RobotForm";
 
 export const RobotsView = ({ docId }: { docId: JournalId }) => {
@@ -18,7 +18,7 @@ export const RobotsView = ({ docId }: { docId: JournalId }) => {
           Robots
         </Center>
       </Flex>
-      <RobotList docId={docId}/>
+      <RobotListQuery docId={docId}/>
       <RobotForm docId={docId}/>
     </>
   );
