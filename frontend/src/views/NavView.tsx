@@ -2,7 +2,7 @@ import { ReactNode, useContext } from "react";
 import { Link } from "react-router-dom";
 
 import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
-import { Center, Title, ScrollArea, AppShell, Burger, Group, Button, useMantineColorScheme } from "@mantine/core";
+import { Center, Title, ScrollArea, AppShell, Burger, Group, Button, useMantineColorScheme, Flex, Box } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 
 import { IconSettings, IconSun, IconMoon } from '@tabler/icons-react';
@@ -10,7 +10,7 @@ import { IconSettings, IconSun, IconMoon } from '@tabler/icons-react';
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
 import { ConnectionStatus } from "../components/ConnectionStatus";
-import { LocationListContext } from "../components/LocationListContext";
+import { LocationListQuery } from "../components/LocationListQuery";
 
 export const NavView = ({
   children,
@@ -21,11 +21,24 @@ export const NavView = ({
   docId: JournalId;
   title: ReactNode;
 }) => {
-  const { setGuiSelection } = useContext( guiSelectionContext );
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false);
-  
   const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const { setGuiSelection } = useContext( guiSelectionContext );
+  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure(false);
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false);
+
+  const closeNav = () => {
+    if ( desktopOpened ) {
+      toggleDesktop();
+    }
+    if ( mobileOpened ) {
+      toggleMobile();
+    }
+  }
+
+  const deselectAndCloseNav = () => {
+    setGuiSelection("no selection");
+    closeNav();
+  }
 
   return (
     <AppShell
@@ -37,7 +50,7 @@ export const NavView = ({
       }}
       padding="sm"
     >
-      <AppShell.Header onClick={() => (setGuiSelection("no selection"))}>
+      <AppShell.Header onClick={ deselectAndCloseNav }>
         <Group h="100%" px="md" justify="space-between">
           <Group>
             <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
@@ -61,11 +74,18 @@ export const NavView = ({
       </AppShell.Header>
       <AppShell.Navbar p="md" onClick={() => (setGuiSelection("no selection"))}>
         <AppShell.Section grow my="md" component={ScrollArea}>
-          <LocationListContext docId={docId} />
+          <Flex>
+            <Center component={Title} style={{ flex: 1, justifyContent: "left" }} order={5}>
+              Locations
+            </Center>
+          </Flex>
+          <Box onClick={ closeNav }>
+            <LocationListQuery docId={docId} />
+          </Box>
         </AppShell.Section>
         <AppShell.Section>
           <Group justify="center">
-            <Link to={"/" + journalIdToString(docId) + "/settings"}>
+            <Link to={"/" + journalIdToString(docId) + "/settings"} onClick={ closeNav }>
               <Button leftSection={<IconSettings size={14} />} variant="default">
                 Settings
               </Button>
@@ -78,7 +98,7 @@ export const NavView = ({
           </Group>
         </AppShell.Section>
       </AppShell.Navbar>
-      <AppShell.Main>
+      <AppShell.Main onClick={ closeNav }>
         {children}
       </AppShell.Main>
     </AppShell>
