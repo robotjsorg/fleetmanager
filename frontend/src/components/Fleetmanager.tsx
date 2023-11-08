@@ -10,6 +10,7 @@ import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locationSelectionContext } from "../context/locationSelectionContext";
 
 import { RobotMesh } from "../components/RobotMesh";
+import { BoxMesh } from "../components/BoxMesh";
 // import { Urdf } from "../components/Urdf";
 
 export const Fleetmanager = () => {
@@ -31,6 +32,12 @@ export const Fleetmanager = () => {
         {robots.map((robot) => (
           <RobotMesh key={robot.id} robotid={robot.id} selected={guiSelection == robot.id ? true : false} />
         ))}
+        <BoxMesh />
+        <BoxMesh />
+        <BoxMesh />
+        <BoxMesh />
+        <BoxMesh />
+        <BoxMesh />
       </Selection>
       <Grid infiniteGrid={ true } position={ [0, -0.01, 0] } fadeDistance={ 16 } fadeStrength={ 3 } />
       <ContactShadows scale={ 150 } position={ [0.33, -0.33, 0.33] } opacity={ 1.5 } />
