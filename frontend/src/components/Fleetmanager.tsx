@@ -1,7 +1,8 @@
+/* eslint-disable react/no-unknown-property */
 import { useContext } from "react";
 
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment, ContactShadows } from "@react-three/drei";
+import { OrbitControls, Environment, ContactShadows, Grid } from "@react-three/drei"; // GizmoHelper, GizmoViewport
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
 
 import { RobotContext } from "../context/robotContext";
@@ -26,8 +27,13 @@ export const Fleetmanager = () => {
           <RobotMesh key={robot.id} robotid={robot.id} selected={guiSelection == robot.id ? true : false} />
         ))}
       </Selection>
-      <ContactShadows scale={150} position={[0.33, -0.33, 0.33]} opacity={1.5} />
-      <OrbitControls target={[0, 1, 0]} maxPolarAngle={Math.PI / 2} enableZoom={false} enablePan={false} />
+      <Grid infiniteGrid={ true } position={ [0, -0.01, 0] } fadeDistance={ 16 } fadeStrength={ 3 } />
+      <ContactShadows scale={ 150 } position={ [0.33, -0.33, 0.33] } opacity={ 1.5 } />
+      <OrbitControls target={ [0, 1, 0] } maxPolarAngle={ Math.PI / 2 } enableZoom={ false } enablePan={ false } />
+      {/* Breaks outlines */}
+      {/* <GizmoHelper alignment="bottom-right" margin={ [80, 80] }>
+        <GizmoViewport axisColors={['#9d4b4b', '#2f7f4f', '#3b5b9d']} labelColor="white" />
+      </GizmoHelper> */}
     </Canvas>
   );
 };
