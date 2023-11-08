@@ -7,17 +7,22 @@ import { Selection, EffectComposer, Outline } from "@react-three/postprocessing"
 
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
+import { locationSelectionContext } from "../context/locationSelectionContext";
 
 import { RobotMesh } from "../components/RobotMesh";
 // import { Urdf } from "../components/Urdf";
 
 export const Fleetmanager = () => {
-  const { robots } = useContext(RobotContext)!;
-  const { guiSelection, setGuiSelection } = useContext(guiSelectionContext);
+  const { robots } = useContext( RobotContext )!;
+  const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
+  const { locationSelection } = useContext( locationSelectionContext );
 
   return (
     <Canvas camera={{ position: [0, 3, 3], near: 0.01, far: 20 }} onPointerMissed={() => setGuiSelection("no selection")}> 
-      <Environment preset="warehouse" background ground={{ height: 10, radius: 43, scale: 6 }} />
+      <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
+        preset={ locationSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 
+        : locationSelection == "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d" ? "apartment" 
+        : "city" } />
       {/* <Urdf /> */}
       <Selection>
         <EffectComposer multisampling={8} autoClear={false}>

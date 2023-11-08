@@ -90,6 +90,23 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
                 "ABB IRB 52 004"
             ).await;
+            execute!(
+                "INSERT OR IGNORE INTO locations (id, description, created_at) VALUES (?, ?, datetime('now'))",
+                "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d",
+                "Apartment"
+            ).await;
+            execute!(
+                "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
+                "d544e656-0e8c-4c3d-91fc-02e38b326c47",
+                "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d",
+                "House Bot 1"
+            ).await;
+            execute!(
+                "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
+                "6d83797f-32ba-4884-bd55-5c116f6d74e7",
+                "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d",
+                "House Bot 2"
+            ).await;
         }
 
         Mutation::CreateLocation { id, description } => {

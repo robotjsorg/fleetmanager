@@ -53,7 +53,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
   }, [initDB, locationSelection, mutate]);
   
   return (
-    <MantineProvider>
+    <MantineProvider defaultColorScheme="dark">
       <guiSelectionContext.Provider value={{ guiSelection, setGuiSelection }}>
         <locationSelectionContext.Provider value={{ locationSelection, setLocationSelection }}>
           <RobotProvider robots={ robots ?? [] }>
@@ -89,7 +89,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                       <Paper component={Stack} shadow="xs" p="xs" h={ ( height - 80 ) / 3 - 20 } onClick={() => setGuiSelection("no selection")}>
                         <TaskListContext docId={docId} />
                       </Paper>
-                      <Paper component={Stack} shadow="xs" p="xs" h={ ( height - 80 ) / 3 - 20 } onClick={() => setGuiSelection("no selection")}>
+                      <Paper component={Stack} shadow="xs" p="xs" h={ ( height - 80 ) / 3 - 20 }>
                         <GuiSelection docId={docId} />
                       </Paper>
                     </Stack>
