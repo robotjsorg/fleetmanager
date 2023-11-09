@@ -1,22 +1,26 @@
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 
+import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Text, ActionIcon, Checkbox, Group } from "@mantine/core";
 
 import { IconX } from "@tabler/icons-react";
 
 import { useMutate } from "../doctype";
 import { ITask } from "../@types/task";
-import { JournalId } from "@orbitinghail/sqlsync-worker";
+
+import { RobotContext } from "../context/robotContext";
 
 export const TaskItem = ({
   docId,
   task,
-  deleteDisabled
+  fbDisabled
 }: {
   docId: JournalId;
   task: ITask;
-  deleteDisabled: boolean;
+  fbDisabled: boolean;
 }) => {
+  const { robots } = useContext( RobotContext );
+  const robot = robots.filter(( robot ) => ( robot.id == task.robotid ))[0];
   const mutate = useMutate( docId );
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteTask", id: task.id }).catch((err) => {
@@ -33,9 +37,9 @@ export const TaskItem = ({
     <Group justify="space-between" gap="sm" px={12} py={4}>
       <Checkbox checked={ task.completed } onChange={ handleToggleCompleted } disabled={ task.completed } />
       <Text style={{ flex: 1 }}>
-        { task.description }
+      { robot.description } &gt; { task.description }
       </Text>
-      { deleteDisabled ? <></> : 
+      { fbDisabled ? <></> : 
         <ActionIcon onClick={ handleDelete } color="gray" variant="subtle">
           <IconX />
         </ActionIcon>

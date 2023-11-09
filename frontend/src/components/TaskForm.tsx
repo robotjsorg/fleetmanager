@@ -1,24 +1,28 @@
 import { useCallback, useContext } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Button, Flex, Select } from "@mantine/core";
+import { Button, Group, Select } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 import { v4 as uuidv4 } from "uuid";
 
 import { useMutate } from "../doctype";
+
 import { RobotContext } from "../context/robotContext";
+import { locationSelectionContext } from "../context/locationSelectionContext";
 
 export const TaskForm = ({ docId }: { docId: JournalId }) => {
-  const { robots } = useContext(RobotContext)!;
+  const { robots, tasks } = useContext( RobotContext );
+  const { locationSelection } = useContext( locationSelectionContext );
+  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locationSelection ));
   
   const form = useForm({
     initialValues: {
-      robotid: "",
+      robot: "",
       description: ""
     },
     validate: {
-      robotid: (value) => (value.trim().length === 0 ? "Select Robot" : null),
+      robot: (value) => (value.trim().length === 0 ? "Select Robot" : null),
       description: (value) => (value.trim().length === 0 ? "Select Task" : null)
     }
   });
@@ -26,47 +30,49 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
 
   const handleSubmit = form.onSubmit(
     useCallback(
-      ({ robotid, description }) => {
-        const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
-        description = robotid + ": " + description;
-        mutate({ tag: "CreateTask", id, robotid, description })
-          .then(() => {
-            form.reset();
-            form.setValues( { robotid: "", description: "" } );
-          })
-          .catch((err) => {
-            form.setFieldError('description', String(err));
-            form.setErrors({ robot: String(err), description: String(err) });
-            console.error("Failed to create task", err);
-          });
-      },
-      [mutate, form]
+      ({ robot, description }) => {
+        const robotTasks = tasks.filter(( task ) => ( task.robotid == robot ));
+        const robotTaskDescriptions = robotTasks.map(( task ) => ( task.description ));
+        if ( robotTaskDescriptions.includes( description ) ) {
+          form.setFieldError('description', "Duplicate task assigned");
+        } else {
+          const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
+          mutate({ tag: "CreateTask", id, robotid: robot, description })
+            .catch((err) => {
+              form.setFieldError('description', String(err));
+              form.setErrors({ robot: String(err), description: String(err) });
+              console.error("Failed to create task", err);
+            });
+        }    
+      }, [tasks, mutate, form]
     )
   );
 
   return (
     <form onSubmit={handleSubmit}>
-      <Flex gap="xs">
+      <Group gap="xs">
        <Select
+          label="Robot"
+          description="Robot for New Task"
+          placeholder="Select Robot"
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
-          required
-          placeholder="Robot"
-          data={(robots!).map((robot) => (
+          data={( filteredRobots ).map(( robot ) => (
             { value: robot.id, label: robot.description }
           ))}
-          {...form.getInputProps("robotid")}
+          {...form.getInputProps("robot")}
         />
        <Select
+          label="New Task"
+          description="Discrete Task"
+          placeholder="Select Task"
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
-          required
-          placeholder="Task"
-          data={['Spin Around']} // , 'Manual', 'Automatic', 'Home', 'Move A', 'Move B', 'Clamp', 'Unclamp'
+          data={['Idle', 'Spin Around']} // , 'Manual', 'Automatic', 'Home', 'Move A', 'Move B', 'Clamp', 'Unclamp'
           {...form.getInputProps("description")}
         />
         <Button color="gray" type="submit">Add</Button>
-      </Flex>
+      </Group>
     </form>
   );
 };

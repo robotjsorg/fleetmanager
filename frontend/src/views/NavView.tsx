@@ -10,7 +10,7 @@ import { IconSettings, IconSun, IconMoon } from '@tabler/icons-react';
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
 import { ConnectionStatus } from "../components/ConnectionStatus";
-import { LocationListQuery } from "../components/LocationListQuery";
+import { LocationList } from "../components/LocationList";
 
 export const NavView = ({
   children,
@@ -74,8 +74,13 @@ export const NavView = ({
       </AppShell.Header>
       <AppShell.Navbar p="md" onClick={() => (setGuiSelection("no selection"))}>
         <AppShell.Section grow my="md" component={ScrollArea}>
+          <Flex>
+            <Center component={Title} style={{ flex: 1, justifyContent: "left" }} order={5}>
+              Locations
+            </Center>
+          </Flex>
           <Box onClick={ closeNav }>
-            <LocationListQuery docId={docId} deleteDisabled={true} />
+            <LocationList docId={docId} fbDisabled={true} />
           </Box>
         </AppShell.Section>
         <AppShell.Section>

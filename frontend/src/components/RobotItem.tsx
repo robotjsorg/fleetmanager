@@ -14,11 +14,11 @@ import { JournalId } from "@orbitinghail/sqlsync-worker";
 export const RobotItem = ({
   docId,
   robot,
-  deleteDisabled
+  fbDisabled
 }: {
   docId: JournalId;
   robot: IRobot;
-  deleteDisabled: boolean;
+  fbDisabled: boolean;
 }) => {
   const mutate = useMutate( docId );
   const handleDelete = useCallback(() => {
@@ -40,11 +40,11 @@ export const RobotItem = ({
   
   return (
     <Group ref={ref} onClick={ handleSelect } justify="space-between" gap="sm" px={12} py={4} 
-      bg={ deleteDisabled && ( hovered || selected() ) ? "gray" : "none" }>
+      bg={ fbDisabled && ( hovered || selected() ) ? "gray" : "none" }>
       <Text style={{ flex: 1 }}>
         { robot.description }
       </Text>
-      { deleteDisabled ? <></> : 
+      { fbDisabled ? <></> : 
         <ActionIcon onClick={ handleDelete } color="gray" variant="subtle">
           <IconX />
         </ActionIcon>

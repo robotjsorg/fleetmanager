@@ -9,7 +9,7 @@ import { useGLTF } from "@react-three/drei";
 import { Select } from "@react-three/postprocessing";
 import { GLTF } from "three-stdlib"; //, ColladaLoader
 
-import "@tweenjs/tween.js";
+// import "@tweenjs/tween.js";
 // import createjs from "@types/tweenjs";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
@@ -50,9 +50,11 @@ const randomRotation = () => {
 
 export const RobotMesh = ({
   robotid,
+  task,
   selected
 } : {
   robotid: string;
+  task: string;
   selected: boolean;
 }) => {
   const ref = useRef<THREE.Mesh>(null!);
@@ -89,7 +91,7 @@ export const RobotMesh = ({
   //   // array1.forEach((element) => console.log(element));
   //   kinematics.joints.forEach(( joint )=>(
   //     joint.hasOwnProperty
-  //     if( joint.hasOwnProperty() ) {
+  //     if ( joint.hasOwnProperty() ) {
   //       if ( ! kinematics.joints[ prop ].static ) {
   //         // let joint = kinematics.joints[ prop ];
   //         let old = tweenParameters[ prop ];

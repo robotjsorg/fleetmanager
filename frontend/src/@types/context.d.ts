@@ -1,5 +1,9 @@
-import { IRobot } from "./robot"
+import { ILocation } from "../@types/location";
+import { IRobot } from "../@types/robot";
+import { ITask } from "../@types/task";
 
 export interface RobotContextType {
-  robots: IRobot[] | null;
+  locations: ILocation[];
+  robots: IRobot[];
+  tasks: ITask[];
 }

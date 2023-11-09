@@ -5,6 +5,8 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment, ContactShadows, Grid } from "@react-three/drei"; // GizmoHelper, GizmoViewport
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
 
+import { IRobot } from "../@types/robot";
+
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locationSelectionContext } from "../context/locationSelectionContext";
@@ -14,9 +16,10 @@ import { BoxMesh } from "../components/BoxMesh";
 // import { Urdf } from "../components/Urdf";
 
 export const Fleetmanager = () => {
-  const { robots } = useContext( RobotContext )!;
+  const { robots } = useContext( RobotContext );
   const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
   const { locationSelection } = useContext( locationSelectionContext );
+  const filteredRobots = robots.filter(( robot )=>( robot.locationid == locationSelection ));
 
   return (
     <Canvas camera={{ position: [0, 3, 3], near: 0.01, far: 20 }} onPointerMissed={() => setGuiSelection("no selection")}> 
@@ -29,7 +32,7 @@ export const Fleetmanager = () => {
         <EffectComposer multisampling={8} autoClear={false}>
           <Outline blur edgeStrength={100} width={1000} />
         </EffectComposer>
-        {robots?.map((robot) => (
+        {filteredRobots.map((robot) => (
           <RobotMesh key={robot.id} robotid={robot.id} selected={guiSelection == robot.id ? true : false} />
         ))}
         <BoxMesh />
