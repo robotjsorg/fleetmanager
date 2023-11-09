@@ -1,11 +1,12 @@
 import { useContext } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Center, Flex, Title, Box } from "@mantine/core";
+import { Center, Flex, Title, Box, Divider } from "@mantine/core";
 
 import { RobotContext } from "../context/robotContext";
 import { locationSelectionContext } from "../context/locationSelectionContext";
 
+import { RobotList } from "../components/RobotList";
 import { RobotTable } from "../components/RobotTable";
 import { RobotForm } from "../components/RobotForm";
 
@@ -23,7 +24,10 @@ export const RobotsView = ({ docId }: { docId: JournalId }) => {
           { selectedLocationDescription } &gt; Robots
         </Center>
       </Flex>
-      <RobotTable docId={docId} fbDisabled={false}/>
+      <RobotList docId={docId} fbDisabled={false}/>
+      <Divider my="sm" />
+      <RobotTable />
+      <Divider my="sm" />
       <Box maw={400} mx="auto">
         <RobotForm docId={docId}/>
       </Box>

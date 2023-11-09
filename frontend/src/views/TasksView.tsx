@@ -1,7 +1,7 @@
 import { useContext } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Center, Flex, Title, Box } from "@mantine/core";
+import { Center, Flex, Title, Box, Divider } from "@mantine/core";
 
 import { RobotContext } from "../context/robotContext";
 import { locationSelectionContext } from "../context/locationSelectionContext";
@@ -24,6 +24,7 @@ export const TasksView = ({ docId }: { docId: JournalId }) => {
         </Center>
       </Flex>
       <TaskList docId={docId} fbDisabled={false} />
+      <Divider my="sm" />
       <Box maw={400} mx="auto">
         <TaskForm docId={docId} />
       </Box>

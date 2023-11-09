@@ -1,5 +1,5 @@
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Center, Flex, Title, Box } from "@mantine/core";
+import { Center, Flex, Title, Box, Divider } from "@mantine/core";
 
 import { LocationList } from "../components/LocationList";
 import { LocationForm } from "../components/LocationForm";
@@ -13,6 +13,7 @@ export const LocationsView = ({ docId }: { docId: JournalId }) => {
         </Center>
       </Flex>
       <LocationList docId={docId} fbDisabled={false} />
+      <Divider my="sm" />
       <Box maw={400} mx="auto">
         <LocationForm docId={docId} />
       </Box>

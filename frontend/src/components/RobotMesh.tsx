@@ -50,11 +50,9 @@ const randomRotation = () => {
 
 export const RobotMesh = ({
   robotid,
-  task,
   selected
 } : {
   robotid: string;
-  task: string;
   selected: boolean;
 }) => {
   const ref = useRef<THREE.Mesh>(null!);

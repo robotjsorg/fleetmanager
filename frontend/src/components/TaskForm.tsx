@@ -50,11 +50,11 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Group gap="xs">
+      <Group gap="xs" align="flex-end">
        <Select
           label="Robot"
-          description="Robot for New Task"
-          placeholder="Select Robot"
+          description="Select which robot"
+          placeholder="Select robot"
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           data={( filteredRobots ).map(( robot ) => (
@@ -64,8 +64,8 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
         />
        <Select
           label="New Task"
-          description="Discrete Task"
-          placeholder="Select Task"
+          description="Select discrete task"
+          placeholder="Select task"
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           data={['Idle', 'Spin Around']} // , 'Manual', 'Automatic', 'Home', 'Move A', 'Move B', 'Clamp', 'Unclamp'

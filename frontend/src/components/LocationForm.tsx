@@ -47,7 +47,7 @@ export const LocationForm = ({ docId }: { docId: JournalId; }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Group gap="xs">
+      <Group gap="xs" align="flex-end">
         <TextInput
           label="New Location"
           description="Description"

@@ -51,7 +51,7 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Group gap="xs" onClick={() => setGuiSelection("no selection")}>
+      <Group align="flex-end" gap="xs" onClick={() => setGuiSelection("no selection")}>
         <TextInput
           label="New Robot"
           description="Description"
