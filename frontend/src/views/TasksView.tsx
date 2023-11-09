@@ -7,6 +7,7 @@ import { RobotContext } from "../context/robotContext";
 import { locationSelectionContext } from "../context/locationSelectionContext";
 
 import { TaskList } from "../components/TaskList";
+import { TaskTable } from "../components/TaskTable";
 import { TaskForm } from "../components/TaskForm";
 
 export const TasksView = ({ docId }: { docId: JournalId }) => {
@@ -24,6 +25,8 @@ export const TasksView = ({ docId }: { docId: JournalId }) => {
         </Center>
       </Flex>
       <TaskList docId={docId} fbDisabled={false} />
+      <Divider my="sm" />
+      <TaskTable />
       <Divider my="sm" />
       <Box maw={400} mx="auto">
         <TaskForm docId={docId} />
