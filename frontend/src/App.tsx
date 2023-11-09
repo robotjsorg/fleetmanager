@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
 import { sql } from "@orbitinghail/sqlsync-react";
@@ -21,7 +22,6 @@ import { Fleetmanager } from "./components/Fleetmanager";
 import { RobotListContext } from "./components/RobotListContext";
 import { GuiSelection } from "./components/GuiSelection";
 import { TaskListContext } from "./components/TaskListContext";
-import { Link } from "react-router-dom";
 
 export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
   const { height } = useViewportSize();

@@ -6,7 +6,3 @@ export interface IRobot {
   description: string;
   position: Vector3;
 }
-
-export interface RobotContextType {
-  robots: IRobot[];
-}

@@ -29,7 +29,7 @@ export const Fleetmanager = () => {
         <EffectComposer multisampling={8} autoClear={false}>
           <Outline blur edgeStrength={100} width={1000} />
         </EffectComposer>
-        {robots.map((robot) => (
+        {robots?.map((robot) => (
           <RobotMesh key={robot.id} robotid={robot.id} selected={guiSelection == robot.id ? true : false} />
         ))}
         <BoxMesh />

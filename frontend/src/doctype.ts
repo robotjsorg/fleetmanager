@@ -5,7 +5,6 @@ const REDUCER_URL = new URL(
   import.meta.url
 );
 
-// matches the Mutation type in demo/demo-reducer
 export type Mutation =
     {
       tag: "InitSchema";

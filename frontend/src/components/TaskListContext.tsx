@@ -14,7 +14,7 @@ import { TaskForm } from "./TaskForm";
 
 export const TaskListContext = ({ docId }: { docId: JournalId }) => {
   const { robots } = useContext( RobotContext )!;
-  const ids = robots.map(( robot )=>( robot.id ));
+  const ids = robots?.map(( robot )=>( robot.id ));
 
   const { rows: tasks } = useQuery<ITask>(
     docId,
@@ -22,7 +22,7 @@ export const TaskListContext = ({ docId }: { docId: JournalId }) => {
   );
   let filteredTasks: ITask[] = []
   if( Array.isArray( tasks ) ){
-    filteredTasks = tasks.filter(( task )=>( ids.includes( task.robotid ) ));
+    filteredTasks = tasks.filter(( task )=>( ids?.includes( task.robotid ) ));
   }
 
   return (
