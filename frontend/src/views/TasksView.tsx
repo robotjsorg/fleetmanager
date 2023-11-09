@@ -12,7 +12,7 @@ export const TasksView = ({ docId }: { docId: JournalId }) => {
           Tasks
         </Center>
       </Flex>
-      <TaskListQuery docId={docId} />
+      <TaskListQuery docId={docId} deleteDisabled={false} />
       <TaskForm docId={docId} />
     </>
   );

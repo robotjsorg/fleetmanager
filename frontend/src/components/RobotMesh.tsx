@@ -56,7 +56,8 @@ export const RobotMesh = ({
   selected: boolean;
 }) => {
   const ref = useRef<THREE.Mesh>(null!);
-  const { nodes, materials } = useGLTF("abb_irb52_7_120.gltf") as GLTFResult;
+  // ("abb_irb52_7_120.gltf")
+  const { nodes, materials } = useGLTF("../../assets/abb_irb52_7_120.gltf") as GLTFResult;
   const { setGuiSelection } = useContext( guiSelectionContext );
   const [ hovered, hover ] = useState( false );
   const [ position ] = useState( randomPosition() );
@@ -194,4 +195,5 @@ export const RobotMesh = ({
   );
 }
 
-useGLTF.preload("abb_irb52_7_120.gltf");
+// ("abb_irb52_7_120.gltf")
+useGLTF.preload("../../assets/abb_irb52_7_120.gltf");

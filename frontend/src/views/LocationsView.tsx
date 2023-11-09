@@ -11,7 +11,7 @@ export const LocationsView = ({ docId }: { docId: JournalId }) => {
   return (
     <Paper component={Stack} p="xs" h={(height-164)}>
       <ScrollArea type="auto">
-        <LocationListQuery docId={docId} />
+        <LocationListQuery docId={docId} deleteDisabled={false} />
       </ScrollArea>
       <LocationForm docId={docId} />
     </Paper>

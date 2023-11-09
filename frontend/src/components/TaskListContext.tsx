@@ -37,7 +37,6 @@ export const TaskListContext = ({ docId }: { docId: JournalId }) => {
           <TaskItem docId={docId} key={task.id} task={task} deleteDisabled={false} />
         ))}
       </ScrollArea>
-      <TaskForm docId={docId} />
     </>
   );
 };

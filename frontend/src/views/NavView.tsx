@@ -74,20 +74,15 @@ export const NavView = ({
       </AppShell.Header>
       <AppShell.Navbar p="md" onClick={() => (setGuiSelection("no selection"))}>
         <AppShell.Section grow my="md" component={ScrollArea}>
-          <Flex>
-            <Center component={Title} style={{ flex: 1, justifyContent: "left" }} order={5}>
-              Locations
-            </Center>
-          </Flex>
           <Box onClick={ closeNav }>
-            <LocationListQuery docId={docId} />
+            <LocationListQuery docId={docId} deleteDisabled={true} />
           </Box>
         </AppShell.Section>
         <AppShell.Section>
           <Group justify="center">
-            <Link to={"/" + journalIdToString(docId) + "/settings"} onClick={ closeNav }>
+            <Link to={"/" + journalIdToString(docId) + "/locations"} onClick={ closeNav }>
               <Button leftSection={<IconSettings size={14} />} variant="default">
-                Settings
+                Edit
               </Button>
             </Link>
             <Button variant="default"

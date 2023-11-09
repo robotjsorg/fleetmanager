@@ -6,7 +6,13 @@ import { ITask } from "../@types/task";
 
 import { TaskItem } from "./TaskItem";
 
-export const TaskListQuery = ({ docId }: { docId: JournalId }) => {
+export const TaskListQuery = ({
+  docId,
+  deleteDisabled
+}: {
+  docId: JournalId;
+  deleteDisabled: boolean;
+}) => {
   const { rows: tasks } = useQuery<ITask>(
     docId,
     sql`SELECT id, description, completed FROM tasks ORDER BY description`
@@ -15,7 +21,7 @@ export const TaskListQuery = ({ docId }: { docId: JournalId }) => {
   return (
     <>
       {(tasks ?? []).map((task) => (
-        <TaskItem docId={docId} key={task.id} task={task} deleteDisabled={false} />
+        <TaskItem docId={docId} key={task.id} task={task} deleteDisabled={deleteDisabled} />
       ))}
     </>
   );

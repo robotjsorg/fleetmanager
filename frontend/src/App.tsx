@@ -65,7 +65,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                   </Button>
                 </Link>
               }>
-              { route == "settings" ?
+              { route == "locations" ?
                 <LocationsView docId={docId} />
               : route == "robots" ?
                 <RobotsView docId={docId} />

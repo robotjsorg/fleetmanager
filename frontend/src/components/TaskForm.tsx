@@ -52,7 +52,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           styles={{ input: { fontSize: "16px" } }}
           required
           placeholder="Robot"
-          data={(robots).map((robot) => (
+          data={(robots!).map((robot) => (
             { value: robot.id, label: robot.description }
           ))}
           {...form.getInputProps("robotid")}
@@ -62,7 +62,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           styles={{ input: { fontSize: "16px" } }}
           required
           placeholder="Task"
-          data={['Manual', 'Automatic', 'Home', 'Move A', 'Move B', 'Clamp', 'Unclamp']}
+          data={['Spin Around']} // , 'Manual', 'Automatic', 'Home', 'Move A', 'Move B', 'Clamp', 'Unclamp'
           {...form.getInputProps("description")}
         />
         <Button color="gray" type="submit">Add</Button>

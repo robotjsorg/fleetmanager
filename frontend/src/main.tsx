@@ -68,7 +68,7 @@ const router = createBrowserRouter([
     element: <DocRoute />
   },
   {
-    path: "/:docId/settings",
+    path: "/:docId/locations",
     element: <DocRoute />
   },
   {
