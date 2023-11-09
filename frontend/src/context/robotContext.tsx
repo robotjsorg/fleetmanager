@@ -7,7 +7,7 @@ export const RobotContext = createContext<RobotContextType | null>(null);
 
 interface RobotProviderProps {
   children: ReactNode;
-  robots: IRobot[];
+  robots: IRobot[]; // | null
 }
 
 export const RobotProvider: FC<RobotProviderProps> = ( props: RobotProviderProps ) => {

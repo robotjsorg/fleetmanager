@@ -1,7 +1,7 @@
 # Fleetmanager
 Fleetmanager application for monitoring and controlling robot fleets.
 
-Fleetmanager started out as a simple [SQLSync Wrapper](https://github.com/jmcmahon443/sqlsync-wrapper). These are instructions for wrapping [SQLSync](https://github.com/orbitinghail/sqlsync) by [orbitinghail](https://github.com/orbitinghail), and coinceditally for building Fleetmanager.
+Fleetmanager started out as a simple [SQLSync Wrapper](https://github.com/jmcmahon443/sqlsync-wrapper). These are instructions for wrapping [SQLSync](https://github.com/orbitinghail/sqlsync) by [orbitinghail](https://github.com/orbitinghail), and coincidentally for building Fleetmanager.
 
 ## Build SQLSync
 * Clone SQLSync: `git clone https://github.com/orbitinghail/sqlsync`

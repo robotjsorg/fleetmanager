@@ -30,7 +30,7 @@ const randomRotation = () => {
 }
 
 export function BoxMesh() {
-  const { nodes, materials } = useGLTF("../../assets/cardboard_box_01_4k.glb") as GLTFResult;
+  const { nodes, materials } = useGLTF("../../assets/gltf/cardboard_box_01_4k.glb") as GLTFResult;
   const [ position ] = useState( randomPosition() );
   const [ rotation ] = useState( randomRotation() );
 
@@ -48,4 +48,4 @@ export function BoxMesh() {
   );
 }
 
-useGLTF.preload("../../assets/cardboard_box_01_4k.glb");
+useGLTF.preload("../../assets/gltf/cardboard_box_01_4k.glb");
