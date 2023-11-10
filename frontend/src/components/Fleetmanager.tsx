@@ -11,11 +11,12 @@ import { locSelectionContext } from "../context/locSelectionContext";
 import { RobotMesh } from "../components/RobotMesh";
 import { BoxMesh } from "../components/BoxMesh";
 // import { Urdf } from "../components/Urdf";
+import { MyRotatingBox } from "../components/MyRotatingBox";
 
 export const Fleetmanager = () => {
   const { robots } = useContext( RobotContext );
   const { locSelection } = useContext( locSelectionContext );
-  const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
+  const { guiSelection } = useContext( guiSelectionContext ); // setGuiSelection
   const filteredRobots = robots.filter(( robot )=>( robot.locationid == locSelection ));
 
   // onPointerMissed={() => setGuiSelection("no selection")}
@@ -39,6 +40,9 @@ export const Fleetmanager = () => {
         <BoxMesh />
         <BoxMesh />
         <BoxMesh />
+        <MyRotatingBox />
+        <ambientLight />
+        <directionalLight />
       </Selection>
       <Grid infiniteGrid={ true } position={ [0, -0.01, 0] } fadeDistance={ 16 } fadeStrength={ 3 } />
       <ContactShadows scale={ 150 } position={ [0.33, -0.33, 0.33] } opacity={ 1.5 } />
