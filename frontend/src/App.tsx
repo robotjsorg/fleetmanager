@@ -7,7 +7,7 @@ import { useMantineColorScheme, MantineProvider,
   Text, Box, Button, Divider, AppShell, Group, Burger, Stack, Code } from "@mantine/core";
 import { useViewportSize, useDisclosure } from '@mantine/hooks';
 
-import { IconChecklist, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react";
+import { IconChecklist, IconHome, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react";
 
 import { useMutate, useQuery } from "./doctype";
 import { ILocation } from "./@types/location";
@@ -166,13 +166,14 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                     <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
                   </Box>
                   <Group wrap="nowrap" gap="xs">
-                    <Box visibleFrom="xs">
-                      <Link to={ "/" + journalIdToString(docId) }>
-                        <Button color="gray" variant={ subpageOpened ? "subtle" : "light" }>
-                          { selectedLocationDescription }
-                        </Button>
-                      </Link>
-                    </Box>
+                    <Link to={ "/" + journalIdToString(docId) }>
+                      <Button visibleFrom="xs" color="gray" variant={ subpageOpened ? "subtle" : "light" }>
+                        { selectedLocationDescription }
+                      </Button>
+                      <Button hiddenFrom="xs" color="gray" variant={ subpageOpened ? "subtle" : "light" }>
+                        <IconHome size={14} />
+                      </Button>
+                    </Link>
                     <Link to={"/" + journalIdToString(docId) + "/robots"}>
                       <Button visibleFrom="xs" color="gray" variant={ route != "robots" ? "subtle" : "light" }>
                         Robots
@@ -189,13 +190,8 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                         <IconChecklist size={14} />
                       </Button>
                     </Link>
-                    <Box hiddenFrom="sm">
-                      <ConnectionStatus docId={docId} />
-                    </Box>
                   </Group>
-                  <Box visibleFrom="sm">
-                    <ConnectionStatus docId={docId} />
-                  </Box>
+                  <ConnectionStatus docId={docId} />
                 </Group>
               </AppShell.Header>
               <AppShell.Navbar zIndex={300} withBorder={true} px="lg" pb="lg">

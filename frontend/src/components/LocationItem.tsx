@@ -43,8 +43,8 @@ export const LocationItem = ({
     if ( locSelection != location.id ) {
       setLocationSelection( location.id );
       setGuiSelection("no selection");
-      navigate( "/" + journalIdToString( docId ) );
     }
+    navigate( "/" + journalIdToString( docId ) );
   };
 
   const { hovered, ref } = useHover();
