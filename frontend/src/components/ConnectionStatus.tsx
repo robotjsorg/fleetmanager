@@ -28,11 +28,11 @@ export const ConnectionStatus = ({ docId }: { docId: JournalId }) => {
   switch (status) {
     case "disabled":
       color = "gray";
-      icon = <IconWifiOff size={14} />;
+      icon = <IconWifiOff size={18} />;
       break;
     case "disconnected":
       color = "gray";
-      icon = <IconWifiOff size={14} />;
+      icon = <IconWifiOff size={18} />;
       break;
     case "connecting":
       color = "yellow";
@@ -40,7 +40,7 @@ export const ConnectionStatus = ({ docId }: { docId: JournalId }) => {
       break;
     case "connected":
       color = "green";
-      icon = <IconWifi size={14} />;
+      icon = <IconWifi size={18} />;
       break;
   }
 

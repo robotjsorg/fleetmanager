@@ -66,6 +66,8 @@ export const Mesh_abb_irb52_7_120 = ({
     document.body.style.cursor = hovered ? 'pointer' : 'auto';
   }, [hovered]);
 
+  // const jointLimits = [[-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2]];
+
   useFrame((_state, delta) => (
     jointAngles[0] += delta,
     jointAngles[1] += delta,

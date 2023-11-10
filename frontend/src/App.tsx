@@ -5,7 +5,7 @@ import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
 import { sql } from "@orbitinghail/sqlsync-react";
 import { useMantineColorScheme, MantineProvider, 
   Text, Box, Button, Divider, AppShell, Group, Burger, Stack, Code } from "@mantine/core";
-import { useViewportSize, useDisclosure } from '@mantine/hooks';
+import { useViewportSize, useDisclosure } from "@mantine/hooks";
 
 import { IconChecklist, IconHome, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react";
 
@@ -77,8 +77,8 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
     const { colorScheme, setColorScheme } = useMantineColorScheme();
     return (
       <Button variant="default"
-        onClick={() => setColorScheme( colorScheme == 'light' ? 'dark' : 'light' )}
-        leftSection={ colorScheme == 'light' ? <IconMoon size={14} /> : <IconSun size={14} /> }>
+        onClick={() => setColorScheme( colorScheme == "light" ? "dark" : "light" )}
+        leftSection={ colorScheme == "light" ? <IconMoon size={18} /> : <IconSun size={18} /> }>
         Theme
       </Button>
     );
@@ -87,14 +87,14 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
   const [initDB, setInitDB] = useState(false);
 
   useEffect(() => {
-    // Set the app's minimum fixed height
+    // Set minimum fixed height
     if ( height > minFixHeight ) {
       setFixHeight( height );
     } else {
       setFixHeight( minFixHeight );
     }
     
-    // Initialize the database if it hasn't been yet
+    // Initialize database
     if (!initDB){
       console.log("[INFO] initDB")
       mutate({ tag: "InitSchema" }).catch(( err ) => {
@@ -151,12 +151,12 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
               }}
               navbar={{
                 width: navbarWidth,
-                breakpoint: 'sm',
+                breakpoint: "sm",
                 collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
               }}
               aside={{
                 width: navbarWidth,
-                breakpoint: 'sm',
+                breakpoint: "sm",
                 collapsed: { mobile: true, desktop: subpageOpened || desktopOpened }
               }}>
               <AppShell.Header>
@@ -171,7 +171,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                         { selectedLocationDescription }
                       </Button>
                       <Button hiddenFrom="xs" color="gray" variant={ subpageOpened ? "subtle" : "light" }>
-                        <IconHome size={14} />
+                        <IconHome size={18} />
                       </Button>
                     </Link>
                     <Link to={"/" + journalIdToString(docId) + "/robots"}>
@@ -179,7 +179,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                         Robots
                       </Button>
                       <Button hiddenFrom="xs" color="gray" variant={ route != "robots" ? "subtle" : "light" }>
-                        <IconRobot size={14} />
+                        <IconRobot size={18} />
                       </Button>
                     </Link>
                     <Link to={"/" + journalIdToString(docId) + "/tasks"}>
@@ -187,7 +187,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                         Tasks
                       </Button>
                       <Button hiddenFrom="xs" color="gray" variant={ route != "tasks" ? "subtle" : "light" }>
-                        <IconChecklist size={14} />
+                        <IconChecklist size={18} />
                       </Button>
                     </Link>
                   </Group>
@@ -203,7 +203,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                 </Stack>
                 <Group justify="center" p="lg">
                   <Link to={"/" + journalIdToString(docId) + "/locations"} onClick={ closeNav }>
-                    <Button leftSection={<IconSettings size={14} />} variant="default">
+                    <Button leftSection={<IconSettings size={18} />} variant="default">
                       Edit
                     </Button>
                   </Link>

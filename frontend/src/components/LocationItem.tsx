@@ -2,7 +2,7 @@ import { useCallback, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
-import { Text, ActionIcon, Group } from "@mantine/core";
+import { Text, ActionIcon, Group, useMantineContext } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 
 import { IconX } from "@tabler/icons-react";
@@ -22,6 +22,7 @@ export const LocationItem = ({
   location: ILocation;
   fbDisabled: boolean;
 }) => {
+  const theme = useMantineContext();
   const { locSelection, setLocationSelection } = useContext( locSelectionContext );
   const { setGuiSelection } = useContext( guiSelectionContext );
 
@@ -53,7 +54,7 @@ export const LocationItem = ({
   };
 
   return (
-    <Group wrap="nowrap" ref={ref} bg={ hovered || selected() ? "gray" : "none" }
+    <Group wrap="nowrap" ref={ref} bg={ hovered || selected() ? theme.colorScheme == "dark" ? "#2a2c30" : "#f3f3f4" : "none" }
       onClick={ handleLocationSelect }
       justify="space-between" gap="sm" px={12} py={4}
       styles={{

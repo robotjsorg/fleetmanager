@@ -1,9 +1,8 @@
 import { useContext } from "react";
 
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment, ContactShadows, Grid } from "@react-three/drei"; // GizmoHelper, GizmoViewport
-import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
-
+import { OrbitControls, Grid } from "@react-three/drei"; // GizmoHelper, GizmoViewport, Environment, ContactShadows
+import { Selection, Select, EffectComposer, Outline } from "@react-three/postprocessing";
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locSelectionContext } from "../context/locSelectionContext";
@@ -22,16 +21,20 @@ export const Fleetmanager = () => {
 
   // onPointerMissed={() => setGuiSelection("no selection")}
   return ( 
-    <Canvas camera={{ position: [0, 3, 3], near: 0.01, far: 20 }}>
-      <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
+    <Canvas dpr={[1, 2]} camera={{ position: [0, 3, 3], near: 0.01, far: 20 }}>
+      {/* <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
         preset={ locSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 
         : locSelection == "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d" ? "apartment" 
-        : "city" } />
-      <ambientLight />
-      <directionalLight />
+        : "city" } /> */}
+      {/* <ContactShadows scale={ 150 } position={ [0.33, -0.33, 0.33] } opacity={ 1.5 } /> */}
+      <ambientLight intensity={1} />
+      <directionalLight intensity={1} position={ [5, 5, 5] } />
+      <directionalLight intensity={1} position={ [5, 5, -5] } />
+      <directionalLight intensity={1} position={ [-5, 5, 5] } />
+      <directionalLight intensity={1} position={ [-5, 5, -5] } />
       <Selection>
         <EffectComposer multisampling={8} autoClear={false}>
-          <Outline blur edgeStrength={100} width={1000} />
+          <Outline blur visibleEdgeColor={"blue"} edgeStrength={100} width={1000} />
         </EffectComposer>
         {filteredRobots.map((robot) => (
           <Mesh_abb_irb52_7_120 key={robot.id} robotid={robot.id} selected={guiSelection == robot.id ? true : false} />
@@ -45,12 +48,11 @@ export const Fleetmanager = () => {
       <Mesh_cardboard_box_01 />
       <Mesh_RotatingBox />
       {/* <Urdf /> */}
-      <Grid infiniteGrid={ true } position={ [0, -0.01, 0] } fadeDistance={ 16 } fadeStrength={ 3 } />
-      <ContactShadows scale={ 150 } position={ [0.33, -0.33, 0.33] } opacity={ 1.5 } />
+      <Grid infiniteGrid={ true } position={ [0, -0.01, 0] } fadeDistance={ 25 } fadeStrength={ 5 } cellColor={"blue"} sectionColor={"blue"} />
       <OrbitControls target={ [0, 1, 0] } maxPolarAngle={ Math.PI / 2 } enableZoom={ false } enablePan={ false } />
       {/* Breaks outlines */}
       {/* <GizmoHelper alignment="bottom-right" margin={ [80, 80] }>
-        <GizmoViewport axisColors={['#9d4b4b', '#2f7f4f', '#3b5b9d']} labelColor="white" />
+        <GizmoViewport axisColors={["#9d4b4b", "#2f7f4f", "#3b5b9d"]} labelColor="white" />
       </GizmoHelper> */}
     </Canvas>
   );

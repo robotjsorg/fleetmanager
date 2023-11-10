@@ -1,6 +1,7 @@
 import { useCallback, useContext } from "react";
 
-import { Text, ActionIcon, Group } from "@mantine/core";
+import { JournalId } from "@orbitinghail/sqlsync-worker";
+import { Text, ActionIcon, Group, useMantineContext } from "@mantine/core";
 import { useHover } from '@mantine/hooks';
 
 import { IconX } from "@tabler/icons-react";
@@ -9,7 +10,6 @@ import { useMutate } from "../doctype";
 import { IRobot } from "../@types/robot";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
-import { JournalId } from "@orbitinghail/sqlsync-worker";
 
 export const RobotItem = ({
   docId,
@@ -20,6 +20,7 @@ export const RobotItem = ({
   robot: IRobot;
   fbDisabled: boolean;
 }) => {
+  const theme = useMantineContext();
   const mutate = useMutate( docId );
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteRobot", id: robot.id })
@@ -41,7 +42,7 @@ export const RobotItem = ({
   };
   
   return (
-    <Group wrap="nowrap" ref={ref} bg={ ( fbDisabled && hovered ) || selected() ? "gray" : "none" }
+    <Group wrap="nowrap" ref={ref} bg={ ( fbDisabled && hovered ) || selected() ? theme.colorScheme == "dark" ? "#2a2c30" : "#f3f3f" : "none" }
       onClick={ handleSelect }
       justify="space-between" gap="sm" px={12} py={4}
       styles={{
