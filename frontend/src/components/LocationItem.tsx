@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
 import { Text, ActionIcon, Group } from "@mantine/core";
+import { useHover } from "@mantine/hooks";
 
 import { IconX } from "@tabler/icons-react";
 
@@ -10,7 +11,7 @@ import { useMutate } from "../doctype";
 import { ILocation } from "../@types/location";
 
 import { locSelectionContext } from "../context/locSelectionContext";
-import { useHover } from "@mantine/hooks";
+import { guiSelectionContext } from "../context/guiSelectionContext";
 
 export const LocationItem = ({
   docId,
@@ -22,6 +23,7 @@ export const LocationItem = ({
   fbDisabled: boolean;
 }) => {
   const { locSelection, setLocationSelection } = useContext( locSelectionContext );
+  const { setGuiSelection } = useContext( guiSelectionContext );
 
   const mutate = useMutate( docId );
   const handleDelete = useCallback(() => {
@@ -38,8 +40,11 @@ export const LocationItem = ({
 
   const navigate = useNavigate();
   const handleLocationSelect = () => {
-    setLocationSelection( location.id );
-    navigate( "/" + journalIdToString( docId ) );
+    if ( locSelection != location.id ) {
+      setLocationSelection( location.id );
+      setGuiSelection("no selection");
+      navigate( "/" + journalIdToString( docId ) );
+    }
   };
 
   const { hovered, ref } = useHover();

@@ -18,8 +18,9 @@ export const Fleetmanager = () => {
   const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
   const filteredRobots = robots.filter(( robot )=>( robot.locationid == locSelection ));
 
-  return (
-    <Canvas camera={{ position: [0, 3, 3], near: 0.01, far: 20 }} onPointerMissed={() => setGuiSelection("no selection")}> 
+  // onPointerMissed={() => setGuiSelection("no selection")}
+  return ( 
+    <Canvas camera={{ position: [0, 3, 3], near: 0.01, far: 20 }}>
       <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
         preset={ locSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 
         : locSelection == "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d" ? "apartment" 

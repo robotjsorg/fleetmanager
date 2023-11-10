@@ -30,7 +30,9 @@ export const RobotItem = ({
 
   const { guiSelection, setGuiSelection } = useContext(guiSelectionContext);
   const handleSelect = () => {
-    setGuiSelection(robot.id);
+    if ( fbDisabled ) { // Counter-intuitive
+      setGuiSelection(robot.id);
+    }
   };
 
   const { hovered, ref } = useHover();
@@ -39,7 +41,7 @@ export const RobotItem = ({
   };
   
   return (
-    <Group wrap="nowrap" ref={ref} bg={ fbDisabled && ( hovered || selected() ) ? "gray" : "none" }
+    <Group wrap="nowrap" ref={ref} bg={ ( fbDisabled && hovered ) || selected() ? "gray" : "none" }
       onClick={ handleSelect }
       justify="space-between" gap="sm" px={12} py={4}
       styles={{

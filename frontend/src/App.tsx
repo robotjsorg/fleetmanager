@@ -131,37 +131,16 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
   );
 
   // Selected location description
-  let selectedLocationDescription = "no selection"
+  let selectedLocationDescription = ""
   if ( Array.isArray( locations ) && locations.length > 0 ) {
     const selectedLocation = locations.filter(( location ) => ( location.id == locSelection ));
     if ( Array.isArray( selectedLocation ) && selectedLocation.length > 0 ) {
       selectedLocationDescription = selectedLocation[0].description;
     }
   }
-  
-  const sameLocation = () => {
-    let selectedRobotLocationId = ""
-    if ( Array.isArray( robots ) && robots.length > 0 ) {
-      const selectedRobot = robots.filter(( robot ) => (robot.id == guiSelection));
-      if ( Array.isArray( selectedRobot ) && selectedRobot.length > 0 ) {
-        selectedRobotLocationId = selectedRobot[0].locationid;
-      }
-    }
-    return (
-      selectedRobotLocationId == locSelection
-    );
-  };
-
-  const deselectAndCloseNav = () => {
-    if ( !sameLocation() ) {
-      setGuiSelection("no selection");  
-    }
-    closeNav();
-  }
 
   return (
     <MantineProvider defaultColorScheme="dark">
-
       <RobotProvider locations={locations ?? []} robots={robots ?? []} tasks={tasks ?? []}>
         <locSelectionContext.Provider value={{ locSelection, setLocationSelection }}>
           <guiSelectionContext.Provider value={{ guiSelection, setGuiSelection }}>
@@ -183,7 +162,6 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
               <AppShell.Header>
                 <Group h="100%" px="md" justify="space-between" wrap="nowrap">
                   <Box>
-                    {/* TODO: Merge Burger Icons */}
                     <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
                     <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
                   </Box>
@@ -223,7 +201,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
               <AppShell.Navbar zIndex={300} withBorder={true} px="lg" pb="lg">
                 <Stack h={ fixHeight - navBarOffset }>
                   <Divider label="Locations" labelPosition="center" />
-                  <Box onClick={ deselectAndCloseNav }>
+                  <Box onClick={ closeNav }>
                     <LocationList docId={docId} fbDisabled={true} />
                   </Box>
                 </Stack>
@@ -268,7 +246,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                     <Divider label="Robots" labelPosition="center" />
                     <RobotList docId={docId} fbDisabled={true} />
                   </Stack>
-                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 3 } onClick={() => setGuiSelection("no selection")}>
+                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 3 }>
                     <Divider label="Tasks" labelPosition="center" />
                     <TaskList docId={docId} fbDisabled={true} />
                   </Stack>
