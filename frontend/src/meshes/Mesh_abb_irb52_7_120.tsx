@@ -47,7 +47,7 @@ const randomRotation = () => {
   return [-Math.PI / 2, 0, z] as Euler;
 }
 
-export const RobotMesh = ({
+export const Mesh_abb_irb52_7_120 = ({
   robotid,
   selected
 } : {

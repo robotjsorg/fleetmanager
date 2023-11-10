@@ -30,7 +30,7 @@ const randomRotation = () => {
   return [0, y, 0] as Euler;
 }
 
-export function BoxMesh() {
+export function Mesh_cardboard_box_01() {
   const { nodes, materials } = useGLTF( filepath ) as GLTFResult;
   const [ position ] = useState( randomPosition() );
   const [ rotation ] = useState( randomRotation() );

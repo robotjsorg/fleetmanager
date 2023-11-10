@@ -8,10 +8,11 @@ import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locSelectionContext } from "../context/locSelectionContext";
 
-import { RobotMesh } from "../components/RobotMesh";
-import { BoxMesh } from "../components/BoxMesh";
 // import { Urdf } from "../components/Urdf";
-import { MyRotatingBox } from "../components/MyRotatingBox";
+
+import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
+import { Mesh_cardboard_box_01 } from "../meshes/Mesh_cardboard_box_01";
+import { Mesh_RotatingBox } from "../meshes/Mesh_RotatingBox";
 
 export const Fleetmanager = () => {
   const { robots } = useContext( RobotContext );
@@ -26,24 +27,24 @@ export const Fleetmanager = () => {
         preset={ locSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 
         : locSelection == "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d" ? "apartment" 
         : "city" } />
-      {/* <Urdf /> */}
+      <ambientLight />
+      <directionalLight />
       <Selection>
         <EffectComposer multisampling={8} autoClear={false}>
           <Outline blur edgeStrength={100} width={1000} />
         </EffectComposer>
         {filteredRobots.map((robot) => (
-          <RobotMesh key={robot.id} robotid={robot.id} selected={guiSelection == robot.id ? true : false} />
+          <Mesh_abb_irb52_7_120 key={robot.id} robotid={robot.id} selected={guiSelection == robot.id ? true : false} />
         ))}
-        <BoxMesh />
-        <BoxMesh />
-        <BoxMesh />
-        <BoxMesh />
-        <BoxMesh />
-        <BoxMesh />
-        <MyRotatingBox />
-        <ambientLight />
-        <directionalLight />
       </Selection>
+      <Mesh_cardboard_box_01 />
+      <Mesh_cardboard_box_01 />
+      <Mesh_cardboard_box_01 />
+      <Mesh_cardboard_box_01 />
+      <Mesh_cardboard_box_01 />
+      <Mesh_cardboard_box_01 />
+      <Mesh_RotatingBox />
+      {/* <Urdf /> */}
       <Grid infiniteGrid={ true } position={ [0, -0.01, 0] } fadeDistance={ 16 } fadeStrength={ 3 } />
       <ContactShadows scale={ 150 } position={ [0.33, -0.33, 0.33] } opacity={ 1.5 } />
       <OrbitControls target={ [0, 1, 0] } maxPolarAngle={ Math.PI / 2 } enableZoom={ false } enablePan={ false } />
