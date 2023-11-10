@@ -1,16 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable prefer-const */
 /* eslint-disable react/no-unknown-property */
 import { useRef, useContext, useState } from "react";
 
 import { Euler, useFrame, Vector3 } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { Select } from "@react-three/postprocessing";
-import { GLTF } from "three-stdlib"; //, ColladaLoader
-
-// import "@tweenjs/tween.js";
-// import createjs from "@types/tweenjs";
+import { GLTF } from "three-stdlib";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
@@ -56,62 +50,12 @@ export const RobotMesh = ({
   selected: boolean;
 }) => {
   const ref = useRef<THREE.Mesh>(null!);
-  // ("abb_irb52_7_120.gltf")
-  const { nodes, materials } = useGLTF("../../assets/gltf/abb_irb52_7_120.gltf") as GLTFResult;
+  const { nodes, materials } = useGLTF("../../assets/gltf/abb_irb52_7_120.glb") as GLTFResult;
   const { setGuiSelection } = useContext( guiSelectionContext );
   const [ hovered, hover ] = useState( false );
   const [ position ] = useState( randomPosition() );
   const [ rotation ] = useState( randomRotation() );
   const [ jointAngles ] = useState( [ 0, 0, 0, 0, 0, 0 ] );
-
-  // let kinematics: object = {joints: null}
-  // let kinematicsTween;
-  // let tweenParameters = {};
-  // const loader = new ColladaLoader();
-  // loader.load( './dae/abb_irb52_7_120.dae', function ( collada ) {
-  //   let dae = collada.scene;
-  //   dae.traverse( function ( child ) {
-  //     if ( child instanceof THREE.Mesh ) {
-  //       // model does not have normals
-  //       child.material.flatShading = true;
-  //     }
-  //   } );
-  //   dae.scale.x = dae.scale.y = dae.scale.z = 10.0;
-  //   dae.updateMatrix();
-  //   kinematics = collada.kinematics; // loader.jointIndex;
-  //   // init(); // deprecated to react-three-fiber
-  //   // animate(); // deprecated to useFrame()
-  //   onload
-  // });
-  // const setupTween = () => {
-  //   const duration = Math.random() * 4000 + 1000;
-  //   let target = {};
-  //   // array1.forEach((element) => console.log(element));
-  //   kinematics.joints.forEach(( joint )=>(
-  //     joint.hasOwnProperty
-  //     if ( joint.hasOwnProperty() ) {
-  //       if ( ! kinematics.joints[ prop ].static ) {
-  //         // let joint = kinematics.joints[ prop ];
-  //         let old = tweenParameters[ prop ];
-  //         let position = old ? old : joint.zeroPosition;
-  //         tweenParameters[ prop ] = position;
-  //         target[ prop ] = Math.random() * (joint.limits.max - joint.limits.min) + joint.limits.min;
-  //       }
-  //     }
-  //   ));
-  // };
-  // kinematicsTween = Tween( tweenParameters ).to( target, duration ).easing( Easing.Quadratic.Out );
-  // kinematicsTween.onUpdate( function() {
-  //   for ( let prop in kinematics.joints ) {
-  //     if ( kinematics.joints.hasOwnProperty( prop ) ) {
-  //       if ( ! kinematics.joints[ prop ].static ) {
-  //         kinematics.setJointValue( prop, this[ prop ] );
-  //       }
-  //     }
-  //   }
-  // });
-  // kinematicsTween.start();
-  // setTimeout( setupTween, duration );
 
   useFrame((_state, delta) => (
     jointAngles[0] += delta,
@@ -195,5 +139,4 @@ export const RobotMesh = ({
   );
 }
 
-// ("abb_irb52_7_120.gltf")
-useGLTF.preload("../../assets/gltf/abb_irb52_7_120.gltf");
+useGLTF.preload("../../assets/gltf/abb_irb52_7_120.glb");

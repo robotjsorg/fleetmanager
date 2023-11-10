@@ -35,6 +35,7 @@ export const LocationForm = ({ docId }: { docId: JournalId; }) => {
           mutate({ tag: "CreateLocation", id, description })
             .then(() => {
               setLocationSelection( id );
+              form.reset();
             })
             .catch((err) => {
               form.setFieldError('description', String(err));

@@ -1,22 +1,21 @@
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Box, Divider } from "@mantine/core";
+import { Stack, Box, Divider } from "@mantine/core";
 
 import { RobotList } from "../components/RobotList";
 // import { RobotTable } from "../components/RobotTable";
 import { RobotForm } from "../components/RobotForm";
 
-export const RobotsView = ({ docId }: { docId: JournalId }) => {  
+export const RobotsView = ({ docId, h }: { docId: JournalId; h: number; }) => {  
   return (
     <>
       <Divider />
-      <Box p="lg">
+      <Stack h={h} p="lg">
         <RobotList docId={docId} fbDisabled={false}/>
-        {/* <Divider my="lg" />
-        <RobotTable /> */}
-        <Divider my="lg" />
-        <Box maw={400} mx="auto">
-          <RobotForm docId={docId}/>
-        </Box>
+        {/* <RobotTable /> */}
+      </Stack>
+      <Divider my="lg" />
+      <Box maw={400} mx="auto">
+        <RobotForm docId={docId}/>
       </Box>
     </>
   );

@@ -50,12 +50,19 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
     );
   };
 
+  // Hardcoded height offsets
+  const minFixHeight = 640;
+  const navBarOffset = 155; // topbar 60 + btns 36 + padding 40 + divider 19
+  const fmOffset = 61; // topbar 60 + divider 1
+  const fmWidgetOffset = 117; // topbar 60 + divider (19 * 3)
+  const viewOffset = 222; // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
+
   const [initDB, setInitDB] = useState(false);
   useEffect(() => {
-    if ( height > 640 ) {
+    if ( height > minFixHeight ) {
       setFixHeight( height );
     } else {
-      setFixHeight( 640 );
+      setFixHeight( minFixHeight );
     }
     
     if (!initDB){
@@ -159,47 +166,43 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                 </Group>
               </AppShell.Header>
               <AppShell.Navbar withBorder={true} px="lg" pb="lg">
-                <AppShell.Section grow>
+                <Stack h={ fixHeight - navBarOffset } onClick={ deselectAndCloseNav }>  
                   <Divider label="Locations" labelPosition="center" />
-                  <Box onClick={ deselectAndCloseNav }>  
-                    <LocationList docId={docId} fbDisabled={true} />
-                  </Box>
-                </AppShell.Section>
-                <AppShell.Section>
-                  <Group justify="center">
-                    <Link to={"/" + journalIdToString(docId) + "/locations"} onClick={ closeNav }>
-                      <Button leftSection={<IconSettings size={14} />} variant="default">
-                        Edit
-                      </Button>
-                    </Link>
-                    <ToggleMantineTheme />
-                  </Group>
-                </AppShell.Section>
+                  <LocationList docId={docId} fbDisabled={true} />
+                </Stack>
+                <Group justify="center" p="lg">
+                  <Link to={"/" + journalIdToString(docId) + "/locations"} onClick={ closeNav }>
+                    <Button leftSection={<IconSettings size={14} />} variant="default">
+                      Edit
+                    </Button>
+                  </Link>
+                  <ToggleMantineTheme />
+                </Group>
               </AppShell.Navbar>
               <AppShell.Main onClick={ closeNav }>
                 { route == "locations" ?
-                <LocationsView docId={docId} />
+                <LocationsView docId={docId} h={ fixHeight - viewOffset } />
                 : route == "robots" ?
-                <RobotsView docId={docId} />
+                <RobotsView docId={docId} h={ fixHeight - viewOffset } />
                 : route == "tasks" ?
-                <TasksView docId={docId} />
+                <TasksView docId={docId} h={ fixHeight - viewOffset } />
                 : // route == "default"
-                <Box h={ fixHeight - 61 }>
+                <Box h={ fixHeight - fmOffset }>
                   <Divider />
                   <Fleetmanager />
                 </Box> }
               </AppShell.Main>
               <AppShell.Aside withBorder={true} px="lg">
                 <Stack>
-                  <Stack h={ ( fixHeight - 60 ) / 3 - 11 }>
+                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 3 }>
                     <Divider label="Robots" labelPosition="center" />
                     <RobotList docId={docId} fbDisabled={true} />
                   </Stack>
-                  <Stack h={ ( fixHeight - 60 ) / 3 - 11 } onClick={() => setGuiSelection("no selection")}>
+                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 3 } onClick={() => setGuiSelection("no selection")}>
                     <Divider label="Tasks" labelPosition="center" />
                     <TaskList docId={docId} fbDisabled={true} />
                   </Stack>
-                  <Stack h={ ( fixHeight - 60 ) / 3 - 11 }>
+                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 3 }>
                     <Divider label="Selection" labelPosition="center" />
                     <GuiSelection docId={docId} />
                   </Stack>

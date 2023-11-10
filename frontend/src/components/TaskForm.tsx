@@ -38,6 +38,9 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
         } else {
           const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
           mutate({ tag: "CreateTask", id, robotid: robot, description })
+            .then(() => {
+              form.reset();
+            })
             .catch((err) => {
               form.setFieldError('description', String(err));
               form.setErrors({ robot: String(err), description: String(err) });
@@ -55,6 +58,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           label="Robot"
           description="Select which robot"
           placeholder="Select robot"
+          clearable
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           data={( filteredRobots ).map(( robot ) => (
@@ -66,6 +70,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           label="New Task"
           description="Select discrete task"
           placeholder="Select task"
+          clearable
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           data={['Idle', 'Spin Around']} // , 'Manual', 'Automatic', 'Home', 'Move A', 'Move B', 'Clamp', 'Unclamp'

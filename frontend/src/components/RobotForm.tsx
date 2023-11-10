@@ -38,6 +38,7 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
           mutate({ tag: "CreateRobot", id, locationid: locSelection, description })
             .then(() => {
               setGuiSelection(id);
+              form.reset();
             })
             .catch(( err ) => {
               form.setFieldError('description', String(err));
