@@ -2,7 +2,7 @@ import { useContext } from "react";
 
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid } from "@react-three/drei"; // GizmoHelper, GizmoViewport, Environment, ContactShadows
-import { Selection, Select, EffectComposer, Outline } from "@react-three/postprocessing";
+import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locSelectionContext } from "../context/locSelectionContext";
