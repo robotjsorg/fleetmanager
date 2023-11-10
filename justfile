@@ -21,6 +21,5 @@ upload-reducer target='local':
     fi
 
 prep-frontend:
-    cp ./frontend/remoteindex.html ./frontend/index.html
     cp -r ./frontend/assets/gltf/ ./frontend/dist/
     cp -r ./frontend/assets/favicon/ ./frontend/dist/

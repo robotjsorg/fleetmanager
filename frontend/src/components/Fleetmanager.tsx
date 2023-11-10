@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unknown-property */
 import { useContext } from "react";
 
 import { Canvas } from "@react-three/fiber";
