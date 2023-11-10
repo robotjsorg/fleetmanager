@@ -175,7 +175,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                     <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
                     <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
                   </Box>
-                  <Group>
+                  <Group gap="xs">
                     <Link to={ "/" + journalIdToString(docId) }>
                       <Button color="gray" variant={ subpageOpened ? "subtle" : "light" }>
                         { selectedLocationDescription }

@@ -8,6 +8,11 @@ import { GLTF } from "three-stdlib";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
+const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168");
+const localFilepath = "../../assets/gltf/";
+const filename = "abb_irb52_7_120.glb";
+const filepath = isLocalhost ? localFilepath + filename : filename;
+
 type GLTFResult = GLTF & {
   nodes: {
     abb_irb52_7_120: THREE.Mesh;
@@ -50,7 +55,7 @@ export const RobotMesh = ({
   selected: boolean;
 }) => {
   const ref = useRef<THREE.Mesh>(null!);
-  const { nodes, materials } = useGLTF("../../assets/gltf/abb_irb52_7_120.glb") as GLTFResult;
+  const { nodes, materials } = useGLTF( filepath ) as GLTFResult;
   const { setGuiSelection } = useContext( guiSelectionContext );
   const [ hovered, hover ] = useState( false );
   const [ position ] = useState( randomPosition() );
@@ -143,4 +148,4 @@ export const RobotMesh = ({
   );
 }
 
-useGLTF.preload("../../assets/gltf/abb_irb52_7_120.glb");
+useGLTF.preload( filepath );

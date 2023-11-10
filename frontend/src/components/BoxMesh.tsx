@@ -8,6 +8,11 @@ import { useGLTF } from "@react-three/drei";
 import { GLTF } from "three-stdlib";
 import { Euler, Vector3 } from "@react-three/fiber";
 
+const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168");
+const localFilepath = "../../assets/gltf/";
+const filename = "cardboard_box_01_4k.gltf";
+const filepath = isLocalhost ? localFilepath + filename : filename;
+
 type GLTFResult = GLTF & {
   nodes: {
     cardboard_box_01: THREE.Mesh;
@@ -30,7 +35,7 @@ const randomRotation = () => {
 }
 
 export function BoxMesh() {
-  const { nodes, materials } = useGLTF("../../assets/gltf/cardboard_box_01_4k.gltf") as GLTFResult;
+  const { nodes, materials } = useGLTF( filepath ) as GLTFResult;
   const [ position ] = useState( randomPosition() );
   const [ rotation ] = useState( randomRotation() );
 
@@ -48,4 +53,4 @@ export function BoxMesh() {
   );
 }
 
-useGLTF.preload("../../assets/gltf/cardboard_box_01_4k.gltf");
+useGLTF.preload( filepath );

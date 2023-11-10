@@ -2,20 +2,25 @@ SQLSYNC_PROD_URL := "https://api.robotjs.org"
 
 wasm-reducer:
     #!/usr/bin/env bash
+    echo "[INFO] Building reducer"
     cd reducer && cargo build --target wasm32-unknown-unknown --package reducer '--release'
 
 upload-reducer target='local':
     #!/usr/bin/env bash
-    echo "[INFO] Rebuilding reducer"
     just wasm-reducer
     set -euo pipefail
     cd ../sqlsync/demo/cloudflare-backend
     REDUCER_PATH="../../../fleetmanager/reducer/target/wasm32-unknown-unknown/release/reducer.wasm"
     
     if [[ '{{target}}' = 'remote' ]]; then
-        echo "Uploading $REDUCER_PATH to sqlsync prod"
+        echo "[INFO] Uploading $REDUCER_PATH to {SQLSYNC_PROD_URL}}"
         curl -X PUT --data-binary @$REDUCER_PATH {{SQLSYNC_PROD_URL}}/reducer
     else
-        echo "Uploading $REDUCER_PATH to localhost:8787"
+        echo "[INFO] Uploading $REDUCER_PATH to localhost:8787"
         curl -X PUT --data-binary @$REDUCER_PATH http://localhost:8787/reducer
     fi
+
+prep-frontend:
+    cp ./frontend/remoteindex.html ./frontend/index.html
+    cp -r ./frontend/assets/gltf/ ./frontend/dist/
+    cp -r ./frontend/assets/favicon/ ./frontend/dist/
