@@ -34,8 +34,8 @@ export const TaskItem = ({
   }, [task.id, mutate]);
 
   return (
-    <Group justify="space-between" gap="sm" px={12} py={4}>
-      <Group>
+    <Group wrap="nowrap" justify="space-between" gap="sm" px={12} py={4}>
+      <Group wrap="nowrap">
         <Checkbox checked={ task.completed } onChange={ handleToggleCompleted } color="gray" />
         <Text>
           { robot.description }: { task.description }

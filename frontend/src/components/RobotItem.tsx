@@ -39,7 +39,7 @@ export const RobotItem = ({
   };
   
   return (
-    <Group ref={ref} bg={ fbDisabled && ( hovered || selected() ) ? "gray" : "none" }
+    <Group wrap="nowrap" ref={ref} bg={ fbDisabled && ( hovered || selected() ) ? "gray" : "none" }
       onClick={ handleSelect }
       justify="space-between" gap="sm" px={12} py={4}
       styles={{

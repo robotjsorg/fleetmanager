@@ -7,7 +7,7 @@ import { useMantineColorScheme, MantineProvider,
   Text, Box, Button, Divider, AppShell, Group, Burger, Stack, Code } from "@mantine/core";
 import { useViewportSize, useDisclosure } from '@mantine/hooks';
 
-import { IconMoon, IconSettings, IconSun } from "@tabler/icons-react";
+import { IconChecklist, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react";
 
 import { useMutate, useQuery } from "./doctype";
 import { ILocation } from "./@types/location";
@@ -35,13 +35,25 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
   const [ guiSelection, setGuiSelection ] = useState("no selection");
 
   // Single screen desktop app, no scrolling
-  const { height } = useViewportSize();
+  const { width, height } = useViewportSize();
   const [ fixHeight, setFixHeight ] = useState( height );
 
   // Hardcoded single screen app offsets
+  let minFixHeight = height;
+  if ( width > 1440 ) {
+    minFixHeight = 620;
+  } else if ( width > 1280 ) {
+    minFixHeight = 480;
+  } else if ( width > 960 ) {
+    minFixHeight = 320;
+  } else if ( width > 640 ) {
+    minFixHeight = 240;
+  } else if ( width < 480 ) {
+    minFixHeight = 160;
+  }
+
   const navbarWidth = 300;
   const headerHeight = 60;
-  const minFixHeight = 400;
   const navBarOffset = 155; // topbar 60 + btns 36 + padding 40 + divider 19
   const fmOffset = 61; // topbar 60 + divider 1
   const fmWidgetOffset = 117; // topbar 60 + divider (19 * 3)
@@ -101,7 +113,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
     return () => {
       setInitDB(true);
     };
-  }, [height, initDB, locSelection, mutate]);
+  }, [height, initDB, locSelection, minFixHeight, mutate]);
 
   // Query DB: Is there a more efficient location for this?
   // in useEffect()? 
@@ -169,26 +181,34 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                 collapsed: { mobile: true, desktop: subpageOpened || desktopOpened }
               }}>
               <AppShell.Header>
-                <Group h="100%" px="md" justify="space-between">
+                <Group h="100%" px="md" justify="space-between" wrap="nowrap">
                   <Box>
                     {/* TODO: Merge Burger Icons */}
                     <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
                     <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
                   </Box>
-                  <Group gap="xs">
-                    <Link to={ "/" + journalIdToString(docId) }>
-                      <Button color="gray" variant={ subpageOpened ? "subtle" : "light" }>
-                        { selectedLocationDescription }
-                      </Button>
-                    </Link>
+                  <Group wrap="nowrap" gap="xs">
+                    <Box visibleFrom="xs">
+                      <Link to={ "/" + journalIdToString(docId) }>
+                        <Button color="gray" variant={ subpageOpened ? "subtle" : "light" }>
+                          { selectedLocationDescription }
+                        </Button>
+                      </Link>
+                    </Box>
                     <Link to={"/" + journalIdToString(docId) + "/robots"}>
-                      <Button color="gray" variant={ route != "robots" ? "subtle" : "light" }>
+                      <Button visibleFrom="xs" color="gray" variant={ route != "robots" ? "subtle" : "light" }>
                         Robots
+                      </Button>
+                      <Button hiddenFrom="xs" color="gray" variant={ route != "robots" ? "subtle" : "light" }>
+                        <IconRobot size={14} />
                       </Button>
                     </Link>
                     <Link to={"/" + journalIdToString(docId) + "/tasks"}>
-                      <Button color="gray" variant={ route != "tasks" ? "subtle" : "light" }>
+                      <Button visibleFrom="xs" color="gray" variant={ route != "tasks" ? "subtle" : "light" }>
                         Tasks
+                      </Button>
+                      <Button hiddenFrom="xs" color="gray" variant={ route != "tasks" ? "subtle" : "light" }>
+                        <IconChecklist size={14} />
                       </Button>
                     </Link>
                     <Box hiddenFrom="sm">

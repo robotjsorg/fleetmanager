@@ -48,7 +48,7 @@ export const LocationItem = ({
   };
 
   return (
-    <Group ref={ref} bg={ hovered || selected() ? "gray" : "none" }
+    <Group wrap="nowrap" ref={ref} bg={ hovered || selected() ? "gray" : "none" }
       onClick={ handleLocationSelect }
       justify="space-between" gap="sm" px={12} py={4}
       styles={{
