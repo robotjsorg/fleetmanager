@@ -5,11 +5,9 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment, ContactShadows, Grid } from "@react-three/drei"; // GizmoHelper, GizmoViewport
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
 
-import { IRobot } from "../@types/robot";
-
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
-import { locationSelectionContext } from "../context/locationSelectionContext";
+import { locSelectionContext } from "../context/locSelectionContext";
 
 import { RobotMesh } from "../components/RobotMesh";
 import { BoxMesh } from "../components/BoxMesh";
@@ -18,14 +16,14 @@ import { BoxMesh } from "../components/BoxMesh";
 export const Fleetmanager = () => {
   const { robots } = useContext( RobotContext );
   const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
-  const { locationSelection } = useContext( locationSelectionContext );
-  const filteredRobots = robots.filter(( robot )=>( robot.locationid == locationSelection ));
+  const { locSelection } = useContext( locSelectionContext );
+  const filteredRobots = robots.filter(( robot )=>( robot.locationid == locSelection ));
 
   return (
     <Canvas camera={{ position: [0, 3, 3], near: 0.01, far: 20 }} onPointerMissed={() => setGuiSelection("no selection")}> 
       <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
-        preset={ locationSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 
-        : locationSelection == "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d" ? "apartment" 
+        preset={ locSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 
+        : locSelection == "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d" ? "apartment" 
         : "city" } />
       {/* <Urdf /> */}
       <Selection>

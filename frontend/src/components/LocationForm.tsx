@@ -9,11 +9,11 @@ import { v4 as uuidv4 } from "uuid";
 import { useMutate } from "../doctype";
 
 import { RobotContext } from "../context/robotContext";
-import { locationSelectionContext } from "../context/locationSelectionContext";
+import { locSelectionContext } from "../context/locSelectionContext";
 
 export const LocationForm = ({ docId }: { docId: JournalId; }) => {
   const { locations } = useContext( RobotContext );
-  const { setLocationSelection } = useContext( locationSelectionContext );
+  const { setLocationSelection } = useContext( locSelectionContext );
 
   const form = useForm({
     initialValues: {

@@ -3,7 +3,7 @@ import { useContext, useMemo } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { InlineCodeHighlight } from "@mantine/code-highlight";
-import { Alert, Center, Code, Flex, ScrollArea, Title } from "@mantine/core";
+import { Alert, Code, ScrollArea } from "@mantine/core";
 
 import { IconAlertCircle } from "@tabler/icons-react";
 
@@ -40,15 +40,8 @@ export const GuiSelection = ({docId}: {docId: JournalId}) => {
   }
 
   return (
-    <>
-      <Flex>
-        <Center component={Title} order={5}>
-          Selection
-        </Center>
-      </Flex>
-      <ScrollArea type="auto">
-        {output}
-      </ScrollArea>
-    </>
+    <ScrollArea type="auto">
+      {output}
+    </ScrollArea>
   );
 };

@@ -9,12 +9,12 @@ import { v4 as uuidv4 } from "uuid";
 import { useMutate } from "../doctype";
 
 import { RobotContext } from "../context/robotContext";
-import { locationSelectionContext } from "../context/locationSelectionContext";
+import { locSelectionContext } from "../context/locSelectionContext";
 
 export const TaskForm = ({ docId }: { docId: JournalId }) => {
   const { robots, tasks } = useContext( RobotContext );
-  const { locationSelection } = useContext( locationSelectionContext );
-  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locationSelection ));
+  const { locSelection } = useContext( locSelectionContext );
+  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ));
   
   const form = useForm({
     initialValues: {

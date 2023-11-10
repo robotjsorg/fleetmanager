@@ -3,12 +3,12 @@ import { useContext } from "react";
 import { Table } from "@mantine/core";
 
 import { RobotContext } from "../context/robotContext";
-import { locationSelectionContext } from "../context/locationSelectionContext";
+import { locSelectionContext } from "../context/locSelectionContext";
 
 export const RobotTable = () => {
   const { robots } = useContext( RobotContext );
-  const { locationSelection } = useContext( locationSelectionContext );
-  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locationSelection ));
+  const { locSelection } = useContext( locSelectionContext );
+  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ));
 
   return (
     <Table>

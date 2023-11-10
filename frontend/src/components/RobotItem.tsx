@@ -41,11 +41,11 @@ export const RobotItem = ({
   return (
     <Group ref={ref} onClick={ handleSelect } justify="space-between" gap="sm" px={12} py={4} 
       bg={ fbDisabled && ( hovered || selected() ) ? "gray" : "none" }>
-      <Text style={{ flex: 1 }}>
+      <Text>
         { robot.description }
       </Text>
       { fbDisabled ? <></> : 
-        <ActionIcon onClick={ handleDelete } color="gray" variant="subtle">
+        <ActionIcon onClick={ handleDelete } color="gray" variant="subtle" size={20}>
           <IconX />
         </ActionIcon>
       }

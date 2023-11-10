@@ -9,7 +9,7 @@ import { IconX } from "@tabler/icons-react";
 import { useMutate } from "../doctype";
 import { ILocation } from "../@types/location";
 
-import { locationSelectionContext } from "../context/locationSelectionContext";
+import { locSelectionContext } from "../context/locSelectionContext";
 import { useHover } from "@mantine/hooks";
 
 export const LocationItem = ({
@@ -21,20 +21,20 @@ export const LocationItem = ({
   location: ILocation;
   fbDisabled: boolean;
 }) => {
-  const { locationSelection, setLocationSelection } = useContext( locationSelectionContext );
+  const { locSelection, setLocationSelection } = useContext( locSelectionContext );
 
   const mutate = useMutate( docId );
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteLocation", id: location.id })
       .then(() => {
-        if ( location.id == locationSelection ) {
+        if ( location.id == locSelection ) {
           setLocationSelection( "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" );
         }
       })
       .catch((err) => {
         console.error("Failed to delete", err);
       });
-  }, [location.id, locationSelection, mutate, setLocationSelection]);
+  }, [location.id, locSelection, mutate, setLocationSelection]);
 
   const navigate = useNavigate();
   const handleLocationSelect = () => {
@@ -44,17 +44,17 @@ export const LocationItem = ({
 
   const { hovered, ref } = useHover();
   const selected = () => { 
-    return locationSelection == location.id;
+    return locSelection == location.id;
   };
 
   return (
     <Group ref={ref} justify="space-between" gap="sm" px={12} py={4}
-      bg={ hovered || selected() ? "gray" : "none" }>
-      <Text style={{ flex: 1 }} onClick={ handleLocationSelect }>
+      bg={ hovered || selected() ? "gray" : "none" } onClick={ handleLocationSelect }>
+      <Text>
         { location.description }
       </Text>
-      { (location.id == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" || fbDisabled) ? <></> : 
-        <ActionIcon onClick={ handleDelete } color="gray" variant="subtle">
+      { (fbDisabled) ? <></> : 
+        <ActionIcon onClick={ handleDelete } color="gray" variant="subtle" size={20}>
           <IconX />
         </ActionIcon>
       }

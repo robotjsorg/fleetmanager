@@ -1,10 +1,10 @@
 import { useContext } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { ScrollArea } from "@mantine/core";
+import { ScrollArea, Text } from "@mantine/core";
 
 import { RobotContext } from "../context/robotContext";
-import { locationSelectionContext } from "../context/locationSelectionContext";
+import { locSelectionContext } from "../context/locSelectionContext";
 
 import { RobotItem } from "./RobotItem";
 
@@ -16,14 +16,16 @@ export const RobotList = ({
   fbDisabled: boolean;
 }) => {
   const { robots } = useContext( RobotContext );
-  const { locationSelection } = useContext( locationSelectionContext );
-  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locationSelection ));
+  const { locSelection } = useContext( locSelectionContext );
+  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ));
 
   return (
     <ScrollArea type="auto">
-      {filteredRobots.map((robot) => (
-        <RobotItem docId={docId} key={robot.id} robot={robot} fbDisabled={fbDisabled} />
-      ))}
+      {filteredRobots.length == 0 ? <Text>No Robots</Text> :
+        filteredRobots.map((robot) => (
+          <RobotItem docId={docId} key={robot.id} robot={robot} fbDisabled={fbDisabled} />
+        ))
+      }
     </ScrollArea>
   );
 };

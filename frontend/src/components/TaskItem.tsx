@@ -1,7 +1,7 @@
 import { useCallback, useContext } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Text, ActionIcon, Checkbox, Group } from "@mantine/core";
+import { Text, ActionIcon, Checkbox, Group, Box } from "@mantine/core";
 
 import { IconX } from "@tabler/icons-react";
 
@@ -35,12 +35,14 @@ export const TaskItem = ({
 
   return (
     <Group justify="space-between" gap="sm" px={12} py={4}>
-      <Checkbox checked={ task.completed } onChange={ handleToggleCompleted } disabled={ task.completed } />
-      <Text style={{ flex: 1 }}>
-      { robot.description } &gt; { task.description }
-      </Text>
+      <Group>
+        <Checkbox checked={ task.completed } onChange={ handleToggleCompleted } color="gray" />
+        <Text>
+          { robot.description }: { task.description }
+        </Text>
+      </Group>
       { fbDisabled ? <></> : 
-        <ActionIcon onClick={ handleDelete } color="gray" variant="subtle">
+        <ActionIcon onClick={ handleDelete } color="gray" variant="subtle" size={20}>
           <IconX />
         </ActionIcon>
       }

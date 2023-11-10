@@ -1,7 +1,7 @@
 import { useContext } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { ScrollArea } from "@mantine/core";
+import { ScrollArea, Text } from "@mantine/core";
 
 import { RobotContext } from "../context/robotContext";
 
@@ -18,9 +18,11 @@ export const LocationList = ({
   
   return (
     <ScrollArea type="auto">
-      {locations.map((location) => (
-        <LocationItem docId={docId} key={location.id} location={location} fbDisabled={fbDisabled} />
-      ))}
+      {locations.length == 0 ? <Text>No Locations</Text> :
+        locations.map((location) => (
+          <LocationItem docId={docId} key={location.id} location={location} fbDisabled={fbDisabled} />
+        ))
+      }
     </ScrollArea>
   );
 };

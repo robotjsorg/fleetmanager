@@ -10,11 +10,11 @@ import { useMutate } from "../doctype";
 
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
-import { locationSelectionContext } from "../context/locationSelectionContext";
+import { locSelectionContext } from "../context/locSelectionContext";
 
 export const RobotForm = ({ docId }: { docId: JournalId }) => {
   const { setGuiSelection } = useContext( guiSelectionContext );
-  const { locationSelection } = useContext( locationSelectionContext );
+  const { locSelection } = useContext( locSelectionContext );
   const { robots } = useContext( RobotContext );
 
   const form = useForm({
@@ -29,13 +29,13 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ description }) => {
-        const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locationSelection ));
+        const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ));
         const robotDescriptions = filteredRobots.map(( robot ) => ( robot.description ));
         if (robotDescriptions.includes(description)) {
           form.setFieldError('description', "Duplicate robot description");
         } else {
           const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
-          mutate({ tag: "CreateRobot", id, locationid: locationSelection, description })
+          mutate({ tag: "CreateRobot", id, locationid: locSelection, description })
             .then(() => {
               setGuiSelection(id);
             })
@@ -45,7 +45,7 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
               form.setValues( { description: "" } );
             });
         }
-      }, [robots, locationSelection, form, mutate, setGuiSelection]
+      }, [robots, locSelection, form, mutate, setGuiSelection]
     )
   );
 
