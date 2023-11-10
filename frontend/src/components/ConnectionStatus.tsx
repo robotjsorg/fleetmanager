@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { useConnectionStatus } from "@orbitinghail/sqlsync-react";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { rem, Button } from "@mantine/core";
+import { Button } from "@mantine/core";
 
 import { IconWifi, IconWifiOff } from "@tabler/icons-react";
 
@@ -28,11 +28,11 @@ export const ConnectionStatus = ({ docId }: { docId: JournalId }) => {
   switch (status) {
     case "disabled":
       color = "gray";
-      icon = <IconWifiOff style={{ width: rem(16), height: rem(16) }} />;
+      icon = <IconWifiOff size={14} />;
       break;
     case "disconnected":
       color = "gray";
-      icon = <IconWifiOff style={{ width: rem(16), height: rem(16) }} />;
+      icon = <IconWifiOff size={14} />;
       break;
     case "connecting":
       color = "yellow";
@@ -40,7 +40,7 @@ export const ConnectionStatus = ({ docId }: { docId: JournalId }) => {
       break;
     case "connected":
       color = "green";
-      icon = <IconWifi style={{ width: rem(16), height: rem(16) }} />;
+      icon = <IconWifi size={14} />;
       break;
   }
 
@@ -48,12 +48,11 @@ export const ConnectionStatus = ({ docId }: { docId: JournalId }) => {
     <Button
       variant="light"
       color={color}
-      rightSection={icon}
+      // rightSection={icon}
       loading={loading}
       onClick={handleClick}
-      size="compact-md"
     >
-      {status}
+      {icon}
     </Button>
   );
 };

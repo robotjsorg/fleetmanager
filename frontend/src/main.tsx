@@ -44,7 +44,7 @@ export const DocRoute = () => {
   } else {
     return (
       <App docId={journalIdFromString( docId )} route={route} />
-    );
+    );  
   }
 };
 

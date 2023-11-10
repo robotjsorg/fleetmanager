@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unknown-property */
-import { useRef, useContext, useState } from "react";
+import { useRef, useContext, useState, useEffect } from "react";
 
 import { Euler, useFrame, Vector3 } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
@@ -56,6 +56,10 @@ export const RobotMesh = ({
   const [ position ] = useState( randomPosition() );
   const [ rotation ] = useState( randomRotation() );
   const [ jointAngles ] = useState( [ 0, 0, 0, 0, 0, 0 ] );
+
+  useEffect(() => {
+    document.body.style.cursor = hovered ? 'pointer' : 'auto';
+  }, [hovered]);
 
   useFrame((_state, delta) => (
     jointAngles[0] += delta,

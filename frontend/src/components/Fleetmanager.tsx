@@ -15,8 +15,8 @@ import { BoxMesh } from "../components/BoxMesh";
 
 export const Fleetmanager = () => {
   const { robots } = useContext( RobotContext );
-  const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
   const { locSelection } = useContext( locSelectionContext );
+  const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
   const filteredRobots = robots.filter(( robot )=>( robot.locationid == locSelection ));
 
   return (

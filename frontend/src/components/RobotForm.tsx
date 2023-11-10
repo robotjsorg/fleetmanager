@@ -13,10 +13,10 @@ import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locSelectionContext } from "../context/locSelectionContext";
 
 export const RobotForm = ({ docId }: { docId: JournalId }) => {
-  const { setGuiSelection } = useContext( guiSelectionContext );
-  const { locSelection } = useContext( locSelectionContext );
   const { robots } = useContext( RobotContext );
-
+  const { locSelection } = useContext( locSelectionContext );
+  const { setGuiSelection } = useContext( guiSelectionContext );
+  
   const form = useForm({
     initialValues: {
       description: ""

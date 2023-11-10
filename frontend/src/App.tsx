@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
 import { sql } from "@orbitinghail/sqlsync-react";
 import { useMantineColorScheme, MantineProvider, 
-  Box, Button, Divider, AppShell, Group, Burger, Stack } from "@mantine/core";
+  Text, Box, Button, Divider, AppShell, Group, Burger, Stack, Code } from "@mantine/core";
 import { useViewportSize, useDisclosure } from '@mantine/hooks';
 
 import { IconMoon, IconSettings, IconSun } from "@tabler/icons-react";
@@ -30,15 +30,37 @@ import { TaskList } from "./components/TaskList";
 import { GuiSelection } from "./components/GuiSelection";
 
 export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
-  const { height } = useViewportSize();
-  const [ fixHeight, setFixHeight ] = useState( height );
   const mutate = useMutate( docId );
   const [ locSelection, setLocationSelection ] = useState("no selection");
   const [ guiSelection, setGuiSelection ] = useState("no selection");
-  const subpageOpened = ( route == "locations" || route == "robots" || route == "tasks" );
+
+  // Single screen desktop app, no scrolling
+  const { height } = useViewportSize();
+  const [ fixHeight, setFixHeight ] = useState( height );
+
+  // Hardcoded single screen app offsets
+  const navbarWidth = 300;
+  const headerHeight = 60;
+  const minFixHeight = 400;
+  const navBarOffset = 155; // topbar 60 + btns 36 + padding 40 + divider 19
+  const fmOffset = 61; // topbar 60 + divider 1
+  const fmWidgetOffset = 117; // topbar 60 + divider (19 * 3)
+  const viewOffset = 222; // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
+
+  // Menu control
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure(false);
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false);
+  const subpageOpened = ( route == "locations" || route == "robots" || route == "tasks" );
+  const closeNav = () => {
+    if ( desktopOpened ) {
+      toggleDesktop();
+    }
+    if ( mobileOpened ) {
+      toggleMobile();
+    }
+  }
 
+  // Has to be a child of MantineProvider
   const ToggleMantineTheme = () => {
     const { colorScheme, setColorScheme } = useMantineColorScheme();
     return (
@@ -50,37 +72,39 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
     );
   };
 
-  // Hardcoded height offsets
-  const minFixHeight = 640;
-  const navBarOffset = 155; // topbar 60 + btns 36 + padding 40 + divider 19
-  const fmOffset = 61; // topbar 60 + divider 1
-  const fmWidgetOffset = 117; // topbar 60 + divider (19 * 3)
-  const viewOffset = 222; // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
-
   const [initDB, setInitDB] = useState(false);
+
   useEffect(() => {
+    // Set the app's minimum fixed height
     if ( height > minFixHeight ) {
       setFixHeight( height );
     } else {
       setFixHeight( minFixHeight );
     }
     
+    // Initialize the database if it hasn't been yet
     if (!initDB){
+      console.log("[INFO] initDB")
       mutate({ tag: "InitSchema" }).catch(( err ) => {
         console.error( "Failed to init schema", err );
       });
       mutate({ tag: "PopulateDB" }).catch(( err ) => {
         console.error( "Failed to populate database", err );
       });
+
+      // Select the "Warehouse" location
       if ( locSelection == "no selection" ) {
         setLocationSelection("c0f67f5f-3414-4e50-9ea7-9ae053aa1f99");
       }
     }
+
     return () => {
       setInitDB(true);
     };
   }, [height, initDB, locSelection, mutate]);
 
+  // Query DB: Is there a more efficient location for this?
+  // in useEffect()? 
   const { rows: locations } = useQuery<ILocation>(
     docId,
     sql`SELECT * FROM locations`
@@ -94,6 +118,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
     sql`SELECT * FROM tasks`
   );
 
+  // Selected location description
   let selectedLocationDescription = "no selection"
   if ( Array.isArray( locations ) && locations.length > 0 ) {
     const selectedLocation = locations.filter(( location ) => ( location.id == locSelection ));
@@ -101,49 +126,56 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
       selectedLocationDescription = selectedLocation[0].description;
     }
   }
+  
+  const sameLocation = () => {
+    let selectedRobotLocationId = ""
+    if ( Array.isArray( robots ) && robots.length > 0 ) {
+      const selectedRobot = robots.filter(( robot ) => (robot.id == guiSelection));
+      if ( Array.isArray( selectedRobot ) && selectedRobot.length > 0 ) {
+        selectedRobotLocationId = selectedRobot[0].locationid;
+      }
+    }
+    return (
+      selectedRobotLocationId == locSelection
+    );
+  };
 
-  const closeNav = () => {
-    if ( desktopOpened ) {
-      toggleDesktop();
-    }
-    if ( mobileOpened ) {
-      toggleMobile();
-    }
-  }
-  // TODO: Retain guiSelection when the same location is selected
   const deselectAndCloseNav = () => {
-    setGuiSelection("no selection");
+    if ( !sameLocation() ) {
+      setGuiSelection("no selection");  
+    }
     closeNav();
   }
-  
+
   return (
     <MantineProvider defaultColorScheme="dark">
+
       <RobotProvider locations={locations ?? []} robots={robots ?? []} tasks={tasks ?? []}>
         <locSelectionContext.Provider value={{ locSelection, setLocationSelection }}>
           <guiSelectionContext.Provider value={{ guiSelection, setGuiSelection }}>
-            <AppShell
+            <AppShell // disabled
               withBorder={false}
               header={{
-                height: 60
+                height: headerHeight
               }}
               navbar={{
-                width: 300,
-                breakpoint: 0,
+                width: navbarWidth,
+                breakpoint: 'sm',
                 collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
               }}
               aside={{
-                width: 300,
-                breakpoint: 0,
-                collapsed: { mobile: subpageOpened, desktop: subpageOpened }
+                width: navbarWidth,
+                breakpoint: 'sm',
+                collapsed: { mobile: true, desktop: subpageOpened || desktopOpened }
               }}>
-              <AppShell.Header onClick={ closeNav }>
+              <AppShell.Header>
                 <Group h="100%" px="md" justify="space-between">
                   <Box>
-                    {/* TODO: One Burger Icon */}
+                    {/* TODO: Merge Burger Icons */}
                     <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
                     <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
                   </Box>
-                  <Box>
+                  <Group>
                     <Link to={ "/" + journalIdToString(docId) }>
                       <Button color="gray" variant={ subpageOpened ? "subtle" : "light" }>
                         { selectedLocationDescription }
@@ -159,16 +191,21 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                         Tasks
                       </Button>
                     </Link>
-                  </Box>
-                  <Box>
+                    <Box hiddenFrom="sm">
+                      <ConnectionStatus docId={docId} />
+                    </Box>
+                  </Group>
+                  <Box visibleFrom="sm">
                     <ConnectionStatus docId={docId} />
                   </Box>
                 </Group>
               </AppShell.Header>
-              <AppShell.Navbar withBorder={true} px="lg" pb="lg">
-                <Stack h={ fixHeight - navBarOffset } onClick={ deselectAndCloseNav }>  
+              <AppShell.Navbar zIndex={300} withBorder={true} px="lg" pb="lg">
+                <Stack h={ fixHeight - navBarOffset }>
                   <Divider label="Locations" labelPosition="center" />
-                  <LocationList docId={docId} fbDisabled={true} />
+                  <Box onClick={ deselectAndCloseNav }>
+                    <LocationList docId={docId} fbDisabled={true} />
+                  </Box>
                 </Stack>
                 <Group justify="center" p="lg">
                   <Link to={"/" + journalIdToString(docId) + "/locations"} onClick={ closeNav }>
@@ -186,11 +223,24 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                 <RobotsView docId={docId} h={ fixHeight - viewOffset } />
                 : route == "tasks" ?
                 <TasksView docId={docId} h={ fixHeight - viewOffset } />
-                : // route == "default"
+                : route == journalIdToString(docId) ? // Fleetmanager
                 <Box h={ fixHeight - fmOffset }>
                   <Divider />
                   <Fleetmanager />
-                </Box> }
+                </Box>
+                : // else: 404
+                <>
+                  <Divider />
+                  <Stack h={fixHeight - fmOffset} p="lg">
+                    <Text c="red">
+                      ERROR invalid URL:&nbsp;
+                      <Code>
+                        /{route}
+                      </Code>
+                    </Text>
+                  </Stack>
+                </>
+                }
               </AppShell.Main>
               <AppShell.Aside withBorder={true} px="lg">
                 <Stack>

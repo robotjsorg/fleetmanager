@@ -48,8 +48,12 @@ export const LocationItem = ({
   };
 
   return (
-    <Group ref={ref} justify="space-between" gap="sm" px={12} py={4}
-      bg={ hovered || selected() ? "gray" : "none" } onClick={ handleLocationSelect }>
+    <Group ref={ref} bg={ hovered || selected() ? "gray" : "none" }
+      onClick={ handleLocationSelect }
+      justify="space-between" gap="sm" px={12} py={4}
+      styles={{
+        root: { cursor: "pointer" }
+      }}>
       <Text>
         { location.description }
       </Text>
