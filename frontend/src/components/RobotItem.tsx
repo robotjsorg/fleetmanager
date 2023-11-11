@@ -39,7 +39,9 @@ export const RobotItem = ({
   const { hovered, ref } = useHover();
   
   return (
-    <Group wrap="nowrap" ref={ref} bg={ (hovered||(guiSelection == robot.id)) ? ((theme.colorScheme == "dark") ? "#2a2c30" : "#f3f3f4") : "none" }
+    <Group wrap="nowrap" ref={ref}
+      bg={ ((fbDisabled&&hovered)||(guiSelection==robot.id)) ?
+        ((theme.colorScheme == "dark") ? "#2a2c30" : "#f3f3f4") : "none" }
       onClick={ handleSelect }
       justify="space-between" gap="sm" px={12} py={4}
       styles={{
