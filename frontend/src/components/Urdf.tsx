@@ -75,7 +75,7 @@
 //   }
 // }
 
-import URDFLoader from 'urdf-loader';
+import URDFLoader from "urdf-loader";
 // import { GLTFLoader } from "three-stdlib";
 
 export const Urdf = () => {
@@ -98,7 +98,7 @@ export const Urdf = () => {
   //     undefined
   //   );
   // };
-  loader.load( '../urdf/T12/urdf/T12.URDF',
+  loader.load( "../urdf/T12/urdf/T12.URDF",
     robot => {
       // scene.add( robot );
       console.log( robot );

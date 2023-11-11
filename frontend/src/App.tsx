@@ -115,8 +115,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
     };
   }, [height, initDB, locSelection, minFixHeight, mutate]);
 
-  // Query DB: Is there a more efficient location for this?
-  // in useEffect()? 
+  // Query DB
   const { rows: locations } = useQuery<ILocation>(
     docId,
     sql`SELECT * FROM locations`
@@ -166,7 +165,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                     <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
                   </Box>
                   <Group wrap="nowrap" gap="xs">
-                    <Link to={ "/" + journalIdToString(docId) }>
+                    <Link to={ "/" + journalIdToString(docId) } hidden={locSelection == "no selection"}>
                       <Button visibleFrom="xs" color="gray" variant={ subpageOpened ? "subtle" : "light" }>
                         { selectedLocationDescription }
                       </Button>

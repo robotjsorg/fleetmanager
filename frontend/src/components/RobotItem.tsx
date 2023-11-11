@@ -2,7 +2,7 @@ import { useCallback, useContext } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Text, ActionIcon, Group, useMantineContext } from "@mantine/core";
-import { useHover } from '@mantine/hooks';
+import { useHover } from "@mantine/hooks";
 
 import { IconX } from "@tabler/icons-react";
 

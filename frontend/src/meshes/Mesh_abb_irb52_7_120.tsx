@@ -5,6 +5,7 @@ import { Euler, useFrame, Vector3 } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { Select } from "@react-three/postprocessing";
 import { GLTF } from "three-stdlib";
+import { useSpring, animated, config } from "@react-spring/three";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
@@ -25,7 +26,7 @@ type GLTFResult = GLTF & {
     link_6: THREE.Mesh;
   };
   materials: {
-    ['default']: THREE.MeshStandardMaterial;
+    ["default"]: THREE.MeshStandardMaterial;
     gkmodel0_base_link_geom0: THREE.MeshStandardMaterial;
     gkmodel0_link_1_geom0: THREE.MeshStandardMaterial;
     gkmodel0_link_2_geom0: THREE.MeshStandardMaterial;
@@ -63,10 +64,22 @@ export const Mesh_abb_irb52_7_120 = ({
   const [ jointAngles ] = useState( [ 0, 0, 0, 0, 0, 0 ] );
 
   useEffect(() => {
-    document.body.style.cursor = hovered ? 'pointer' : 'auto';
+    document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
-  // const jointLimits = [[-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2]];
+  const jointLimits = [[-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2], [-Math.PI/2, Math.PI/2]];
+  // eslint-disable-next-line prefer-const
+  let randomJointPosition = [0, 0, 0, 0, 0, 0, 0];
+  for( let i = 0; i++; i < jointLimits.length ){
+    const big = jointLimits[i][1];
+    const small = jointLimits[i][0];
+    randomJointPosition[ i ] = Math.random() * ( big - small ) - small;
+  }
+
+  const { scale } = useSpring({
+    scale: selected ? 1.2 : 1,
+    config: config.wobbly
+  });
 
   useFrame((_state, delta) => (
     jointAngles[0] += delta,
@@ -86,8 +99,9 @@ export const Mesh_abb_irb52_7_120 = ({
   return (
     <Select enabled={ selected || hovered }>
       <group dispose={null}>
-        <mesh
+        <animated.mesh
           ref={ref}
+          scale={scale}
           onPointerOver={() => hover(true)}
           onPointerOut={() => hover(false)}
           onClick={(e) => (e.stopPropagation(), setGuiSelection(robotid))}
@@ -144,7 +158,7 @@ export const Mesh_abb_irb52_7_120 = ({
               </mesh>
             </mesh>
           </mesh>
-        </mesh>
+        </animated.mesh>
       </group>
     </Select>
   );

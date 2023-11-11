@@ -10,6 +10,7 @@ import { IconX } from "@tabler/icons-react";
 import { useMutate } from "../doctype";
 import { ILocation } from "../@types/location";
 
+import { RobotContext } from "../context/robotContext";
 import { locSelectionContext } from "../context/locSelectionContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
@@ -23,6 +24,7 @@ export const LocationItem = ({
   fbDisabled: boolean;
 }) => {
   const theme = useMantineContext();
+  const { locations } = useContext( RobotContext );
   const { locSelection, setLocationSelection } = useContext( locSelectionContext );
   const { setGuiSelection } = useContext( guiSelectionContext );
 
@@ -30,14 +32,20 @@ export const LocationItem = ({
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteLocation", id: location.id })
       .then(() => {
-        if ( location.id == locSelection ) {
-          setLocationSelection( "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" );
+        if ( location.id == locSelection && Array.isArray( locations ) && locations.length > 1 ) {
+          if ( locations[0].id == locSelection) {
+            setLocationSelection( locations[1].id );
+          } else {
+            setLocationSelection( locations[0].id );
+          }
+        } else {
+          setLocationSelection( "no selection" );
         }
       })
       .catch((err) => {
         console.error("Failed to delete", err);
       });
-  }, [location.id, locSelection, mutate, setLocationSelection]);
+  }, [mutate, location.id, locSelection, locations, setLocationSelection]);
 
   const navigate = useNavigate();
   const handleLocationSelect = () => {

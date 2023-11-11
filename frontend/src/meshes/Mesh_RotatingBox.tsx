@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useSpring, animated, config } from '@react-spring/three';
+import { useSpring, animated, config } from "@react-spring/three";
 
 export const Mesh_RotatingBox = () => {
   const ref = useRef<THREE.Mesh>(null!);

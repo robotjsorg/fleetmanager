@@ -1,6 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig, searchForWorkspaceRoot } from "vite";
-import { resolve } from 'path'
+import { resolve } from "path"
 
 export default defineConfig({
   plugins: [react()],
@@ -16,9 +16,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        build: resolve(__dirname, 'assets/index.html'),
-        dist: resolve(__dirname, 'assets/index.html')
+        main: resolve(__dirname, "index.html"),
+        dist: resolve(__dirname, "assets/index.html")
       }
     }
   }

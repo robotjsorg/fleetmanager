@@ -29,7 +29,7 @@ export const LocationForm = ({ docId }: { docId: JournalId; }) => {
       ({ description }) => {
         const locationDescriptions = locations.map(( location )=>( location.description ));
         if (locationDescriptions.includes(description)) {
-          form.setFieldError('description', "Duplicate location description");
+          form.setFieldError("description", "Duplicate location description");
         } else {
           const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
           mutate({ tag: "CreateLocation", id, description })
@@ -38,7 +38,7 @@ export const LocationForm = ({ docId }: { docId: JournalId; }) => {
               form.reset();
             })
             .catch((err) => {
-              form.setFieldError('description', String(err));
+              form.setFieldError("description", String(err));
               console.error("Failed to create location", err);
             });
         }

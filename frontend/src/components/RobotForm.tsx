@@ -29,22 +29,26 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ description }) => {
-        const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ));
-        const robotDescriptions = filteredRobots.map(( robot ) => ( robot.description ));
-        if (robotDescriptions.includes(description)) {
-          form.setFieldError('description', "Duplicate robot description");
+        if ( locSelection == "no selection" ) {
+          form.setFieldError("description", "No Locations exist");
         } else {
-          const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
-          mutate({ tag: "CreateRobot", id, locationid: locSelection, description })
-            .then(() => {
-              setGuiSelection(id);
-              form.reset();
-            })
-            .catch(( err ) => {
-              form.setFieldError('description', String(err));
-              console.error("Failed to create robot", err);
-              form.setValues( { description: "" } );
-            });
+          const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ));
+          const robotDescriptions = filteredRobots.map(( robot ) => ( robot.description ));
+          if (robotDescriptions.includes(description)) {
+            form.setFieldError("description", "Duplicate robot description");
+          } else {
+            const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
+            mutate({ tag: "CreateRobot", id, locationid: locSelection, description })
+              .then(() => {
+                setGuiSelection(id);
+                form.reset();
+              })
+              .catch(( err ) => {
+                form.setFieldError("description", String(err));
+                console.error("Failed to create robot", err);
+                form.setValues( { description: "" } );
+              });
+          }
         }
       }, [robots, locSelection, form, mutate, setGuiSelection]
     )

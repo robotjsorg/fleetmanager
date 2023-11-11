@@ -14,7 +14,7 @@ type GLTFResult = GLTF & {
     cardboard_box_01: THREE.Mesh;
   };
   materials: {
-    ['default']: THREE.MeshStandardMaterial;
+    ["default"]: THREE.MeshStandardMaterial;
     cardboard_box_01: THREE.MeshStandardMaterial;
   };
 };

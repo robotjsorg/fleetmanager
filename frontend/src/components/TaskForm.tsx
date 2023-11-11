@@ -34,7 +34,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
         const robotTasks = tasks.filter(( task ) => ( task.robotid == robot ));
         const robotTaskDescriptions = robotTasks.map(( task ) => ( task.description ));
         if ( robotTaskDescriptions.includes( description ) ) {
-          form.setFieldError('description', "Duplicate task assigned");
+          form.setFieldError("description", "Duplicate task assigned");
         } else {
           const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
           mutate({ tag: "CreateTask", id, robotid: robot, description })
@@ -42,7 +42,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
               form.reset();
             })
             .catch((err) => {
-              form.setFieldError('description', String(err));
+              form.setFieldError("description", String(err));
               form.setErrors({ robot: String(err), description: String(err) });
               console.error("Failed to create task", err);
             });
@@ -73,7 +73,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           clearable
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
-          data={['Idle', 'Spin Around']} // , 'Manual', 'Automatic', 'Home', 'Move A', 'Move B', 'Clamp', 'Unclamp'
+          data={["Idle", "Spin Around"]} // , "Manual", "Automatic", "Home", "Move A", "Move B", "Clamp", "Unclamp"
           {...form.getInputProps("description")}
         />
         <Button color="gray" type="submit">Add</Button>
