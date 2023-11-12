@@ -35,15 +35,18 @@ export function Mesh_cardboard_box_01() {
   const [ position ] = useState( randomPosition() );
   const [ rotation ] = useState( randomRotation() );
 
+  const shadows = false;
+
   return (
     <group dispose={null}>
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.cardboard_box_01.geometry}
         material={materials.cardboard_box_01}
         position={position}
         rotation={rotation}
+        castShadow={shadows}
+        receiveShadow={shadows}
+        scale={0.8}
       />
     </group>
   );
