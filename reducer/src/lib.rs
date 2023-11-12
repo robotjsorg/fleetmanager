@@ -73,10 +73,22 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 "ABB IRB 52 001"
             ).await;
             execute!(
+                "INSERT OR IGNORE INTO tasks (id, robotid, description, completed, created_at) VALUES (?, ?, ?, false, datetime('now'))",
+                "48228b08-1b8a-4d54-9b90-16f1f73fb1cc",
+                "24db4c5b-1e3a-4853-8316-1d6ad07beed1",
+                "Spin Around"
+            ).await;
+            execute!(
                 "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
                 "402e7545-512b-4b7d-b570-e94311b38ab6",
                 "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
                 "ABB IRB 52 002"
+            ).await;
+            execute!(
+                "INSERT OR IGNORE INTO tasks (id, robotid, description, completed, created_at) VALUES (?, ?, ?, true, datetime('now'))",
+                "ea131ae6-13a8-4a23-9436-5f46f3dcffd1",
+                "402e7545-512b-4b7d-b570-e94311b38ab6",
+                "Random Positions"
             ).await;
             execute!(
                 "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",

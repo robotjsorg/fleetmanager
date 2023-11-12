@@ -38,9 +38,6 @@ export const Fleetmanager = () => {
       <Mesh_cardboard_box_01 />
       <Mesh_cardboard_box_01 />
       <Mesh_cardboard_box_01 />
-      <Mesh_cardboard_box_01 />
-      <Mesh_cardboard_box_01 />
-      <Mesh_cardboard_box_01 />
 
       <Grid cellColor={theme.colorScheme == "dark" ? "white" : "blue"} sectionColor={theme.colorScheme == "dark" ? "white" : "blue"}
         cellSize={1} sectionSize={4} infiniteGrid={ true } position={ [0, -0.02, 0] } fadeDistance={ 16 } fadeStrength={ 6 } />
