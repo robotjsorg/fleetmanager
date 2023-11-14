@@ -73,7 +73,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           clearable
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
-          data={["Idle", "Spin Around", "Random Positions"]} // , "Manual", "Automatic", "Home", "Move A", "Move B", "Clamp", "Unclamp"
+          data={["Idle", "Spin Around", "Random Positions"]} // , "Manual", "Auto", "Home", "Move A", "Move B", "Clamp", "Unclamp"
           {...form.getInputProps("description")}
         />
         <Button color="gray" type="submit">Add</Button>

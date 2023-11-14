@@ -1,41 +1,110 @@
 import { useContext, useEffect, useState } from "react";
 
-import { Text, Box, Table, Button, Divider } from "@mantine/core";
+import { Text, Box, Table, Button, Divider, NumberInput, Center } from "@mantine/core";
+
+import { IRobot } from "../@types/robot";
+import { ITask } from "../@types/task";
 
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
-import { ITask } from "../@types/task";
-import { IRobot } from "../@types/robot";
+
+import { JOINT_LIMITS } from "../meshes/Mesh_abb_irb52_7_120";
+import { useForm } from "@mantine/form";
 
 export const RobotSelection = () => {
   const { robots, tasks } = useContext( RobotContext );
   const { guiSelection } = useContext( guiSelectionContext );
 
-  let description = "";
-  let createdAt = "";
-  let state = "";
-  let position: [number, number, number] = [0, 0, 0];
-  let rotation: [number, number, number] = [0, 0, 0];
   const [ selectedRobot, setSelectedRobot ] = useState<IRobot | null>(null);
   useEffect(()=>{
     const selectedRobots = robots.filter(( robot ) => ( robot.id == guiSelection ));
     if ( Array.isArray( selectedRobots ) && selectedRobots.length > 0 ) {
       setSelectedRobot( selectedRobots[0] );
     }
-  },[guiSelection, robots]);
+  }, [guiSelection, robots]);
 
-  if ( selectedRobot ) {
-    description = selectedRobot.description;
-    createdAt = selectedRobot.created_at;
-    state = selectedRobot.state;
-    position = selectedRobot.lastKnownPosition as [number, number, number];
-    rotation = selectedRobot.lastKnownPosition as [number, number, number];  
-  }
+  const [ jointAngles, setJointAngles ] = useState<number[]>([0, 0, 0, 0, 0, 0]);
 
+  const [description, setDescription] = useState("");
+  const [createdAt, setCreatedAt] = useState("");
+  const [state, setState] = useState("");
+  const [position, setPosition] = useState([0, 0, 0]);
+  const [rotation, setRotation] = useState([0, 0 ,0]);
+  useEffect(()=>{
+    if ( selectedRobot ) {
+      setJointAngles( selectedRobot.lastKnownJointAngles as [number, number, number, number, number, number]  );
+      setDescription( selectedRobot.description );
+      setCreatedAt( selectedRobot.created_at );
+      setState( selectedRobot.state );
+      setPosition( selectedRobot.lastKnownPosition as [number, number, number] );
+      setRotation( selectedRobot.lastKnownPosition as [number, number, number] );  
+    }
+  }, [selectedRobot])
+  
   const [ filteredTasks, setFilteredTasks ] = useState<ITask[]>([]);
   useEffect(()=>{
     setFilteredTasks(tasks.filter(( task ) => ( task.robotid == guiSelection )) );
-  },[guiSelection, tasks])
+  }, [guiSelection, tasks])
+
+  const handleOff = () => {
+    setState( "Off" );
+    if ( selectedRobot ) {
+      selectedRobot.state = "Off";
+    }
+  };
+
+  const handleOn = () => {
+    setState( "Error" );
+    if ( selectedRobot ) {
+      selectedRobot.state = "Error";
+    }
+  };
+
+  const handleReset = () => {
+    setState( "Manual" );
+    if ( selectedRobot ) {
+      selectedRobot.state = "Manual";
+    }
+  }
+
+  const handleManual = () => {
+    setState( "Manual" );
+    if ( selectedRobot ) {
+      selectedRobot.state = "Manual";
+    }
+  };
+
+  const handleAuto = () => {
+    setState( "Auto" );
+    if ( selectedRobot ) {
+      selectedRobot.state = "Auto" ;
+    }
+  };
+
+  const form = useForm({
+    initialValues: {
+      J1: jointAngles[0],
+      J2: jointAngles[1],
+      J3: jointAngles[2],
+      J4: jointAngles[3],
+      J5: jointAngles[4],
+      J6: jointAngles[5]
+    },
+    validate: {
+      J1: (value) => (value),
+      J2: (value) => (value),
+      J3: (value) => (value),
+      J4: (value) => (value),
+      J5: (value) => (value),
+      J6: (value) => (value)
+    }
+  });
+
+  const handleManualJoints = form.onSubmit(
+    ({ J1, J2, J3, J4, J5, J6 }) => {
+      setJointAngles([J1, J2, J3, J4, J5, J6]);
+    }
+  );
 
   return (
     <Box>
@@ -126,29 +195,34 @@ export const RobotSelection = () => {
               { guiSelection == "no selection" ?
                 <Box h={30}></Box>
               : state == "Error" ?
-                <Button variant="default" color="gray" size="xs">
-                  Reset
-                </Button>
-              : state == "Manual" ?
                 <>
-                  <Button variant="default" color="gray" size="xs">
-                    Automatic
+                  <Button onClick={handleReset} variant="default" color="gray" size="xs">
+                    Reset
                   </Button>
-                  <Button variant="default" color="gray" size="xs" ml={8}>
+                  <Button onClick={handleOff} variant="default" color="gray" size="xs" ml={8}>
                     Off
                   </Button>
                 </>
-              : state == "Automatic" ?
+              : state == "Manual" ?
                 <>
-                  <Button variant="default" color="gray" size="xs">
+                  <Button onClick={handleAuto} variant="default" color="gray" size="xs">
+                    Auto
+                  </Button>
+                  <Button onClick={handleOff} variant="default" color="gray" size="xs" ml={8}>
+                    Off
+                  </Button>
+                </>
+              : state == "Auto" ?
+                <>
+                  <Button onClick={handleManual} variant="default" color="gray" size="xs">
                     Manual
                   </Button>
-                  <Button variant="default" color="gray" size="xs" ml={8}>
+                  <Button onClick={handleOff} variant="default" color="gray" size="xs" ml={8}>
                     Off
                   </Button>
                 </>
               : // state == "Off"
-                <Button variant="default" color="gray" size="xs">
+                <Button onClick={handleOn} variant="default" color="gray" size="xs">
                   Power On
                 </Button>
               }
@@ -159,30 +233,120 @@ export const RobotSelection = () => {
       {state == "Error" && guiSelection != "no selection" ?
         <>
           <Divider />
-          <Box>
-            Error
+          <Box p="lg">
+            <Text>
+              <Text c="red" span>Error: </Text>
+              Robot error text placeholder.
+            </Text>
           </Box>
         </>
       : state == "Manual" && guiSelection != "no selection" ?
         <>
           <Divider />
-          <Box>
-            Manual
-          </Box>
+          <form onChange={handleManualJoints} onInput={handleManualJoints}>
+            <Table withRowBorders={false}>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Td w="50%">
+                    <Center>
+                      <Button variant="light" color="gray" size="xs">
+                        Joint Space
+                      </Button>
+                    </Center>
+                  </Table.Td>
+                  <Table.Td w="50%">
+                    <Center>
+                      <Button disabled variant="default" color="gray" size="xs" ml={8}>
+                        XYZ Space
+                      </Button>
+                    </Center>
+                  </Table.Td>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                <Table.Tr>
+                  <Table.Td>
+                    <NumberInput
+                      leftSection={"J1"}
+                      size="xs"
+                      clampBehavior="strict"
+                      step={0.1}
+                      startValue={jointAngles[0]}
+                      min={JOINT_LIMITS[0][0]}
+                      max={JOINT_LIMITS[0][1]}
+                      {...form.getInputProps("J1")}
+                    />
+                    <NumberInput
+                      leftSection={"J2"}
+                      size="xs"
+                      clampBehavior="strict"
+                      step={0.1}
+                      startValue={jointAngles[1]}
+                      min={JOINT_LIMITS[1][0]}
+                      max={JOINT_LIMITS[1][1]}
+                      {...form.getInputProps("J2")}
+                    />
+                    <NumberInput
+                      leftSection={"J3"}
+                      size="xs"
+                      clampBehavior="strict"
+                      step={0.1}
+                      startValue={jointAngles[2]}
+                      min={JOINT_LIMITS[2][0]}
+                      max={JOINT_LIMITS[2][1]}
+                      {...form.getInputProps("J3")}
+                    />
+                  </Table.Td>
+                  <Table.Td>
+                    <NumberInput
+                      leftSection={"J4"}
+                      size="xs"
+                      clampBehavior="strict"
+                      step={0.1}
+                      startValue={jointAngles[3]}
+                      min={JOINT_LIMITS[3][0]}
+                      max={JOINT_LIMITS[3][1]}
+                      {...form.getInputProps("J4")}
+                    />
+                    <NumberInput
+                      leftSection={"J5"}
+                      size="xs"
+                      clampBehavior="strict"
+                      step={0.1}
+                      startValue={jointAngles[4]}
+                      min={JOINT_LIMITS[4][0]}
+                      max={JOINT_LIMITS[4][1]}
+                      {...form.getInputProps("J5")}
+                    />
+                    <NumberInput
+                      leftSection={"J6"}
+                      size="xs"
+                      clampBehavior="strict"
+                      step={0.1}
+                      startValue={jointAngles[5]}
+                      min={JOINT_LIMITS[5][0]}
+                      max={JOINT_LIMITS[5][1]}
+                      {...form.getInputProps("J6")}
+                    />
+                  </Table.Td>
+                </Table.Tr>
+              </Table.Tbody>
+            </Table>
+          </form>
         </>
-      : state == "Automatic" && guiSelection != "no selection" ?
+      : state == "Auto" && guiSelection != "no selection" ?
         <>
           <Divider />
           <Table withRowBorders={false}>
             <Table.Thead>
               <Table.Tr>
-                <Table.Td>
+                <Table.Td w="50%">
                   <Text size="xs">
                     <Text span c="gray" inherit>task: </Text>
                     {filteredTasks.length > 0 ? filteredTasks.map(( task ) => ( task.description )) : "-"}
                   </Text>
                 </Table.Td>
-                <Table.Td>
+                <Table.Td w="50%">
                   <Text size="xs">
                     <Text span c="gray" inherit>completed: </Text>
                     {filteredTasks.length > 0 ? filteredTasks.map(( task ) => ( task.completed ? "True" : "False" )) : "-"}
@@ -191,15 +355,17 @@ export const RobotSelection = () => {
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
+              <Table.Tr>
+                <Table.Td>
+                  {/* Automatic task data and controls. */}
+                </Table.Td>
+              </Table.Tr>
             </Table.Tbody>
           </Table>
         </>
       : guiSelection != "no selection" ? // state == "Off"
       <>
         <Divider />
-        <Box>
-          Off
-        </Box>
       </>
       :
         <></>

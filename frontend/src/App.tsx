@@ -135,23 +135,26 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   }, [initDB, locSelection, mutate]);
 
   // Add data to robots
-  const [ robots, setRobots ] = useState( [] );
+  const [ robots, setRobots ] = useState<IRobot[]>([]);
   useEffect(()=>{
     const newRobots: IRobot[] = [];
     if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
       robotsQuery.map(( robot ) => ( 
         newRobots.push( robot as IRobot ))
-      )
-      newRobots.filter((robot) => (robot.state = "Off"));
+      );
+      newRobots.filter((robot) => (robot.id == "24db4c5b-1e3a-4853-8316-1d6ad07beed1" ?
+        robot.state = "Auto" : robot.id == "402e7545-512b-4b7d-b570-e94311b38ab6" ?
+        robot.state = "Error" : robot.state = "Off"
+      ));
       newRobots.filter((robot) => (robot.lastKnownPosition = randomPosition()));
       newRobots.filter((robot) => (robot.lastKnownRotation = randomRotation()));
       newRobots.filter((robot) => (robot.lastKnownJointAngles = randomJointAngles()));
-      setRobots(newRobots as never[]);
+      setRobots(newRobots);
     }
   }, [robotsQuery]);
 
   // Add data to tasks
-  const [ tasks, setTasks ] = useState( [] );
+  const [ tasks, setTasks ] = useState<ITask[]>([]);
   useEffect(()=>{
     const newTasks: ITask[] = [];
     if ( Array.isArray( tasksQuery ) && tasksQuery.length > 0 ) {
@@ -159,7 +162,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
         newTasks.push( task as ITask ))
       )
       newTasks.filter((task) => (task.state = "Unknown"));
-      setTasks(newTasks as never[]);
+      setTasks(newTasks);
     }
   }, [tasksQuery]);
 

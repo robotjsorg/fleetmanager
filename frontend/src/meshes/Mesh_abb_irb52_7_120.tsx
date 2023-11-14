@@ -16,6 +16,8 @@ const localFilepath = "../../assets/gltf/";
 const filename = "abb_irb52_7_120.glb";
 const filepath = isLocalhost ? localFilepath + filename : filename;
 
+export const JOINT_LIMITS = [[-180*0.0174533, 180*0.0174533], [-63*0.0174533, 110*0.0174533], [-235*0.0174533, 55*0.0174533], [-200*0.0174533, 200*0.0174533], [-115*0.0174533, 115*0.0174533], [-400*0.0174533, 400*0.0174533]];
+
 type GLTFResult = GLTF & {
   nodes: {
     abb_irb52_7_120: THREE.Mesh;
@@ -40,11 +42,10 @@ type GLTFResult = GLTF & {
 };
 
 export const randomJointAngles = () => {
-  const jointLimits = [[-180*0.0174533, 180*0.0174533], [-63*0.0174533, 110*0.0174533], [-235*0.0174533, 55*0.0174533], [-200*0.0174533, 200*0.0174533], [-115*0.0174533, 115*0.0174533], [-400*0.0174533, 400*0.0174533]];
   const angles = [0, 0, 0, 0, 0, 0];
-  for( let i = 0; i < jointLimits.length; i++ ){
-    const big = jointLimits[i][1];
-    const small = jointLimits[i][0];
+  for( let i = 0; i < JOINT_LIMITS.length; i++ ){
+    const big = JOINT_LIMITS[i][1];
+    const small = JOINT_LIMITS[i][0];
     angles[ i ] = Math.random() * ( big - small ) - small;
   }
   return (
@@ -95,13 +96,25 @@ export const Mesh_abb_irb52_7_120 = ({
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
-  const handleReset = () => {
-    robot.state = "Manual";
-  };
+  // const handleOff = () => {
+  //   robot.state = "Off";
+  // };
 
-  const handleAutomatic = () => {
-    robot.state = "Automatic";
-  };
+  // const handleOn = () => {
+  //   robot.state = "Error";
+  // };
+
+  // const handleReset = () => {
+  //   robot.state = "Manual";
+  // };
+
+  // const handleManual = () => {
+  //   robot.state = "Manual";
+  // };
+
+  // const handleAuto = () => {
+  //   robot.state = "Auto";
+  // };
 
   const handleTasks = ( delta: number ) => {
     if ( containsSpinAroundDesc ) {
@@ -118,26 +131,19 @@ export const Mesh_abb_irb52_7_120 = ({
     } // else Idle
   }
 
-  const handleOn = () => {
-    robot.state = "Error";
-  };
-
   const handleStates = ( delta: number ) => { // TODO: Move to useEffect()
     switch( robot.state ) {
       case "Error": { 
-        handleReset();
         break; 
       } 
       case "Manual": { 
-        handleAutomatic();
         break; 
       } 
-      case "Automatic": { 
+      case "Auto": { 
         handleTasks( delta );
         break; 
       } 
       default: { // "Off"
-        handleOn();
         break; 
       } 
     }
