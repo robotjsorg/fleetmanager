@@ -267,15 +267,16 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                 </Box>
                 : <></>}
               </AppShell.Main>
-              <AppShell.Aside withBorder={true} px="lg">
+              <AppShell.Aside withBorder={true}>
                 <Stack>
-                  <Stack h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
+                  <Stack px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
                     <Divider label="Robots" labelPosition="center" />
                     <RobotList docId={docId} fbDisabled={true} />
                   </Stack>
-                  <Stack h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
-                    <RobotSelection docId={docId} fbDisabled={true} />
-                  </Stack>
+                  <Box h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
+                    <Divider />
+                    <RobotSelection />
+                  </Box>
                 </Stack>
               </AppShell.Aside>
             </AppShell>
