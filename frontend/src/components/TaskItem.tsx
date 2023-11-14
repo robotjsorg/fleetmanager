@@ -38,7 +38,7 @@ export const TaskItem = ({
       <Group wrap="nowrap">
         <Checkbox checked={ task.completed } onChange={ handleToggleCompleted } color="gray" />
         <Text>
-          { robot.description }: { task.description }
+          { robot.description }: { task.description }: { task.state }
         </Text>
       </Group>
       { fbDisabled ? <></> : 

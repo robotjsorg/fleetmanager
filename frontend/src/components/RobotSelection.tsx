@@ -62,7 +62,8 @@ export const RobotSelection = ({
           <Text>Robot has No Tasks</Text> :
         filteredTasks.map((task) => (
           <TaskItemWidget docId={docId} key={task.id} task={task} fbDisabled={fbDisabled} />
-        ))}
+        ))
+        }
       </ScrollArea>
     </>
   );

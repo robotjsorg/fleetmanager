@@ -158,7 +158,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
       tasksQuery.map(( task ) => ( 
         newTasks.push( task as ITask ))
       )
-      newTasks.filter((task) => (task.state = "Completed"));
+      newTasks.filter((task) => (task.state = "Unknown"));
       setTasks(newTasks as never[]);
     }
   }, [tasksQuery]);

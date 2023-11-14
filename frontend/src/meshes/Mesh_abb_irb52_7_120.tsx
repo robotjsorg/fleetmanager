@@ -72,6 +72,7 @@ export const Mesh_abb_irb52_7_120 = ({
     config: config.wobbly
   });
 
+  // TODO: Use task states
   const { tasks } = useContext( RobotContext );
   const [ containsSpinAroundDesc, setContainsSpinAroundDesc ] = useState( false );
   const [ containsRandomPositionsDesc, setContainsRandomPositionsDesc ] = useState( false );
