@@ -41,16 +41,34 @@ const randomRotation = () => {
 
 export const App = ({ docId }: { docId: JournalId; }) => {
   const mutate = useMutate( docId );
-  const [ route, setPseudoRoute ] = useState("location");
 
+  // Query DB
+  const { rows: locations } = useQuery<ILocation>(
+    docId,
+    sql`SELECT * FROM locations`
+  );
+  const { rows: robotsQuery } = useQuery<IRobotQuery>(
+    docId,
+    sql`SELECT * FROM robots`
+  );
+  const { rows: tasks } = useQuery<ITask>(
+    docId,
+    sql`SELECT * FROM tasks`
+  );
+
+  const [ route, setPseudoRoute ] = useState("location");
   const [ locSelection, setLocationSelection ] = useState("no selection");
   const [ guiSelection, setGuiSelection ] = useState("no selection");
 
   // Single screen desktop app, no scrolling
   const { width, height } = useViewportSize();
   const [ fixHeight, setFixHeight ] = useState( height );
-
-  // Hardcoded single screen app offsets
+  const navbarWidth = 300;
+  const headerHeight = 60;
+  const navBarOffset = 155; // topbar 60 + btns 36 + padding 40 + divider 19
+  const fmOffset = 61; // topbar 60 + divider 1
+  const fmWidgetOffset = 117; // topbar 60 + divider (19 * 3)
+  const viewOffset = 222; // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
   let minFixHeight = height;
   if ( width > 1440 ) {
     minFixHeight = 620;
@@ -63,13 +81,13 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   } else if ( width < 480 ) {
     minFixHeight = 160;
   }
-
-  const navbarWidth = 300;
-  const headerHeight = 60;
-  const navBarOffset = 155; // topbar 60 + btns 36 + padding 40 + divider 19
-  const fmOffset = 61; // topbar 60 + divider 1
-  const fmWidgetOffset = 117; // topbar 60 + divider (19 * 3)
-  const viewOffset = 222; // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
+  useEffect(() => {
+    if ( height > minFixHeight ) {
+      setFixHeight( height );
+    } else {
+      setFixHeight( minFixHeight );
+    }
+  }, [height, minFixHeight]);
 
   // Menu control
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure(false);
@@ -96,18 +114,9 @@ export const App = ({ docId }: { docId: JournalId; }) => {
     );
   };
 
-  useEffect(() => {
-    // Set minimum fixed height
-    if ( height > minFixHeight ) {
-      setFixHeight( height );
-    } else {
-      setFixHeight( minFixHeight );
-    }
-  }, [height, minFixHeight]);
-
+  // Initialize database
   const [initDB, setInitDB] = useState(false);
   useEffect(() => {    
-    // Initialize database
     if (!initDB){
       console.log("[INFO] Init DB")
       mutate({ tag: "InitSchema" })
@@ -124,38 +133,31 @@ export const App = ({ docId }: { docId: JournalId; }) => {
     };
   }, [initDB, locSelection, mutate]);
 
-  // Query DB
-  const { rows: locations } = useQuery<ILocation>(
-    docId,
-    sql`SELECT * FROM locations`
-  );
-  const { rows: robotsQuery } = useQuery<IRobotQuery>(
-    docId,
-    sql`SELECT * FROM robots`
-  );
-  const { rows: tasks } = useQuery<ITask>(
-    docId,
-    sql`SELECT * FROM tasks`
-  );
-
-  const robots: IRobot[] = [];
-  if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
-    robotsQuery.map(( robot ) => ( 
-      robots.push(robot as IRobot))
-    )
-    robots.filter((robot) => (robot.lastKnownPosition = randomPosition()));
-    robots.filter((robot) => (robot.lastKnownRotation = randomRotation()));
-    robots.filter((robot) => (robot.lastKnownJointAngles = randomJointAngles()));
-  }
+  // Add data to robots
+  const [ robots, setRobots ] = useState([]);
+  useEffect(()=>{
+    const newRobots: IRobot[] = [];
+    if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
+      robotsQuery.map(( robot ) => ( 
+        newRobots.push(robot as IRobot))
+      )
+      newRobots.filter((robot) => (robot.lastKnownPosition = randomPosition()));
+      newRobots.filter((robot) => (robot.lastKnownRotation = randomRotation()));
+      newRobots.filter((robot) => (robot.lastKnownJointAngles = randomJointAngles()));
+      setRobots(newRobots as never[]);
+    }
+  }, [robotsQuery]);
 
   // Selected location description
-  let selectedLocationDescription = ""
-  if ( Array.isArray( locations ) && locations.length > 0 ) {
-    const selectedLocation = locations.filter(( location ) => ( location.id == locSelection ));
-    if ( Array.isArray( selectedLocation ) && selectedLocation.length > 0 ) {
-      selectedLocationDescription = selectedLocation[0].description;
+  const [ selectedLocationDescription, setSelectedLocationDescription ] = useState("");
+  useEffect(()=>{
+    if ( Array.isArray( locations ) && locations.length > 0 ) {
+      const selectedLocation = locations.filter(( location ) => ( location.id == locSelection ));
+      if ( Array.isArray( selectedLocation ) && selectedLocation.length > 0 ) {
+        setSelectedLocationDescription(selectedLocation[0].description);
+      }
     }
-  }
+  }, [locSelection, locations]);
 
   return (
     <MantineProvider defaultColorScheme="dark">

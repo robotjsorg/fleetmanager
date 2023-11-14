@@ -64,10 +64,6 @@ const router = createBrowserRouter([
   {
     path: "/:docId",
     element: <DocRoute />
-  },
-  {
-    path: "/:docId/*",
-    element: <DocRoute />
   }
 ]);
 
