@@ -1,7 +1,6 @@
 import { useCallback, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 
-import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
+import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Text, ActionIcon, Group, useMantineContext } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 
@@ -47,13 +46,13 @@ export const LocationItem = ({
       });
   }, [mutate, location.id, locSelection, locations, setLocationSelection]);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const handleLocationSelect = () => {
     if ( locSelection != location.id ) {
       setLocationSelection( location.id );
       setGuiSelection("no selection");
     }
-    navigate( "/" + journalIdToString( docId ) );
+    // navigate( "/" + journalIdToString( docId ) );
   };
 
   const { hovered, ref } = useHover();

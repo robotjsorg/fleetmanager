@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unknown-property */
 import { useRef, useContext, useState, useEffect } from "react";
 
-import { Euler, Vector3, useFrame } from "@react-three/fiber"; // useFrame
+import { Euler, Vector3, useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { Select } from "@react-three/postprocessing";
 import { GLTF } from "three-stdlib";
@@ -9,6 +9,7 @@ import { useSpring, animated, config } from "@react-spring/three";
 
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { RobotContext } from "../context/robotContext";
+import { IRobot } from "../@types/robot";
 
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168");
 const localFilepath = "../../assets/gltf/";
@@ -38,22 +39,24 @@ type GLTFResult = GLTF & {
   };
 };
 
-const randomPosition = () => {
-  const x = 4 * (Math.random() - 0.5);
-  const z = 2 * (Math.random() - 0.5);
-  return [x, -0.02, z] as Vector3;
-};
-
-const randomRotation = () => {
-  const z = 2 * Math.PI * (Math.random() - 0.0);
-  return [-Math.PI / 2, 0, z] as Euler;
+export const randomJointAngles = () => {
+  const jointLimits = [[-180*0.0174533, 180*0.0174533], [-63*0.0174533, 110*0.0174533], [-235*0.0174533, 55*0.0174533], [-200*0.0174533, 200*0.0174533], [-115*0.0174533, 115*0.0174533], [-400*0.0174533, 400*0.0174533]];
+  const angles = [0, 0, 0, 0, 0, 0];
+  for( let i = 0; i < jointLimits.length; i++ ){
+    const big = jointLimits[i][1];
+    const small = jointLimits[i][0];
+    angles[ i ] = Math.random() * ( big - small ) - small;
+  }
+  return (
+    angles
+  );
 }
 
 export const Mesh_abb_irb52_7_120 = ({
-  robotid,
+  robot,
   selected
 } : {
-  robotid: string;
+  robot: IRobot;
   selected: boolean;
 }) => {
   const ref = useRef<THREE.Mesh>(null!);
@@ -61,12 +64,16 @@ export const Mesh_abb_irb52_7_120 = ({
   const { tasks } = useContext( RobotContext );
   const { setGuiSelection } = useContext( guiSelectionContext );
   const [ hovered, hover ] = useState( false );
-  const [ position ] = useState( randomPosition() );
-  const [ rotation ] = useState( randomRotation() );
-  const [ jointAngles, setJointAngles ] = useState( [0, 0, 0, 0, 0, 0] );
-  const filteredTasks = tasks.filter(( task ) => ( task.robotid == robotid ));
+  const [ position ] = useState( robot.lastKnownPosition as Vector3 );
+  const [ rotation ] = useState( robot.lastKnownRotation as Euler );
+  const [ jointAngles, setJointAngles ] = useState( robot.lastKnownJointAngles );
+  const filteredTasks = tasks.filter(( task ) => ( task.robotid == robot.id ));
   const containsSpinAroundDesc = filteredTasks.reduce((contains, task) => {return contains || (task.description == "Spin Around" && !task.completed)}, false);
   const containsRandomPositionsDesc = filteredTasks.reduce((contains, task) => {return contains || task.description == "Random Positions" && !task.completed}, false);
+
+  useEffect(() => {
+    document.body.style.cursor = hovered ? "pointer" : "auto";
+  }, [hovered]);
 
   const handleTasks = (delta: number) => {
     if ( containsSpinAroundDesc ) {
@@ -79,20 +86,9 @@ export const Mesh_abb_irb52_7_120 = ({
       newJointAngles[5] += delta;
       setJointAngles( newJointAngles );
     } else if ( containsRandomPositionsDesc ) {
-      const jointLimits = [[-180*0.0174533, 180*0.0174533], [-63*0.0174533, 110*0.0174533], [-235*0.0174533, 55*0.0174533], [-200*0.0174533, 200*0.0174533], [-115*0.0174533, 115*0.0174533], [-400*0.0174533, 400*0.0174533]];
-      const randomJointAngles = [0, 0, 0, 0, 0, 0];
-      for( let i = 0; i < jointLimits.length; i++ ){
-        const big = jointLimits[i][1];
-        const small = jointLimits[i][0];
-        randomJointAngles[ i ] = Math.random() * ( big - small ) - small;
-      }
-      setJointAngles( randomJointAngles );
+      setJointAngles( randomJointAngles() );
     } // else Idle
   }
-
-  useEffect(() => {
-    document.body.style.cursor = hovered ? "pointer" : "auto";
-  }, [hovered]);
 
   useFrame((_state, delta) => (
     handleTasks(delta),
@@ -119,7 +115,7 @@ export const Mesh_abb_irb52_7_120 = ({
           scale={scale}
           onPointerOver={() => hover(true)}
           onPointerOut={() => hover(false)}
-          onClick={(e) => (e.stopPropagation(), setGuiSelection(robotid))}
+          onClick={(e) => (e.stopPropagation(), setGuiSelection(robot.id))}
           geometry={nodes.base_link.geometry}
           material={materials.gkmodel0_base_link_geom0}
           position={position}

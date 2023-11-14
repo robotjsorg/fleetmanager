@@ -21,9 +21,15 @@ export const RobotProvider = ( props: RobotProviderProps ) => {
 
   useEffect(() => {
     setLocations(props.locations);
+  }, [props.locations]);
+
+  useEffect(() => {
     setRobots(props.robots);
+  }, [props.robots]);
+
+  useEffect(() => {
     setTasks(props.tasks);
-  }, [props.locations, props.robots, props.tasks]);
+  }, [props.tasks]);
 
   return (
     <RobotContext.Provider value={{ locations, robots, tasks }} >

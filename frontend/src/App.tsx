@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
-import { JournalId, journalIdToString } from "@orbitinghail/sqlsync-worker";
+import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { sql } from "@orbitinghail/sqlsync-react";
-import { useMantineColorScheme, MantineProvider, 
-  Text, Box, Button, Divider, AppShell, Group, Burger, Stack, Code } from "@mantine/core";
+import { useMantineColorScheme, MantineProvider, Box, Button, Divider, AppShell, Group, Burger, Stack } from "@mantine/core";
 import { useViewportSize, useDisclosure } from "@mantine/hooks";
 
 import { IconChecklist, IconHome, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react";
+import { Euler, Vector3 } from "@react-three/fiber";
 
 import { useMutate, useQuery } from "./doctype";
 import { ILocation } from "./@types/location";
-import { IRobot } from "./@types/robot";
+import { IRobotQuery, IRobot } from "./@types/robot";
 import { ITask } from "./@types/task";
 
 import { RobotProvider } from "./context/robotContext";
@@ -26,11 +25,24 @@ import { ConnectionStatus } from "./components/ConnectionStatus";
 import { Fleetmanager } from "./components/Fleetmanager";
 import { LocationList } from "./components/LocationList";
 import { RobotList } from "./components/RobotList";
-import { TaskList } from "./components/TaskList";
-import { GuiSelection } from "./components/GuiSelection";
+import { RobotSelection } from "./components/RobotSelection";
 
-export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
+import { randomJointAngles } from "./meshes/Mesh_abb_irb52_7_120";
+
+const randomPosition = () => {
+  const x = 4 * (Math.random() - 0.5);
+  const z = 2 * (Math.random() - 0.5);
+  return [x, -0.02, z] as Vector3;
+};
+const randomRotation = () => {
+  const z = 2*Math.PI * (Math.random() - 0.0);
+  return [-Math.PI/2, 0, z] as Euler;
+};
+
+export const App = ({ docId }: { docId: JournalId; }) => {
   const mutate = useMutate( docId );
+  const [ route, setPseudoRoute ] = useState("location");
+
   const [ locSelection, setLocationSelection ] = useState("no selection");
   const [ guiSelection, setGuiSelection ] = useState("no selection");
 
@@ -84,8 +96,6 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
     );
   };
 
-  const [initDB, setInitDB] = useState(false);
-
   useEffect(() => {
     // Set minimum fixed height
     if ( height > minFixHeight ) {
@@ -93,34 +103,33 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
     } else {
       setFixHeight( minFixHeight );
     }
-    
+  }, [height, minFixHeight]);
+
+  const [initDB, setInitDB] = useState(false);
+  useEffect(() => {    
     // Initialize database
     if (!initDB){
-      console.log("[INFO] initDB")
-      mutate({ tag: "InitSchema" }).catch(( err ) => {
-        console.error( "Failed to init schema", err );
-      });
-      mutate({ tag: "PopulateDB" }).catch(( err ) => {
-        console.error( "Failed to populate database", err );
-      });
-
+      console.log("[INFO] Init DB")
+      mutate({ tag: "InitSchema" })
+        .catch(( err ) => {console.error( "Failed to init schema", err )});
+      mutate({ tag: "PopulateDB" })
+        .catch(( err ) => {console.error( "Failed to populate database", err )});
       // Select the "Warehouse" location
       if ( locSelection == "no selection" ) {
         setLocationSelection("c0f67f5f-3414-4e50-9ea7-9ae053aa1f99");
       }
     }
-
     return () => {
       setInitDB(true);
     };
-  }, [height, initDB, locSelection, minFixHeight, mutate]);
+  }, [initDB, locSelection, mutate]);
 
   // Query DB
   const { rows: locations } = useQuery<ILocation>(
     docId,
     sql`SELECT * FROM locations`
   );
-  const { rows: robots } = useQuery<IRobot>(
+  const { rows: robotsQuery } = useQuery<IRobotQuery>(
     docId,
     sql`SELECT * FROM robots`
   );
@@ -128,6 +137,16 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
     docId,
     sql`SELECT * FROM tasks`
   );
+
+  const robots: IRobot[] = [];
+  if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
+    robotsQuery.map(( robot ) => ( 
+      robots.push(robot as IRobot))
+    )
+    robots.filter((robot) => (robot.lastKnownPosition = randomPosition()));
+    robots.filter((robot) => (robot.lastKnownRotation = randomRotation()));
+    robots.filter((robot) => (robot.lastKnownJointAngles = randomJointAngles()));
+  }
 
   // Selected location description
   let selectedLocationDescription = ""
@@ -143,7 +162,7 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
       <RobotProvider locations={locations ?? []} robots={robots ?? []} tasks={tasks ?? []}>
         <locSelectionContext.Provider value={{ locSelection, setLocationSelection }}>
           <guiSelectionContext.Provider value={{ guiSelection, setGuiSelection }}>
-            <AppShell // disabled
+            <AppShell
               withBorder={false}
               header={{
                 height: headerHeight
@@ -165,30 +184,26 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                     <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
                   </Box>
                   <Group wrap="nowrap" gap="xs">
-                    <Link to={ "/" + journalIdToString(docId) } hidden={locSelection == "no selection"}>
-                      <Button visibleFrom="xs" color="gray" variant={ subpageOpened ? "subtle" : "light" }>
+                    <Box hidden={locSelection == "no selection"}>
+                      <Button visibleFrom="xs" color="gray" variant={ subpageOpened ? "subtle" : "light" } onClick={() => (setPseudoRoute("location"))}>
                         { selectedLocationDescription }
                       </Button>
-                      <Button hiddenFrom="xs" color="gray" variant={ subpageOpened ? "subtle" : "light" }>
+                      <Button hiddenFrom="xs" color="gray" variant={ subpageOpened ? "subtle" : "light" } onClick={() => (setPseudoRoute("location"))}>
                         <IconHome size={18} />
                       </Button>
-                    </Link>
-                    <Link to={"/" + journalIdToString(docId) + "/robots"}>
-                      <Button visibleFrom="xs" color="gray" variant={ route != "robots" ? "subtle" : "light" }>
-                        Robots
-                      </Button>
-                      <Button hiddenFrom="xs" color="gray" variant={ route != "robots" ? "subtle" : "light" }>
-                        <IconRobot size={18} />
-                      </Button>
-                    </Link>
-                    <Link to={"/" + journalIdToString(docId) + "/tasks"}>
-                      <Button visibleFrom="xs" color="gray" variant={ route != "tasks" ? "subtle" : "light" }>
-                        Tasks
-                      </Button>
-                      <Button hiddenFrom="xs" color="gray" variant={ route != "tasks" ? "subtle" : "light" }>
-                        <IconChecklist size={18} />
-                      </Button>
-                    </Link>
+                    </Box>
+                    <Button visibleFrom="xs" color="gray" variant={ route != "robots" ? "subtle" : "light" } onClick={() => (setPseudoRoute("robots"))}>
+                      Robots
+                    </Button>
+                    <Button hiddenFrom="xs" color="gray" variant={ route != "robots" ? "subtle" : "light" } onClick={() => (setPseudoRoute("robots"))}>
+                      <IconRobot size={18} />
+                    </Button>
+                    <Button visibleFrom="xs" color="gray" variant={ route != "tasks" ? "subtle" : "light" } onClick={() => (setPseudoRoute("tasks"))}>
+                      Tasks
+                    </Button>
+                    <Button hiddenFrom="xs" color="gray" variant={ route != "tasks" ? "subtle" : "light" } onClick={() => (setPseudoRoute("tasks"))}>
+                      <IconChecklist size={18} />
+                    </Button>
                   </Group>
                   <ConnectionStatus docId={docId} />
                 </Group>
@@ -201,11 +216,9 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                   </Box>
                 </Stack>
                 <Group justify="center" p="lg">
-                  <Link to={"/" + journalIdToString(docId) + "/locations"} onClick={ closeNav }>
-                    <Button leftSection={<IconSettings size={18} />} variant="default">
-                      Edit
-                    </Button>
-                  </Link>
+                  <Button leftSection={<IconSettings size={18} />} variant="default" onClick={() => (closeNav(), setPseudoRoute("locations"))}>
+                    Edit
+                  </Button>
                   <ToggleMantineTheme />
                 </Group>
               </AppShell.Navbar>
@@ -216,38 +229,21 @@ export const App = ({ docId, route }: { docId: JournalId; route: string; }) => {
                 <RobotsView docId={docId} h={ fixHeight - viewOffset } />
                 : route == "tasks" ?
                 <TasksView docId={docId} h={ fixHeight - viewOffset } />
-                : route == journalIdToString(docId) ? // Fleetmanager
+                : route == "location" ? // Fleetmanager
                 <Box h={ fixHeight - fmOffset }>
                   <Divider />
                   <Fleetmanager />
                 </Box>
-                : // else: 404
-                <>
-                  <Divider />
-                  <Stack h={fixHeight - fmOffset} p="lg">
-                    <Text c="red">
-                      ERROR invalid URL:&nbsp;
-                      <Code>
-                        /{route}
-                      </Code>
-                    </Text>
-                  </Stack>
-                </>
-                }
+                : <></>}
               </AppShell.Main>
               <AppShell.Aside withBorder={true} px="lg">
                 <Stack>
-                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 3 }>
+                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 2 }>
                     <Divider label="Robots" labelPosition="center" />
                     <RobotList docId={docId} fbDisabled={true} />
                   </Stack>
-                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 3 }>
-                    <Divider label="Tasks" labelPosition="center" />
-                    <TaskList docId={docId} fbDisabled={true} />
-                  </Stack>
-                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 3 }>
-                    <Divider label="Selection" labelPosition="center" />
-                    <GuiSelection docId={docId} />
+                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 2 }>
+                    <RobotSelection docId={docId} fbDisabled={true} />
                   </Stack>
                 </Stack>
               </AppShell.Aside>

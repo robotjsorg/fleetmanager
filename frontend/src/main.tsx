@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { RouterProvider, createBrowserRouter, redirect, useLocation, useParams } from "react-router-dom";
+import { RouterProvider, createBrowserRouter, redirect, useParams } from "react-router-dom";
 
 import workerUrl from "@orbitinghail/sqlsync-worker/worker.js?url";
 import sqlSyncWasmUrl from "@orbitinghail/sqlsync-worker/sqlsync.wasm?url";
@@ -33,8 +33,6 @@ const newDocumentId = async (name = "") => {
 
 export const DocRoute = () => {
   const { docId } = useParams();
-  const location = useLocation();
-  const route = location.pathname.split("/").pop()!;
 
   if (!docId) {
     console.error("doc id not found in params");
@@ -43,7 +41,7 @@ export const DocRoute = () => {
     );
   } else {
     return (
-      <App docId={journalIdFromString( docId )} route={route} />
+      <App docId={journalIdFromString( docId )} />
     );  
   }
 };
@@ -65,18 +63,6 @@ const router = createBrowserRouter([
   },
   {
     path: "/:docId",
-    element: <DocRoute />
-  },
-  {
-    path: "/:docId/locations",
-    element: <DocRoute />
-  },
-  {
-    path: "/:docId/robots",
-    element: <DocRoute />
-  },
-  {
-    path: "/:docId/tasks",
     element: <DocRoute />
   },
   {

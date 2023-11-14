@@ -23,7 +23,7 @@ export const TaskList = ({
 
   return (
     <ScrollArea type="auto">
-      {filteredTasks.length == 0 ? <Text>No Tasks</Text> :
+      {filteredTasks.length == 0 ? <Text>Location has No Tasks</Text> :
         filteredTasks.map((task) => (
           <TaskItem docId={docId} key={task.id} task={task} fbDisabled={fbDisabled} />
         ))
