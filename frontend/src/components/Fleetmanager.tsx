@@ -1,10 +1,13 @@
 /* eslint-disable react/no-unknown-property */
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useMantineContext } from "@mantine/core";
 
 import { Canvas } from "@react-three/fiber";
 import { Text, OrbitControls } from "@react-three/drei";
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
+
+import { IRobot } from "../@types/robot";
+
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locSelectionContext } from "../context/locSelectionContext";
@@ -17,8 +20,13 @@ export const Fleetmanager = () => {
   const { robots } = useContext( RobotContext );
   const { locSelection } = useContext( locSelectionContext );
   const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
-  const filteredRobots = robots.filter(( robot )=>( robot.locationid == locSelection ));
 
+  const [ filteredRobots, setFilteredRobots ] = useState<IRobot[]>([]);
+  useEffect(() => {
+    const newFilteredRobots = robots.filter(( robot )=>( robot.locationid == locSelection ));
+    setFilteredRobots( newFilteredRobots );
+  }, [locSelection, robots]);
+  
   return ( 
     <Canvas dpr={[1, 2]} camera={{ position: [0, 4, 1], near: 0.01, far: 20 }}
       onPointerMissed={() => setGuiSelection("no selection")}>

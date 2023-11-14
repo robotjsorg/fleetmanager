@@ -11,7 +11,7 @@ import { Euler, Vector3 } from "@react-three/fiber";
 import { useMutate, useQuery } from "./doctype";
 import { ILocation } from "./@types/location";
 import { IRobotQuery, IRobot } from "./@types/robot";
-import { ITask } from "./@types/task";
+import { ITask, ITaskQuery } from "./@types/task";
 
 import { RobotProvider } from "./context/robotContext";
 import { guiSelectionContext } from "./context/guiSelectionContext";
@@ -28,6 +28,13 @@ import { RobotList } from "./components/RobotList";
 import { RobotSelection } from "./components/RobotSelection";
 
 import { randomJointAngles } from "./meshes/Mesh_abb_irb52_7_120";
+
+const NAVBAR_WIDTH = 300;
+const HEADER_HEIGHT = 60;
+const NAVBAR_OFFSET = 155; // topbar 60 + btns 36   + padding 40 + divider 19
+const CONTENT_OFFSET = 61; // topbar 60 + divider 1
+const WIDGET_OFFSET = 117; // topbar 60 + divider (19 * 3)
+const VIEW_OFFSET = 222;   // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
 
 const randomPosition = () => {
   const x = 4 * (Math.random() - 0.5);
@@ -51,7 +58,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
     docId,
     sql`SELECT * FROM robots`
   );
-  const { rows: tasks } = useQuery<ITask>(
+  const { rows: tasksQuery } = useQuery<ITaskQuery>(
     docId,
     sql`SELECT * FROM tasks`
   );
@@ -63,31 +70,25 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   // Single screen desktop app, no scrolling
   const { width, height } = useViewportSize();
   const [ fixHeight, setFixHeight ] = useState( height );
-  const navbarWidth = 300;
-  const headerHeight = 60;
-  const navBarOffset = 155; // topbar 60 + btns 36 + padding 40 + divider 19
-  const fmOffset = 61; // topbar 60 + divider 1
-  const fmWidgetOffset = 117; // topbar 60 + divider (19 * 3)
-  const viewOffset = 222; // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
-  let minFixHeight = height;
-  if ( width > 1440 ) {
-    minFixHeight = 620;
-  } else if ( width > 1280 ) {
-    minFixHeight = 480;
-  } else if ( width > 960 ) {
-    minFixHeight = 320;
-  } else if ( width > 640 ) {
-    minFixHeight = 240;
-  } else if ( width < 480 ) {
-    minFixHeight = 160;
-  }
   useEffect(() => {
+    let minFixHeight = height;
+    if ( width > 1440 ) {
+      minFixHeight = 620;
+    } else if ( width > 1280 ) {
+      minFixHeight = 480;
+    } else if ( width > 960 ) {
+      minFixHeight = 320;
+    } else if ( width > 640 ) {
+      minFixHeight = 240;
+    } else if ( width < 480 ) {
+      minFixHeight = 160;
+    }
     if ( height > minFixHeight ) {
       setFixHeight( height );
     } else {
       setFixHeight( minFixHeight );
     }
-  }, [height, minFixHeight]);
+  }, [height, width]);
 
   // Menu control
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure(false);
@@ -115,7 +116,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   };
 
   // Initialize database
-  const [initDB, setInitDB] = useState(false);
+  const [initDB, setInitDB] = useState( false );
   useEffect(() => {    
     if (!initDB){
       console.log("[INFO] Init DB")
@@ -129,18 +130,19 @@ export const App = ({ docId }: { docId: JournalId; }) => {
       }
     }
     return () => {
-      setInitDB(true);
+      setInitDB( true );
     };
   }, [initDB, locSelection, mutate]);
 
   // Add data to robots
-  const [ robots, setRobots ] = useState([]);
+  const [ robots, setRobots ] = useState( [] );
   useEffect(()=>{
     const newRobots: IRobot[] = [];
     if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
       robotsQuery.map(( robot ) => ( 
-        newRobots.push(robot as IRobot))
+        newRobots.push( robot as IRobot ))
       )
+      newRobots.filter((robot) => (robot.state = "Off"));
       newRobots.filter((robot) => (robot.lastKnownPosition = randomPosition()));
       newRobots.filter((robot) => (robot.lastKnownRotation = randomRotation()));
       newRobots.filter((robot) => (robot.lastKnownJointAngles = randomJointAngles()));
@@ -148,13 +150,26 @@ export const App = ({ docId }: { docId: JournalId; }) => {
     }
   }, [robotsQuery]);
 
+  // Add data to tasks
+  const [ tasks, setTasks ] = useState( [] );
+  useEffect(()=>{
+    const newTasks: ITask[] = [];
+    if ( Array.isArray( tasksQuery ) && tasksQuery.length > 0 ) {
+      tasksQuery.map(( task ) => ( 
+        newTasks.push( task as ITask ))
+      )
+      newTasks.filter((task) => (task.state = "Completed"));
+      setTasks(newTasks as never[]);
+    }
+  }, [tasksQuery]);
+
   // Selected location description
   const [ selectedLocationDescription, setSelectedLocationDescription ] = useState("");
   useEffect(()=>{
     if ( Array.isArray( locations ) && locations.length > 0 ) {
       const selectedLocation = locations.filter(( location ) => ( location.id == locSelection ));
       if ( Array.isArray( selectedLocation ) && selectedLocation.length > 0 ) {
-        setSelectedLocationDescription(selectedLocation[0].description);
+        setSelectedLocationDescription( selectedLocation[0].description );
       }
     }
   }, [locSelection, locations]);
@@ -167,15 +182,15 @@ export const App = ({ docId }: { docId: JournalId; }) => {
             <AppShell
               withBorder={false}
               header={{
-                height: headerHeight
+                height: HEADER_HEIGHT
               }}
               navbar={{
-                width: navbarWidth,
+                width: NAVBAR_WIDTH,
                 breakpoint: "sm",
                 collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
               }}
               aside={{
-                width: navbarWidth,
+                width: NAVBAR_WIDTH,
                 breakpoint: "sm",
                 collapsed: { mobile: true, desktop: subpageOpened || desktopOpened }
               }}>
@@ -187,23 +202,35 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                   </Box>
                   <Group wrap="nowrap" gap="xs">
                     <Box hidden={locSelection == "no selection"}>
-                      <Button visibleFrom="xs" color="gray" variant={ subpageOpened ? "subtle" : "light" } onClick={() => (setPseudoRoute("location"))}>
+                      <Button visibleFrom="xs" color="gray"
+                        onClick={() => (setPseudoRoute("location"))}
+                        variant={ subpageOpened ? "subtle" : "light" }>
                         { selectedLocationDescription }
                       </Button>
-                      <Button hiddenFrom="xs" color="gray" variant={ subpageOpened ? "subtle" : "light" } onClick={() => (setPseudoRoute("location"))}>
+                      <Button hiddenFrom="xs" color="gray"
+                        onClick={() => (setPseudoRoute("location"))}
+                        variant={ subpageOpened ? "subtle" : "light" }>
                         <IconHome size={18} />
                       </Button>
                     </Box>
-                    <Button visibleFrom="xs" color="gray" variant={ route != "robots" ? "subtle" : "light" } onClick={() => (setPseudoRoute("robots"))}>
+                    <Button visibleFrom="xs" color="gray"
+                      onClick={() => (setPseudoRoute("robots"))}
+                      variant={ route != "robots" ? "subtle" : "light" }>
                       Robots
                     </Button>
-                    <Button hiddenFrom="xs" color="gray" variant={ route != "robots" ? "subtle" : "light" } onClick={() => (setPseudoRoute("robots"))}>
+                    <Button hiddenFrom="xs" color="gray"
+                      onClick={() => (setPseudoRoute("robots"))}
+                      variant={ route != "robots" ? "subtle" : "light" }>
                       <IconRobot size={18} />
                     </Button>
-                    <Button visibleFrom="xs" color="gray" variant={ route != "tasks" ? "subtle" : "light" } onClick={() => (setPseudoRoute("tasks"))}>
+                    <Button visibleFrom="xs" color="gray" 
+                      onClick={() => (setPseudoRoute("tasks"))}
+                      variant={ route != "tasks" ? "subtle" : "light" }>
                       Tasks
                     </Button>
-                    <Button hiddenFrom="xs" color="gray" variant={ route != "tasks" ? "subtle" : "light" } onClick={() => (setPseudoRoute("tasks"))}>
+                    <Button hiddenFrom="xs" color="gray"
+                      onClick={() => (setPseudoRoute("tasks"))}
+                      variant={ route != "tasks" ? "subtle" : "light" }>
                       <IconChecklist size={18} />
                     </Button>
                   </Group>
@@ -211,14 +238,16 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                 </Group>
               </AppShell.Header>
               <AppShell.Navbar zIndex={300} withBorder={true} px="lg" pb="lg">
-                <Stack h={ fixHeight - navBarOffset }>
+                <Stack h={ fixHeight - NAVBAR_OFFSET }>
                   <Divider label="Locations" labelPosition="center" />
                   <Box onClick={ closeNav }>
                     <LocationList docId={docId} fbDisabled={true} />
                   </Box>
                 </Stack>
                 <Group justify="center" p="lg">
-                  <Button leftSection={<IconSettings size={18} />} variant="default" onClick={() => (closeNav(), setPseudoRoute("locations"))}>
+                  <Button variant="default"
+                    onClick={() => (closeNav(), setPseudoRoute("locations"))}
+                    leftSection={<IconSettings size={18} />}>
                     Edit
                   </Button>
                   <ToggleMantineTheme />
@@ -226,13 +255,13 @@ export const App = ({ docId }: { docId: JournalId; }) => {
               </AppShell.Navbar>
               <AppShell.Main onClick={ closeNav }>
                 { route == "locations" ?
-                <LocationsView docId={docId} h={ fixHeight - viewOffset } />
+                <LocationsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
                 : route == "robots" ?
-                <RobotsView docId={docId} h={ fixHeight - viewOffset } />
+                <RobotsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
                 : route == "tasks" ?
-                <TasksView docId={docId} h={ fixHeight - viewOffset } />
+                <TasksView docId={docId} h={ fixHeight - VIEW_OFFSET } />
                 : route == "location" ? // Fleetmanager
-                <Box h={ fixHeight - fmOffset }>
+                <Box h={ fixHeight - CONTENT_OFFSET }>
                   <Divider />
                   <Fleetmanager />
                 </Box>
@@ -240,11 +269,11 @@ export const App = ({ docId }: { docId: JournalId; }) => {
               </AppShell.Main>
               <AppShell.Aside withBorder={true} px="lg">
                 <Stack>
-                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 2 }>
+                  <Stack h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
                     <Divider label="Robots" labelPosition="center" />
                     <RobotList docId={docId} fbDisabled={true} />
                   </Stack>
-                  <Stack h={ ( fixHeight - fmWidgetOffset ) / 2 }>
+                  <Stack h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
                     <RobotSelection docId={docId} fbDisabled={true} />
                   </Stack>
                 </Stack>

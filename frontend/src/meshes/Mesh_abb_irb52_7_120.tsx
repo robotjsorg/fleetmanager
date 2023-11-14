@@ -61,21 +61,48 @@ export const Mesh_abb_irb52_7_120 = ({
 }) => {
   const ref = useRef<THREE.Mesh>(null!);
   const { nodes, materials } = useGLTF( filepath ) as GLTFResult;
-  const { tasks } = useContext( RobotContext );
   const { setGuiSelection } = useContext( guiSelectionContext );
-  const [ hovered, hover ] = useState( false );
   const [ position ] = useState( robot.lastKnownPosition as Vector3 );
   const [ rotation ] = useState( robot.lastKnownRotation as Euler );
   const [ jointAngles, setJointAngles ] = useState( robot.lastKnownJointAngles );
-  const filteredTasks = tasks.filter(( task ) => ( task.robotid == robot.id ));
-  const containsSpinAroundDesc = filteredTasks.reduce((contains, task) => {return contains || (task.description == "Spin Around" && !task.completed)}, false);
-  const containsRandomPositionsDesc = filteredTasks.reduce((contains, task) => {return contains || task.description == "Random Positions" && !task.completed}, false);
 
+  const SHADOWS = false;
+  const { scale } = useSpring({
+    scale: selected ? 1.2 : 1,
+    config: config.wobbly
+  });
+
+  const { tasks } = useContext( RobotContext );
+  const [ containsSpinAroundDesc, setContainsSpinAroundDesc ] = useState( false );
+  const [ containsRandomPositionsDesc, setContainsRandomPositionsDesc ] = useState( false );
+  useEffect(() => {
+    const filteredTasks = tasks.filter(( task ) => ( task.robotid == robot.id ));
+    setContainsSpinAroundDesc(
+      filteredTasks.reduce(
+        (contains, task) => {return contains || (task.description == "Spin Around" && !task.completed)}, false
+      )
+    );
+    setContainsRandomPositionsDesc(
+      filteredTasks.reduce(
+        (contains, task) => {return contains || (task.description == "Random Positions" && !task.completed)}, false
+      )
+    );
+  }, [robot.id, tasks]);
+
+  const [ hovered, hover ] = useState( false );
   useEffect(() => {
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
-  const handleTasks = (delta: number) => {
+  const handleReset = () => {
+    robot.state = "Manual";
+  };
+
+  const handleAutomatic = () => {
+    robot.state = "Automatic";
+  };
+
+  const handleTasks = ( delta: number ) => {
     if ( containsSpinAroundDesc ) {
       const newJointAngles = jointAngles;
       newJointAngles[0] += delta;
@@ -90,8 +117,33 @@ export const Mesh_abb_irb52_7_120 = ({
     } // else Idle
   }
 
-  useFrame((_state, delta) => (
-    handleTasks(delta),
+  const handleOn = () => {
+    robot.state = "Error";
+  };
+
+  const handleStates = ( delta: number ) => { // TODO: Move to useEffect()
+    switch( robot.state ) {
+      case "Error": { 
+        handleReset();
+        break; 
+      } 
+      case "Manual": { 
+        handleAutomatic();
+        break; 
+      } 
+      case "Automatic": { 
+        handleTasks( delta );
+        break; 
+      } 
+      default: { // "Off"
+        handleOn();
+        break; 
+      } 
+    }
+  };
+
+  useFrame(( _state, delta ) => (
+    handleStates(delta),
     ref.current.children[0].rotation.z = jointAngles[0],
     ref.current.children[0].children[0].rotation.y = jointAngles[1],
     ref.current.children[0].children[0].children[0].rotation.y = jointAngles[2],
@@ -99,13 +151,6 @@ export const Mesh_abb_irb52_7_120 = ({
     ref.current.children[0].children[0].children[0].children[0].children[0].rotation.y = jointAngles[4],
     ref.current.children[0].children[0].children[0].children[0].children[0].children[0].rotation.x = jointAngles[5]
   ));
-
-  const { scale } = useSpring({
-    scale: selected ? 1.2 : 1,
-    config: config.wobbly
-  });
-
-  const shadows = false;
 
   return (
     <Select enabled={ selected || hovered }>
@@ -120,43 +165,43 @@ export const Mesh_abb_irb52_7_120 = ({
           material={materials.gkmodel0_base_link_geom0}
           position={position}
           rotation={rotation}
-          castShadow={shadows}
-          receiveShadow={shadows}>
+          castShadow={SHADOWS}
+          receiveShadow={SHADOWS}>
           <mesh
             geometry={nodes.link_1.geometry}
             material={materials.gkmodel0_link_1_geom0}
             position={[0, 0, 0.486]}
-            castShadow={shadows}
-            receiveShadow={shadows}>
+            castShadow={SHADOWS}
+            receiveShadow={SHADOWS}>
             <mesh
               geometry={nodes.link_2.geometry}
               material={materials.gkmodel0_link_2_geom0}
               position={[0.15, 0, 0]}
-              castShadow={shadows}
-              receiveShadow={shadows}>
+              castShadow={SHADOWS}
+              receiveShadow={SHADOWS}>
               <mesh
                 geometry={nodes.link_3.geometry}
                 material={materials.gkmodel0_link_3_geom0}
                 position={[0, 0, 0.475]}
-                castShadow={shadows}
-                receiveShadow={shadows}>
+                castShadow={SHADOWS}
+                receiveShadow={SHADOWS}>
                 <mesh
                   geometry={nodes.link_4.geometry}
                   material={materials.gkmodel0_link_4_geom0}
                   position={[0.6, 0, 0]}
-                  castShadow={shadows}
-                  receiveShadow={shadows}>
+                  castShadow={SHADOWS}
+                  receiveShadow={SHADOWS}>
                   <mesh
                     geometry={nodes.link_5.geometry}
                     material={materials.gkmodel0_link_5_geom0}
-                    castShadow={shadows}
-                    receiveShadow={shadows}>
+                    castShadow={SHADOWS}
+                    receiveShadow={SHADOWS}>
                     <mesh
                       geometry={nodes.link_6.geometry}
                       material={materials.gkmodel0_link_6_geom0}
                       position={[0.065, 0, 0]}
-                      castShadow={shadows}
-                      receiveShadow={shadows}/>
+                      castShadow={SHADOWS}
+                      receiveShadow={SHADOWS}/>
                   </mesh>
                 </mesh>
               </mesh>

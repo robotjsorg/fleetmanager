@@ -9,16 +9,6 @@ const localFilepath = "../../assets/gltf/";
 const filename = "cardboard_box_01_4k.gltf";
 const filepath = isLocalhost ? localFilepath + filename : filename;
 
-type GLTFResult = GLTF & {
-  nodes: {
-    cardboard_box_01: THREE.Mesh;
-  };
-  materials: {
-    ["default"]: THREE.MeshStandardMaterial;
-    cardboard_box_01: THREE.MeshStandardMaterial;
-  };
-};
-
 const randomPosition = () => {
   const x = 6 * (Math.random() - 0.5);
   const z = 3 * (Math.random() - 0.5);
@@ -30,12 +20,22 @@ const randomRotation = () => {
   return [0, y, 0] as Euler;
 }
 
+type GLTFResult = GLTF & {
+  nodes: {
+    cardboard_box_01: THREE.Mesh;
+  };
+  materials: {
+    ["default"]: THREE.MeshStandardMaterial;
+    cardboard_box_01: THREE.MeshStandardMaterial;
+  };
+};
+
 export function Mesh_cardboard_box_01() {
   const { nodes, materials } = useGLTF( filepath ) as GLTFResult;
   const [ position ] = useState( randomPosition() );
   const [ rotation ] = useState( randomRotation() );
 
-  const shadows = false;
+  const SHADOWS = false;
 
   return (
     <group dispose={null}>
@@ -44,8 +44,8 @@ export function Mesh_cardboard_box_01() {
         material={materials.cardboard_box_01}
         position={position}
         rotation={rotation}
-        castShadow={shadows}
-        receiveShadow={shadows}
+        castShadow={SHADOWS}
+        receiveShadow={SHADOWS}
         scale={0.8}
       />
     </group>
