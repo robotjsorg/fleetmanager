@@ -1,7 +1,9 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { ScrollArea, Text } from "@mantine/core";
+
+import { IRobot } from "../@types/robot";
 
 import { RobotContext } from "../context/robotContext";
 import { locSelectionContext } from "../context/locSelectionContext";
@@ -17,7 +19,10 @@ export const RobotList = ({
 }) => {
   const { robots } = useContext( RobotContext );
   const { locSelection } = useContext( locSelectionContext );
-  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ));
+  const [filteredRobots, setFilteredRobots] = useState<IRobot[]>([]);
+  useEffect(()=>{
+    setFilteredRobots(robots.filter(( robot ) => ( robot.locationid == locSelection )));
+  }, [locSelection, robots]);
 
   return (
     <ScrollArea type="auto">

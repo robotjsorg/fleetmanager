@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 
-import { Text, Box, Table, Button, Divider, NumberInput, Center } from "@mantine/core";
+import { Text, Box, Table, Button, Divider, NumberInput, Center, Group, Flex } from "@mantine/core";
 
 import { IRobot } from "../@types/robot";
 import { ITask } from "../@types/task";
@@ -28,6 +28,7 @@ export const RobotSelection = () => {
   const [description, setDescription] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [state, setState] = useState("");
+  const [toggleManual, setToggleManual] = useState(true);
   const [position, setPosition] = useState([0, 0, 0]);
   const [rotation, setRotation] = useState([0, 0 ,0]);
   useEffect(()=>{
@@ -129,11 +130,19 @@ export const RobotSelection = () => {
           <Table.Tr>
             <Table.Td>
               <Text size="xs">
-                <Text span c="gray" inherit>created: </Text>
-                { guiSelection != "no selection" ? createdAt.split(" ")[0] : "-"}
+                <Text span c="gray" inherit>part: </Text>
+                { guiSelection != "no selection" ? "Not Present" : "-"}
+              </Text>
+              <Text size="xs">
+                <Text span c="gray" inherit>tool: </Text>
+                { guiSelection != "no selection" ? "Unactuated" : "-"}
               </Text>
             </Table.Td>
             <Table.Td>
+              <Text size="xs">
+                <Text span c="gray" inherit>created: </Text>
+                { guiSelection != "no selection" ? createdAt.split(" ")[0] : "-"}
+              </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>updated: </Text>
                 { guiSelection != "no selection" ? createdAt.split(" ")[0] : "-"}
@@ -167,20 +176,6 @@ export const RobotSelection = () => {
               <Text size="xs">
                 <Text span c="gray" inherit>&psi;: </Text>
                 { guiSelection != "no selection" ? rotation[2].toPrecision(3) : "-"}
-              </Text>
-            </Table.Td>
-          </Table.Tr>
-          <Table.Tr>
-            <Table.Td>
-              <Text size="xs">
-                <Text span c="gray" inherit>part: </Text>
-                { guiSelection != "no selection" ? "Not Present" : "-"}
-              </Text>
-            </Table.Td>
-            <Table.Td>
-              <Text size="xs">
-                <Text span c="gray" inherit>tool: </Text>
-                { guiSelection != "no selection" ? "Unactuated" : "-"}
               </Text>
             </Table.Td>
           </Table.Tr>
@@ -232,111 +227,161 @@ export const RobotSelection = () => {
       </Table>
       {state == "Error" && guiSelection != "no selection" ?
         <>
-          <Divider />
-          <Box p="lg">
-            <Text>
-              <Text c="red" span>Error: </Text>
-              Robot error text placeholder.
-            </Text>
-          </Box>
+          <Divider mx="xs" />
+          <Table withRowBorders={false}>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Td>
+                  <Text size="xs">
+                    <Text span c="red" inherit>message: </Text>
+                    Robot error text placeholder.
+                  </Text>
+                </Table.Td>
+              </Table.Tr>
+            </Table.Thead>
+            {/* <Table.Tbody>
+              <Table.Tr>
+                <Table.Td>
+                  Automatic task data and controls.
+                </Table.Td>
+              </Table.Tr>
+            </Table.Tbody> */}
+          </Table>
         </>
       : state == "Manual" && guiSelection != "no selection" ?
         <>
-          <Divider />
-          <form onChange={handleManualJoints} onInput={handleManualJoints}>
-            <Table withRowBorders={false}>
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Td w="50%">
-                    <Center>
-                      <Button variant="light" color="gray" size="xs">
-                        Joint Space
-                      </Button>
-                    </Center>
-                  </Table.Td>
-                  <Table.Td w="50%">
-                    <Center>
-                      <Button disabled variant="default" color="gray" size="xs" ml={8}>
-                        XYZ Space
-                      </Button>
-                    </Center>
-                  </Table.Td>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                <Table.Tr>
-                  <Table.Td>
-                    <NumberInput
-                      leftSection={"J1"}
-                      size="xs"
-                      clampBehavior="strict"
-                      step={0.1}
-                      startValue={jointAngles[0]}
-                      min={JOINT_LIMITS[0][0]}
-                      max={JOINT_LIMITS[0][1]}
-                      {...form.getInputProps("J1")}
-                    />
-                    <NumberInput
-                      leftSection={"J2"}
-                      size="xs"
-                      clampBehavior="strict"
-                      step={0.1}
-                      startValue={jointAngles[1]}
-                      min={JOINT_LIMITS[1][0]}
-                      max={JOINT_LIMITS[1][1]}
-                      {...form.getInputProps("J2")}
-                    />
-                    <NumberInput
-                      leftSection={"J3"}
-                      size="xs"
-                      clampBehavior="strict"
-                      step={0.1}
-                      startValue={jointAngles[2]}
-                      min={JOINT_LIMITS[2][0]}
-                      max={JOINT_LIMITS[2][1]}
-                      {...form.getInputProps("J3")}
-                    />
-                  </Table.Td>
-                  <Table.Td>
-                    <NumberInput
-                      leftSection={"J4"}
-                      size="xs"
-                      clampBehavior="strict"
-                      step={0.1}
-                      startValue={jointAngles[3]}
-                      min={JOINT_LIMITS[3][0]}
-                      max={JOINT_LIMITS[3][1]}
-                      {...form.getInputProps("J4")}
-                    />
-                    <NumberInput
-                      leftSection={"J5"}
-                      size="xs"
-                      clampBehavior="strict"
-                      step={0.1}
-                      startValue={jointAngles[4]}
-                      min={JOINT_LIMITS[4][0]}
-                      max={JOINT_LIMITS[4][1]}
-                      {...form.getInputProps("J5")}
-                    />
-                    <NumberInput
-                      leftSection={"J6"}
-                      size="xs"
-                      clampBehavior="strict"
-                      step={0.1}
-                      startValue={jointAngles[5]}
-                      min={JOINT_LIMITS[5][0]}
-                      max={JOINT_LIMITS[5][1]}
-                      {...form.getInputProps("J6")}
-                    />
-                  </Table.Td>
-                </Table.Tr>
-              </Table.Tbody>
-            </Table>
-          </form>
+          <Divider mx="xs" />
+          <Table withRowBorders={false}>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Td w="50%">
+                  <Center>
+                    <Button onClick={()=>setToggleManual(true)} variant={toggleManual ? "light" : "subtle"} color="gray" size="xs">
+                      Joint Space
+                    </Button>
+                  </Center>
+                </Table.Td>
+                <Table.Td w="50%">
+                  <Center>
+                    <Button onClick={()=>setToggleManual(false)} variant={!toggleManual ? "light" : "subtle"}  color="gray" size="xs" ml={8}>
+                      XYZ Space
+                    </Button>
+                  </Center>
+                </Table.Td>
+              </Table.Tr>
+            </Table.Thead>
+          </Table>
+          {toggleManual ? // Joint Space
+            <form onChange={handleManualJoints} onInput={handleManualJoints}>
+              <Group gap={0} px="xs" pb="xs">
+                <Flex w="50%" gap="xs" px="xs" direction="column">
+                  <NumberInput
+                    leftSection={<Text span size="xs">J1</Text>}
+                    size="xs"
+                    clampBehavior="strict"
+                    step={0.1}
+                    startValue={jointAngles[0]}
+                    min={JOINT_LIMITS[0][0]}
+                    max={JOINT_LIMITS[0][1]}
+                    {...form.getInputProps("J1")}
+                  />
+                  <NumberInput
+                    leftSection={<Text span size="xs">J2</Text>}
+                    size="xs"
+                    clampBehavior="strict"
+                    step={0.1}
+                    startValue={jointAngles[1]}
+                    min={JOINT_LIMITS[1][0]}
+                    max={JOINT_LIMITS[1][1]}
+                    {...form.getInputProps("J2")}
+                  />
+                  <NumberInput
+                    leftSection={<Text span size="xs">J3</Text>}
+                    size="xs"
+                    clampBehavior="strict"
+                    step={0.1}
+                    startValue={jointAngles[2]}
+                    min={JOINT_LIMITS[2][0]}
+                    max={JOINT_LIMITS[2][1]}
+                    {...form.getInputProps("J3")}
+                  />
+                </Flex>
+                <Flex w="50%" gap="xs" px="xs" direction="column">
+                  <NumberInput
+                    leftSection={<Text span size="xs">J4</Text>}
+                    size="xs"
+                    clampBehavior="strict"
+                    step={0.1}
+                    startValue={jointAngles[3]}
+                    min={JOINT_LIMITS[3][0]}
+                    max={JOINT_LIMITS[3][1]}
+                    {...form.getInputProps("J4")}
+                  />
+                  <NumberInput
+                    leftSection={<Text span size="xs">J5</Text>}
+                    size="xs"
+                    clampBehavior="strict"
+                    step={0.1}
+                    startValue={jointAngles[4]}
+                    min={JOINT_LIMITS[4][0]}
+                    max={JOINT_LIMITS[4][1]}
+                    {...form.getInputProps("J5")}
+                  />
+                  <NumberInput
+                    leftSection={<Text span size="xs">J6</Text>}
+                    size="xs"
+                    clampBehavior="strict"
+                    step={0.1}
+                    startValue={jointAngles[5]}
+                    min={JOINT_LIMITS[5][0]}
+                    max={JOINT_LIMITS[5][1]}
+                    {...form.getInputProps("J6")}
+                  />
+                </Flex>
+              </Group>
+            </form>
+          : // Coordinate Space
+            <form onChange={handleManualJoints} onInput={handleManualJoints}>
+              <Center>
+                <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column">
+                  <NumberInput disabled
+                    leftSection={<Text span size="xs">X</Text>}
+                    size="xs"
+                    clampBehavior="strict"
+                    step={0.1}
+                    startValue={0}
+                    min={-10}
+                    max={10}
+                    {...form.getInputProps("X")}
+                  />
+                  <NumberInput disabled
+                    leftSection={<Text span size="xs">Y</Text>}
+                    size="xs"
+                    clampBehavior="strict"
+                    step={0.1}
+                    startValue={0}
+                    min={-10}
+                    max={10}
+                    {...form.getInputProps("Y")}
+                  />
+                  <NumberInput disabled
+                    leftSection={<Text span size="xs">Z</Text>}
+                    size="xs"
+                    clampBehavior="strict"
+                    step={0.1}
+                    startValue={0}
+                    min={-10}
+                    max={10}
+                    {...form.getInputProps("Z")}
+                  />
+                </Flex>
+              </Center>
+            </form> 
+          }
         </>
       : state == "Auto" && guiSelection != "no selection" ?
         <>
-          <Divider />
+          <Divider mx="xs" />
           <Table withRowBorders={false}>
             <Table.Thead>
               <Table.Tr>
@@ -348,8 +393,8 @@ export const RobotSelection = () => {
                 </Table.Td>
                 <Table.Td w="50%">
                   <Text size="xs">
-                    <Text span c="gray" inherit>completed: </Text>
-                    {filteredTasks.length > 0 ? filteredTasks.map(( task ) => ( task.completed ? "True" : "False" )) : "-"}
+                    <Text span c="gray" inherit>created: </Text>
+                    {filteredTasks.length > 0 ? filteredTasks.map(( task ) => ( task.created_at.split(" ")[0] )) : "-"}
                   </Text>
                 </Table.Td>
               </Table.Tr>
@@ -357,17 +402,22 @@ export const RobotSelection = () => {
             <Table.Tbody>
               <Table.Tr>
                 <Table.Td>
-                  {/* Automatic task data and controls. */}
+                  <Text size="xs">
+                    <Text span c="gray" inherit>state: </Text>
+                    {filteredTasks.length > 0 ? filteredTasks.map(( task ) => ( task.state )) : "-"}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <Text size="xs">
+                    <Text span c="gray" inherit>completed: </Text>
+                    {filteredTasks.length > 0 ? filteredTasks.map(( task ) => ( task.completed ? "True" : "False" )) : "-"}
+                  </Text>
                 </Table.Td>
               </Table.Tr>
             </Table.Tbody>
           </Table>
         </>
-      : guiSelection != "no selection" ? // state == "Off"
-      <>
-        <Divider />
-      </>
-      :
+      : 
         <></>
       }
     </Box>

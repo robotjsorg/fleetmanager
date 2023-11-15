@@ -1,4 +1,4 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Text, ActionIcon, Checkbox, Group } from "@mantine/core";
@@ -6,6 +6,7 @@ import { Text, ActionIcon, Checkbox, Group } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 
 import { useMutate } from "../doctype";
+import { IRobot } from "../@types/robot";
 import { ITask } from "../@types/task";
 
 import { RobotContext } from "../context/robotContext";
@@ -20,7 +21,10 @@ export const TaskItem = ({
   fbDisabled: boolean;
 }) => {
   const { robots } = useContext( RobotContext );
-  const robot = robots.filter(( robot ) => ( robot.id == task.robotid ))[0];
+  const [ robot, setRobot ] = useState<IRobot>(robots[0]);
+  useEffect(()=>{
+    setRobot( robots.filter(( robot ) => ( robot.id == task.robotid ))[0] );
+  }, [robots, task.robotid]);
   const mutate = useMutate( docId );
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteTask", id: task.id }).catch((err) => {

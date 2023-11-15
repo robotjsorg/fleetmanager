@@ -1,4 +1,4 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Button, Group, Select } from "@mantine/core";
@@ -7,6 +7,7 @@ import { useForm } from "@mantine/form";
 import { v4 as uuidv4 } from "uuid";
 
 import { useMutate } from "../doctype";
+import { IRobot } from "../@types/robot";
 
 import { RobotContext } from "../context/robotContext";
 import { locSelectionContext } from "../context/locSelectionContext";
@@ -14,7 +15,10 @@ import { locSelectionContext } from "../context/locSelectionContext";
 export const TaskForm = ({ docId }: { docId: JournalId }) => {
   const { robots, tasks } = useContext( RobotContext );
   const { locSelection } = useContext( locSelectionContext );
-  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ));
+  const [filteredRobots, setFilteredRobots] = useState<IRobot[]>([]);
+  useEffect(()=>{
+    setFilteredRobots(robots.filter(( robot ) => ( robot.locationid == locSelection )));
+  }, [locSelection, robots]);
   
   const form = useForm({
     initialValues: {
@@ -27,7 +31,6 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
     }
   });
   const mutate = useMutate( docId );
-
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ robot, description }) => {

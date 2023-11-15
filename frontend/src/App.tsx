@@ -272,7 +272,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
               </AppShell.Main>
               <AppShell.Aside withBorder={true}>
                 <Stack>
-                  <Stack px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
+                  <Stack px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
                     <Divider label="Robots" labelPosition="center" />
                     <RobotList docId={docId} fbDisabled={true} />
                   </Stack>

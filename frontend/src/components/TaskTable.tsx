@@ -1,6 +1,8 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { Table } from "@mantine/core";
+
+import { ITask } from "../@types/task";
 
 import { RobotContext } from "../context/robotContext";
 import { locSelectionContext } from "../context/locSelectionContext";
@@ -8,12 +10,13 @@ import { locSelectionContext } from "../context/locSelectionContext";
 export const TaskTable = () => {
   const { robots, tasks } = useContext( RobotContext );
   const { locSelection } = useContext( locSelectionContext );
-  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ));
-  const filteredRobotIds = filteredRobots.map(( robot ) => ( robot.id ));
-  const filteredTasks = tasks.filter(( task ) => ( filteredRobotIds.includes( task.robotid ) ));
+  const [ filteredTasks, setFilteredTasks ] = useState<ITask[]>([]);
+  useEffect(()=>{
+    const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ));
+    const filteredRobotIds = filteredRobots.map(( robot ) => ( robot.id ));
+    setFilteredTasks( tasks.filter(( task ) => ( filteredRobotIds.includes( task.robotid ) )) );
+  }, [locSelection, robots, tasks]);
   
-  // const robot = robots.filter(( robot ) => ( robot.id == task.robotid ))[0];
-
   return (
     <Table>
       <Table.Thead>
