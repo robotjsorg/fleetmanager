@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 
-import { Text, Box, Table, Button, Divider, NumberInput, Center, Group, Flex, Select } from "@mantine/core";
+import { Text, Box, Table, Button, Divider, NumberInput, Group, Flex, Select } from "@mantine/core";
 
 import { IRobot } from "../@types/robot";
 import { ITask } from "../@types/task";
@@ -11,6 +11,7 @@ import { moveRobotContext } from "../context/moveRobotContext";
 
 import { JOINT_LIMITS } from "../meshes/Mesh_abb_irb52_7_120";
 import { useForm } from "@mantine/form";
+import { IconLock, IconLockOpen } from "@tabler/icons-react";
 
 export const RobotSelection = () => {
   const { robots, tasks } = useContext( RobotContext );
@@ -255,7 +256,8 @@ export const RobotSelection = () => {
             <Group gap={0} p="xs">
               <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column" align="center">
                 <Button onClick={()=>{moveRobot ? setMoveRobot(false) : setMoveRobot(true)}}
-                  variant={moveRobot ? "outline" : "default"} color="gray" size="xs">
+                  variant={moveRobot ? "outline" : "default"} color="gray" size="xs"
+                  leftSection={moveRobot ? <IconLockOpen size={18} /> : <IconLock size={18} />}>
                   Move Robot
                 </Button>
               </Flex>
@@ -307,26 +309,14 @@ export const RobotSelection = () => {
       : state == "Manual" && guiSelection != "no selection" ?
         <>
           <Divider mx="xs" />
-          <Table withRowBorders={false}>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Td w="50%">
-                  <Center>
-                    <Button onClick={()=>setToggleManual(true)} variant={toggleManual ? "light" : "subtle"} color="gray" size="xs">
-                      Joints
-                    </Button>
-                  </Center>
-                </Table.Td>
-                <Table.Td w="50%">
-                  <Center>
-                    <Button onClick={()=>setToggleManual(false)} variant={!toggleManual ? "light" : "subtle"}  color="gray" size="xs" ml={8}>
-                      Tool
-                    </Button>
-                  </Center>
-                </Table.Td>
-              </Table.Tr>
-            </Table.Thead>
-          </Table>
+          <Group gap="xs" py="xs" justify="center">
+            <Button onClick={()=>setToggleManual(true)} variant={toggleManual ? "light" : "subtle"} color="gray" size="xs">
+              Joints
+            </Button>
+            <Button onClick={()=>setToggleManual(false)} variant={!toggleManual ? "light" : "subtle"}  color="gray" size="xs" ml={8}>
+              Tool
+            </Button>
+          </Group>
           {toggleManual ? // Joints
             <form>
               <Group gap={0} px="xs" pb="xs">
@@ -399,7 +389,7 @@ export const RobotSelection = () => {
           : // Tool
             <form>
               <Group gap={0} px="xs" pb="xs">
-                <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column">
+                <Flex w="50%" gap="xs" px="xs" direction="column">
                   <NumberInput disabled
                     leftSection={<Text span size="xs">X</Text>}
                     size="xs"
@@ -432,12 +422,18 @@ export const RobotSelection = () => {
                   />
                 </Flex>
                 <Flex w="50%" gap="xs" px="xs" direction="column">
-                  <Select
+                  <Button onClick={()=>{setToolState("Actuated")}} size="xs" variant="default">
+                    Actuate
+                  </Button>
+                  <Button onClick={()=>{setToolState("Unactuated")}} size="xs" variant="default">
+                    Unactuate
+                  </Button>
+                  {/* <Select
                     size="xs"
                     data={['Actuated', 'Unactuated']}
                     defaultValue={toolState}
                     onChange={(e)=>{setToolState(e!.valueOf())}}
-                  />
+                  /> */}
                 </Flex>
               </Group>
             </form> 

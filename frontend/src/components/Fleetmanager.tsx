@@ -28,10 +28,10 @@ export const Fleetmanager = () => {
     setLocationRobots( robots.filter(( robot )=>( robot.locationid == locSelection )) );
   }, [locSelection, robots]);
 
-  const [ selectedRobot, setSelectedRobot ] = useState<IRobot>();
-  useEffect(() => {
-    setSelectedRobot( robots.filter(( robot )=>( robot.locationid == guiSelection ))[0] );
-  }, [guiSelection, robots]);
+  // const [ selectedRobot, setSelectedRobot ] = useState<IRobot>();
+  // useEffect(() => {
+  //   setSelectedRobot( robots.filter(( robot )=>( robot.locationid == guiSelection ))[0] );
+  // }, [guiSelection, robots]);
   
   const Controls = () => {
     const scene = useThree((state) => (state.scene));
@@ -39,8 +39,8 @@ export const Fleetmanager = () => {
 
     return (
       <>
-        {guiSelection != "" && moveRobot && <TransformControls object={object} showY={false} mode="translate" position={selectedRobot?.lastKnownPosition as [number,number,number]} onMouseUp={()=>{console.log("Mouse Up - translate")}} />}
-        {guiSelection != "" && moveRobot && <TransformControls object={object} showX={false} showZ={false} mode="rotate" position={selectedRobot?.lastKnownPosition as [number,number,number]} onMouseUp={()=>{console.log("Mouse Up - rotate")}} />}
+        {guiSelection != "" && moveRobot && <TransformControls object={object} showY={false} mode="translate" />}
+        {guiSelection != "" && moveRobot && <TransformControls object={object} showX={false} showZ={false} mode="rotate" />}
         <OrbitControls makeDefault maxPolarAngle={Math.PI/2} screenSpacePanning={ false } enableZoom={ false } enablePan={ true } target={ [0, 1, 0] } />
       </>
     )
