@@ -50,7 +50,7 @@ export const RobotItem = ({
       <Text>
         { robot.description }
       </Text>
-      { fbDisabled ? <></> : 
+      { !fbDisabled &&
         <ActionIcon onClick={ handleDelete } color="gray" variant="subtle" size={20}>
           <IconX />
         </ActionIcon>

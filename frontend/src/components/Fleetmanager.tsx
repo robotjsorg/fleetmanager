@@ -2,7 +2,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useMantineContext } from "@mantine/core";
 
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { Text, OrbitControls, TransformControls } from "@react-three/drei";
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
 
@@ -11,10 +11,10 @@ import { IRobot } from "../@types/robot";
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locSelectionContext } from "../context/locSelectionContext";
+import { moveRobotContext } from "../context/moveRobotContext";
 
 import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
 import { Mesh_cardboard_box_01 } from "../meshes/Mesh_cardboard_box_01";
-import { moveRobotContext } from "../context/moveRobotContext";
 
 export const Fleetmanager = () => {
   const theme = useMantineContext();
@@ -28,17 +28,25 @@ export const Fleetmanager = () => {
     setLocationRobots( robots.filter(( robot )=>( robot.locationid == locSelection )) );
   }, [locSelection, robots]);
 
-  const MyTransformControls = () => {
-    return (
-      <TransformControls enabled={moveRobot} showY={ false }
-      onChange={()=>{console.log("onChange")}}
-      onMouseDown={()=>{console.log("onMouseDown")}}
-      onMouseUp={()=>{console.log("onMouseUp")}}
-      onObjectChange={()=>{console.log("onObjectChange")}} />
-    );
-  };
+  const [ selectedRobot, setSelectedRobot ] = useState<IRobot>();
+  useEffect(() => {
+    setSelectedRobot( robots.filter(( robot )=>( robot.locationid == guiSelection ))[0] );
+  }, [guiSelection, robots]);
+  
+  const Controls = () => {
+    const scene = useThree((state) => (state.scene));
+    const object = scene.getObjectByName(guiSelection);
 
-  return ( 
+    return (
+      <>
+        {guiSelection != "" && moveRobot && <TransformControls object={object} showY={false} mode="translate" position={selectedRobot?.lastKnownPosition as [number,number,number]} onMouseUp={()=>{console.log("Mouse Up - translate")}} />}
+        {guiSelection != "" && moveRobot && <TransformControls object={object} showX={false} showZ={false} mode="rotate" position={selectedRobot?.lastKnownPosition as [number,number,number]} onMouseUp={()=>{console.log("Mouse Up - rotate")}} />}
+        <OrbitControls makeDefault maxPolarAngle={Math.PI/2} screenSpacePanning={ false } enableZoom={ false } enablePan={ true } target={ [0, 1, 0] } />
+      </>
+    )
+  }
+
+  return (
     <Canvas dpr={[1, 2]} camera={{ position: [0, 4, 1], near: 0.01, far: 20 }}
       onPointerMissed={() => setGuiSelection("no selection")}>
       <Selection>
@@ -63,10 +71,7 @@ export const Fleetmanager = () => {
       <directionalLight intensity={2} position={ [-5, 5, 5] } />
       <directionalLight intensity={2} position={ [-5, 5, -5] } />
 
-      { moveRobot ?
-        <MyTransformControls />
-      : <></>}
-      <OrbitControls enabled={!moveRobot} screenSpacePanning={ false } maxPolarAngle={ Math.PI/2 } enableZoom={ false } enablePan={ true } target={ [0, 1, 0] } />
+      <Controls />
 
       {/* <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
         preset={ locSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 
@@ -81,7 +86,3 @@ export const Fleetmanager = () => {
     </Canvas>
   );
 };
-
-function useThree(arg0: (state: any) => any) {
-  throw new Error("Function not implemented.");
-}

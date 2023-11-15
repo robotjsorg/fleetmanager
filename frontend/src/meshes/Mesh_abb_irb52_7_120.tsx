@@ -7,9 +7,12 @@ import { Select } from "@react-three/postprocessing";
 import { GLTF } from "three-stdlib";
 import { useSpring, animated, config } from "@react-spring/three";
 
-import { guiSelectionContext } from "../context/guiSelectionContext";
-import { RobotContext } from "../context/robotContext";
 import { IRobot } from "../@types/robot";
+
+import { RobotContext } from "../context/robotContext";
+import { guiSelectionContext } from "../context/guiSelectionContext";
+
+// import { state } from "../components/Fleetmanager";
 
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168");
 const localFilepath = "../../assets/gltf/";
@@ -141,13 +144,13 @@ export const Mesh_abb_irb52_7_120 = ({
 
   return (
     <Select enabled={ selected || hovered }>
-      <group dispose={null}>
+      <group name={robot.id} dispose={null}>
         <animated.mesh
           ref={ref}
           scale={scale}
-          onPointerOver={() => hover(true)}
-          onPointerOut={() => hover(false)}
           onClick={(e) => (e.stopPropagation(), setGuiSelection(robot.id))}
+          onPointerOver={(e) => (e.stopPropagation(), hover(true))}
+          onPointerOut={() => hover(false)}
           geometry={nodes.base_link.geometry}
           material={materials.gkmodel0_base_link_geom0}
           position={position}

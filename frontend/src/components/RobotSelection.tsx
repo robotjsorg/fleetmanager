@@ -443,7 +443,7 @@ export const RobotSelection = () => {
             </form> 
           }
         </>
-      : state == "Auto" && guiSelection != "no selection" ?
+      : state == "Auto" && guiSelection != "no selection" &&
         <>
           <Divider mx="xs" />
           <Table withRowBorders={false}>
@@ -481,8 +481,6 @@ export const RobotSelection = () => {
             </Table.Tbody>
           </Table>
         </>
-      :
-        <></>
       }
     </Box>
   );

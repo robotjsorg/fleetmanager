@@ -46,7 +46,7 @@ export const TaskItem = ({
           {/* : { task.state } */}
         </Text>
       </Group>
-      { fbDisabled ? <></> : 
+      { !fbDisabled &&
         <ActionIcon onClick={ handleDelete } color="gray" variant="subtle" size={20}>
           <IconX />
         </ActionIcon>

@@ -46,13 +46,11 @@ export const LocationItem = ({
       });
   }, [mutate, location.id, locSelection, locations, setLocationSelection]);
 
-  // const navigate = useNavigate();
   const handleLocationSelect = () => {
     if ( locSelection != location.id ) {
       setLocationSelection( location.id );
       setGuiSelection("no selection");
     }
-    // navigate( "/" + journalIdToString( docId ) );
   };
 
   const { hovered, ref } = useHover();
@@ -70,7 +68,7 @@ export const LocationItem = ({
       <Text>
         { location.description }
       </Text>
-      { (fbDisabled) ? <></> : 
+      { !fbDisabled &&
         <ActionIcon onClick={ handleDelete } color="gray" variant="subtle" size={20}>
           <IconX />
         </ActionIcon>

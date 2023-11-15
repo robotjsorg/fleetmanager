@@ -266,17 +266,17 @@ export const App = ({ docId }: { docId: JournalId; }) => {
               </AppShell.Navbar>
               <AppShell.Main onClick={ closeNav }>
                 { route == "locations" ?
-                <LocationsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+                  <LocationsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
                 : route == "robots" ?
-                <RobotsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+                  <RobotsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
                 : route == "tasks" ?
-                <TasksView docId={docId} h={ fixHeight - VIEW_OFFSET } />
-                : route == "location" ? // Fleetmanager
-                <Box h={ fixHeight - CONTENT_OFFSET }>
-                  <Divider />
-                  <Fleetmanager />
-                </Box>
-                : <></>}
+                  <TasksView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+                : route == "location" && // Fleetmanager
+                  <Box h={ fixHeight - CONTENT_OFFSET }>
+                    <Divider />
+                    <Fleetmanager />
+                  </Box>
+                }
               </AppShell.Main>
               <AppShell.Aside withBorder={true}>
                 <Stack>
