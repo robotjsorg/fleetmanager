@@ -82,7 +82,7 @@ export const RobotSelection = () => {
     }
   };
 
-  const form = useForm({
+  const jointsForm = useForm({
     initialValues: {
       J1: jointAngles[0],
       J2: jointAngles[1],
@@ -101,11 +101,31 @@ export const RobotSelection = () => {
     }
   });
 
-  const handleManualJoints = form.onSubmit(
-    ({ J1, J2, J3, J4, J5, J6 }) => {
-      setJointAngles([J1, J2, J3, J4, J5, J6]);
+  const toolForm = useForm({
+    initialValues: {
+      X: 0,
+      Y: 0,
+      Z: 0
+    },
+    validate: {
+      X: (value) => (value),
+      Y: (value) => (value),
+      Z: (value) => (value)
     }
-  );
+  });
+
+  // const handleManualJoints = form.onSubmit(
+  //   ({ J1, J2, J3, J4, J5, J6 }) => {
+  //     setJointAngles([J1, J2, J3, J4, J5, J6]);
+  //   }
+  // );
+
+  // const handleManualTool = form.onSubmit(
+  //   ({ X, Y, Z }) => {
+  //     // TODO: Inverse kinematics
+  //     setJointAngles([J1, J2, J3, J4, J5, J6]);
+  //   }
+  // );
 
   return (
     <Box>
@@ -257,14 +277,14 @@ export const RobotSelection = () => {
                 <Table.Td w="50%">
                   <Center>
                     <Button onClick={()=>setToggleManual(true)} variant={toggleManual ? "light" : "subtle"} color="gray" size="xs">
-                      Joint Space
+                      Joints
                     </Button>
                   </Center>
                 </Table.Td>
                 <Table.Td w="50%">
                   <Center>
                     <Button onClick={()=>setToggleManual(false)} variant={!toggleManual ? "light" : "subtle"}  color="gray" size="xs" ml={8}>
-                      XYZ Space
+                      Tool
                     </Button>
                   </Center>
                 </Table.Td>
@@ -272,10 +292,10 @@ export const RobotSelection = () => {
             </Table.Thead>
           </Table>
           {toggleManual ? // Joint Space
-            <form onChange={handleManualJoints} onInput={handleManualJoints}>
+            <form>
               <Group gap={0} px="xs" pb="xs">
                 <Flex w="50%" gap="xs" px="xs" direction="column">
-                  <NumberInput
+                  <NumberInput disabled
                     leftSection={<Text span size="xs">J1</Text>}
                     size="xs"
                     clampBehavior="strict"
@@ -283,9 +303,9 @@ export const RobotSelection = () => {
                     startValue={jointAngles[0]}
                     min={JOINT_LIMITS[0][0]}
                     max={JOINT_LIMITS[0][1]}
-                    {...form.getInputProps("J1")}
+                    {...jointsForm.getInputProps("J1")}
                   />
-                  <NumberInput
+                  <NumberInput disabled
                     leftSection={<Text span size="xs">J2</Text>}
                     size="xs"
                     clampBehavior="strict"
@@ -293,9 +313,9 @@ export const RobotSelection = () => {
                     startValue={jointAngles[1]}
                     min={JOINT_LIMITS[1][0]}
                     max={JOINT_LIMITS[1][1]}
-                    {...form.getInputProps("J2")}
+                    {...jointsForm.getInputProps("J2")}
                   />
-                  <NumberInput
+                  <NumberInput disabled
                     leftSection={<Text span size="xs">J3</Text>}
                     size="xs"
                     clampBehavior="strict"
@@ -303,11 +323,11 @@ export const RobotSelection = () => {
                     startValue={jointAngles[2]}
                     min={JOINT_LIMITS[2][0]}
                     max={JOINT_LIMITS[2][1]}
-                    {...form.getInputProps("J3")}
+                    {...jointsForm.getInputProps("J3")}
                   />
                 </Flex>
                 <Flex w="50%" gap="xs" px="xs" direction="column">
-                  <NumberInput
+                  <NumberInput disabled
                     leftSection={<Text span size="xs">J4</Text>}
                     size="xs"
                     clampBehavior="strict"
@@ -315,9 +335,9 @@ export const RobotSelection = () => {
                     startValue={jointAngles[3]}
                     min={JOINT_LIMITS[3][0]}
                     max={JOINT_LIMITS[3][1]}
-                    {...form.getInputProps("J4")}
+                    {...jointsForm.getInputProps("J4")}
                   />
-                  <NumberInput
+                  <NumberInput disabled
                     leftSection={<Text span size="xs">J5</Text>}
                     size="xs"
                     clampBehavior="strict"
@@ -325,9 +345,9 @@ export const RobotSelection = () => {
                     startValue={jointAngles[4]}
                     min={JOINT_LIMITS[4][0]}
                     max={JOINT_LIMITS[4][1]}
-                    {...form.getInputProps("J5")}
+                    {...jointsForm.getInputProps("J5")}
                   />
-                  <NumberInput
+                  <NumberInput disabled
                     leftSection={<Text span size="xs">J6</Text>}
                     size="xs"
                     clampBehavior="strict"
@@ -335,13 +355,13 @@ export const RobotSelection = () => {
                     startValue={jointAngles[5]}
                     min={JOINT_LIMITS[5][0]}
                     max={JOINT_LIMITS[5][1]}
-                    {...form.getInputProps("J6")}
+                    {...jointsForm.getInputProps("J6")}
                   />
                 </Flex>
               </Group>
             </form>
           : // Coordinate Space
-            <form onChange={handleManualJoints} onInput={handleManualJoints}>
+            <form>
               <Center>
                 <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column">
                   <NumberInput disabled
@@ -352,7 +372,7 @@ export const RobotSelection = () => {
                     startValue={0}
                     min={-10}
                     max={10}
-                    {...form.getInputProps("X")}
+                    {...toolForm.getInputProps("X")}
                   />
                   <NumberInput disabled
                     leftSection={<Text span size="xs">Y</Text>}
@@ -362,7 +382,7 @@ export const RobotSelection = () => {
                     startValue={0}
                     min={-10}
                     max={10}
-                    {...form.getInputProps("Y")}
+                    {...toolForm.getInputProps("Y")}
                   />
                   <NumberInput disabled
                     leftSection={<Text span size="xs">Z</Text>}
@@ -372,7 +392,7 @@ export const RobotSelection = () => {
                     startValue={0}
                     min={-10}
                     max={10}
-                    {...form.getInputProps("Z")}
+                    {...toolForm.getInputProps("Z")}
                   />
                 </Flex>
               </Center>
