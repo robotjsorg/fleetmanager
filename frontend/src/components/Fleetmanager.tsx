@@ -21,25 +21,36 @@ export const Fleetmanager = () => {
   const { locSelection } = useContext( locSelectionContext );
   const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
 
-  const [ filteredRobots, setFilteredRobots ] = useState<IRobot[]>([]);
+  const [ locationsRobots, setLocationRobots ] = useState<IRobot[]>([]);
   useEffect(() => {
-    const newFilteredRobots = robots.filter(( robot )=>( robot.locationid == locSelection ));
-    setFilteredRobots( newFilteredRobots );
+    setLocationRobots( robots.filter(( robot )=>( robot.locationid == locSelection )) );
   }, [locSelection, robots]);
-  
+
+  // const MyTransformControls = () => {
+  //   const scene = useThree((state) => state.scene);
+  //   console.log( scene );
+  //   console.log( scene.getObjectByName("selected") );
+  //   const object = scene.getObjectByName("selected");
+  //   return (
+  //     <TransformControls enabled={guiSelection != "no selection"} showY={ false } object={ object } 
+  //     onChange={()=>{console.log("onChange")}}
+  //     onMouseDown={()=>{console.log("onMouseDown")}}
+  //     onMouseUp={()=>{console.log("onMouseUp")}}
+  //     onObjectChange={()=>{console.log("onObjectChange")}} />
+  //   );
+  // };
+
   return ( 
     <Canvas dpr={[1, 2]} camera={{ position: [0, 4, 1], near: 0.01, far: 20 }}
       onPointerMissed={() => setGuiSelection("no selection")}>
-
       <Selection>
         <EffectComposer multisampling={8} autoClear={false}>
           <Outline visibleEdgeColor={theme.colorScheme == "dark" ? "white" : "blue"} blur edgeStrength={100} width={1000} />
         </EffectComposer>
-        {filteredRobots.map((robot) => (
+        {locationsRobots.map((robot) => (
           <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} />
         ))}
       </Selection>
-
       <Mesh_cardboard_box_01 />
       <Mesh_cardboard_box_01 />
       <Mesh_cardboard_box_01 />
@@ -54,6 +65,7 @@ export const Fleetmanager = () => {
       <directionalLight intensity={2} position={ [-5, 5, 5] } />
       <directionalLight intensity={2} position={ [-5, 5, -5] } />
 
+      {/* <MyTransformControls /> */}
       <OrbitControls screenSpacePanning={ false } maxPolarAngle={ Math.PI/2 } enableZoom={ false } enablePan={ true } target={ [0, 1, 0] } />
 
       {/* <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
