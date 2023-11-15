@@ -16,6 +16,7 @@ import { ITask, ITaskQuery } from "./@types/task";
 import { RobotProvider } from "./context/robotContext";
 import { guiSelectionContext } from "./context/guiSelectionContext";
 import { locSelectionContext } from "./context/locSelectionContext";
+import { moveRobotContext } from "./context/moveRobotContext";
 
 import { LocationsView } from "./views/LocationsView";
 import { RobotsView } from "./views/RobotsView";
@@ -29,8 +30,8 @@ import { RobotSelection } from "./components/RobotSelection";
 
 import { randomJointAngles } from "./meshes/Mesh_abb_irb52_7_120";
 
-const NAVBAR_WIDTH = 300;
-const HEADER_HEIGHT = 60;
+const NAVBAR_WIDTH = 300;  // navbar width 300
+const HEADER_HEIGHT = 60;  // topbar 60
 const NAVBAR_OFFSET = 155; // topbar 60 + btns 36   + padding 40 + divider 19
 const CONTENT_OFFSET = 61; // topbar 60 + divider 1
 const WIDGET_OFFSET = 117; // topbar 60 + divider (19 * 3)
@@ -66,6 +67,10 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   const [ route, setPseudoRoute ] = useState("location");
   const [ locSelection, setLocationSelection ] = useState("no selection");
   const [ guiSelection, setGuiSelection ] = useState("no selection");
+  const [ moveRobot, setMoveRobot ] = useState( false );
+  useEffect(()=>{
+    setMoveRobot( false );
+  }, [guiSelection])
 
   // Single screen desktop app, no scrolling
   const { width, height } = useViewportSize();
@@ -148,7 +153,9 @@ export const App = ({ docId }: { docId: JournalId; }) => {
       ));
       newRobots.filter((robot) => (robot.lastKnownPosition = randomPosition()));
       newRobots.filter((robot) => (robot.lastKnownRotation = randomRotation()));
-      newRobots.filter((robot) => (robot.lastKnownJointAngles = randomJointAngles()));
+      newRobots.filter((robot) => (robot.lastKnownJointAngles = randomJointAngles())); // jointAngles and tool state shouldn't be stored
+      // newRobots.filter((robot) => (robot.partpresent = "Unactuated"));
+      // newRobots.filter((robot) => (robot.toolState = "Unactuated"));
       setRobots(newRobots);
     }
   }, [robotsQuery]);
@@ -182,6 +189,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
       <RobotProvider locations={locations ?? []} robots={robots ?? []} tasks={tasks ?? []}>
         <locSelectionContext.Provider value={{ locSelection, setLocationSelection }}>
           <guiSelectionContext.Provider value={{ guiSelection, setGuiSelection }}>
+          <moveRobotContext.Provider value={{ moveRobot, setMoveRobot }}>
             <AppShell
               withBorder={false}
               header={{
@@ -283,6 +291,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                 </Stack>
               </AppShell.Aside>
             </AppShell>
+          </moveRobotContext.Provider>
           </guiSelectionContext.Provider>
         </locSelectionContext.Provider>
       </RobotProvider>

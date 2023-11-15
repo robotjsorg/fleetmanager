@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 
-import { Text, Box, Table, Button, Divider, NumberInput, Center, Group, Flex } from "@mantine/core";
+import { Text, Box, Table, Button, Divider, NumberInput, Center, Group, Flex, Select } from "@mantine/core";
 
 import { IRobot } from "../@types/robot";
 import { ITask } from "../@types/task";
 
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
+import { moveRobotContext } from "../context/moveRobotContext";
 
 import { JOINT_LIMITS } from "../meshes/Mesh_abb_irb52_7_120";
 import { useForm } from "@mantine/form";
@@ -14,6 +15,7 @@ import { useForm } from "@mantine/form";
 export const RobotSelection = () => {
   const { robots, tasks } = useContext( RobotContext );
   const { guiSelection } = useContext( guiSelectionContext );
+  const { moveRobot, setMoveRobot } = useContext(moveRobotContext);
 
   const [ selectedRobot, setSelectedRobot ] = useState<IRobot | null>(null);
   useEffect(()=>{
@@ -24,7 +26,6 @@ export const RobotSelection = () => {
   }, [guiSelection, robots]);
 
   const [ jointAngles, setJointAngles ] = useState<number[]>([0, 0, 0, 0, 0, 0]);
-
   const [description, setDescription] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [state, setState] = useState("");
@@ -46,6 +47,8 @@ export const RobotSelection = () => {
   useEffect(()=>{
     setFilteredTasks(tasks.filter(( task ) => ( task.robotid == guiSelection )) );
   }, [guiSelection, tasks])
+
+  const [ toolState, setToolState ] = useState( "Unactuated" );
 
   const handleOff = () => {
     setState( "Off" );
@@ -155,7 +158,7 @@ export const RobotSelection = () => {
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>tool: </Text>
-                { guiSelection != "no selection" ? "Unactuated" : "-"}
+                { guiSelection != "no selection" ? toolState : "-"}
               </Text>
             </Table.Td>
             <Table.Td>
@@ -245,28 +248,61 @@ export const RobotSelection = () => {
           </Table.Tr>
         </Table.Tbody>
       </Table>
-      {state == "Error" && guiSelection != "no selection" ?
+      {state == "Off" && guiSelection != "no selection" ?
         <>
           <Divider mx="xs" />
-          <Table withRowBorders={false}>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Td>
-                  <Text size="xs">
-                    <Text span c="red" inherit>message: </Text>
-                    Robot error text placeholder.
-                  </Text>
-                </Table.Td>
-              </Table.Tr>
-            </Table.Thead>
-            {/* <Table.Tbody>
-              <Table.Tr>
-                <Table.Td>
-                  Automatic task data and controls.
-                </Table.Td>
-              </Table.Tr>
-            </Table.Tbody> */}
-          </Table>
+          <form>
+            <Group gap={0} p="xs">
+              <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column" align="center">
+                <Button onClick={()=>{moveRobot ? setMoveRobot(false) : setMoveRobot(true)}}
+                  variant={moveRobot ? "outline" : "default"} color="gray" size="xs">
+                  Move Robot
+                </Button>
+              </Flex>
+              <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column" align="center">
+                <NumberInput disabled={!moveRobot}
+                  leftSection={<Text span size="xs">X</Text>}
+                  size="xs"
+                  clampBehavior="strict"
+                  step={0.1}
+                  startValue={0}
+                  min={-10}
+                  max={10}
+                  {...toolForm.getInputProps("X")}
+                />
+                <NumberInput disabled={!moveRobot}
+                  leftSection={<Text span size="xs">Y</Text>}
+                  size="xs"
+                  clampBehavior="strict"
+                  step={0.1}
+                  startValue={0}
+                  min={-10}
+                  max={10}
+                  {...toolForm.getInputProps("Y")}
+                />
+                <NumberInput disabled={!moveRobot}
+                  leftSection={<Text span size="xs">Z</Text>}
+                  size="xs"
+                  clampBehavior="strict"
+                  step={0.1}
+                  startValue={0}
+                  min={-10}
+                  max={10}
+                  {...toolForm.getInputProps("Z")}
+                />
+              </Flex>
+            </Group>
+          </form>
+        </>
+        : state == "Error" && guiSelection != "no selection" ?
+        <>
+          <Divider mx="xs" />
+          <Group gap={0} p="xs">
+            <Text size="xs">
+              <Text span c="red" inherit>message: </Text>
+              Robot error text placeholder.
+            </Text>
+          </Group>
         </>
       : state == "Manual" && guiSelection != "no selection" ?
         <>
@@ -291,7 +327,7 @@ export const RobotSelection = () => {
               </Table.Tr>
             </Table.Thead>
           </Table>
-          {toggleManual ? // Joint Space
+          {toggleManual ? // Joints
             <form>
               <Group gap={0} px="xs" pb="xs">
                 <Flex w="50%" gap="xs" px="xs" direction="column">
@@ -360,9 +396,9 @@ export const RobotSelection = () => {
                 </Flex>
               </Group>
             </form>
-          : // Coordinate Space
+          : // Tool
             <form>
-              <Center>
+              <Group gap={0} px="xs" pb="xs">
                 <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column">
                   <NumberInput disabled
                     leftSection={<Text span size="xs">X</Text>}
@@ -395,7 +431,15 @@ export const RobotSelection = () => {
                     {...toolForm.getInputProps("Z")}
                   />
                 </Flex>
-              </Center>
+                <Flex w="50%" gap="xs" px="xs" direction="column">
+                  <Select
+                    size="xs"
+                    data={['Actuated', 'Unactuated']}
+                    defaultValue={toolState}
+                    onChange={(e)=>{setToolState(e!.valueOf())}}
+                  />
+                </Flex>
+              </Group>
             </form> 
           }
         </>
@@ -437,7 +481,7 @@ export const RobotSelection = () => {
             </Table.Tbody>
           </Table>
         </>
-      : 
+      :
         <></>
       }
     </Box>

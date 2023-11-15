@@ -96,26 +96,6 @@ export const Mesh_abb_irb52_7_120 = ({
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
-  // const handleOff = () => {
-  //   robot.state = "Off";
-  // };
-
-  // const handleOn = () => {
-  //   robot.state = "Error";
-  // };
-
-  // const handleReset = () => {
-  //   robot.state = "Manual";
-  // };
-
-  // const handleManual = () => {
-  //   robot.state = "Manual";
-  // };
-
-  // const handleAuto = () => {
-  //   robot.state = "Auto";
-  // };
-
   const handleTasks = ( delta: number ) => {
     if ( containsSpinAroundDesc ) {
       const newJointAngles = jointAngles;
