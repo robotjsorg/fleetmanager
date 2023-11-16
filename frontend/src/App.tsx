@@ -24,18 +24,19 @@ import { TasksView } from "./views/TasksView";
 
 import { ConnectionStatus } from "./components/ConnectionStatus";
 import { Fleetmanager } from "./components/Fleetmanager";
+// import MoveStuffTest from "./components/MoveStuffTest";
 import { LocationList } from "./components/LocationList";
 import { RobotList } from "./components/RobotList";
 import { RobotSelection } from "./components/RobotSelection";
 
 import { randomJointAngles } from "./meshes/Mesh_abb_irb52_7_120";
 
-const NAVBAR_WIDTH = 300;  // navbar width 300
-const HEADER_HEIGHT = 60;  // topbar 60
-const NAVBAR_OFFSET = 155; // topbar 60 + btns 36   + padding 40 + divider 19
-const CONTENT_OFFSET = 61; // topbar 60 + divider 1
-const WIDGET_OFFSET = 117; // topbar 60 + divider (19 * 3)
-const VIEW_OFFSET = 222;   // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
+const NAVBAR_WIDTH   = 300; // nav width 300
+const HEADER_HEIGHT  = 60;  // topbar 60
+const NAVBAR_OFFSET  = 155; // topbar 60 + btns 36 + padding 40 + divider 19
+const CONTENT_OFFSET = 61;  // topbar 60 + divider 1
+const WIDGET_OFFSET  = 117; // topbar 60 + divider (19 * 3)
+const VIEW_OFFSET    = 222; // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
 
 const randomPosition = () => {
   const x = 4 * (Math.random() - 0.5);
@@ -275,6 +276,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                   <Box h={ fixHeight - CONTENT_OFFSET }>
                     <Divider />
                     <Fleetmanager />
+                    {/* <MoveStuffTest /> */}
                   </Box>
                 }
               </AppShell.Main>

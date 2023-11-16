@@ -18,7 +18,7 @@ const randomPosition = () => {
 const randomRotation = () => {
   const y = 2* Math.PI * (Math.random() - 0.0);
   return [0, y, 0] as Euler;
-}
+};
 
 type GLTFResult = GLTF & {
   nodes: {

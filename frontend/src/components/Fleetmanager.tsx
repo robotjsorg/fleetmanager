@@ -79,7 +79,7 @@ export const Fleetmanager = () => {
 
       <Controls />
       {/* autoRotate={ true } */}
-      <OrbitControls makeDefault screenSpacePanning={ false } maxPolarAngle={Math.PI/2} enableZoom={ false } enablePan={ true } target={ [0, 1, 0] } />
+      <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0, 1, 0] } />
 
       {/* <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
         preset={ locSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 
