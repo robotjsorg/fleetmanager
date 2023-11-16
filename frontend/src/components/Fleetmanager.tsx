@@ -16,6 +16,8 @@ import { moveRobotContext } from "../context/moveRobotContext";
 import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
 import { Mesh_cardboard_box_01 } from "../meshes/Mesh_cardboard_box_01";
 
+import { proxy, useSnapshot } from 'valtio'
+
 export const Fleetmanager = () => {
   const theme = useMantineContext();
   const { robots } = useContext( RobotContext );
@@ -32,19 +34,27 @@ export const Fleetmanager = () => {
   // useEffect(() => {
   //   setSelectedRobot( robots.filter(( robot )=>( robot.locationid == guiSelection ))[0] );
   // }, [guiSelection, robots]);
-  
+
+  const state = proxy({ current: null as string | null })
+
+  const updatePosition=()=>{
+    console.log("updatePosition");
+  }
+  const updateRotation=()=>{
+    console.log("updatePosition");
+  }
+
   const Controls = () => {
     const scene = useThree((state) => (state.scene));
     const object = scene.getObjectByName(guiSelection);
 
     return (
       <>
-        {guiSelection != "" && moveRobot && <TransformControls object={object} showY={false} mode="translate" />}
-        {guiSelection != "" && moveRobot && <TransformControls object={object} showX={false} showZ={false} mode="rotate" />}
-        <OrbitControls makeDefault maxPolarAngle={Math.PI/2} screenSpacePanning={ false } enableZoom={ false } enablePan={ true } target={ [0, 1, 0] } />
+        {guiSelection != "" && moveRobot && <TransformControls object={object} showY={false} mode="translate" onMouseUp={updatePosition} />}
+        {guiSelection != "" && moveRobot && <TransformControls object={object} showX={false} showZ={false} mode="rotate" onMouseUp={updateRotation} />}
       </>
-    )
-  }
+    );
+  };
 
   return (
     <Canvas dpr={[1, 2]} camera={{ position: [0, 4, 1], near: 0.01, far: 20 }}
@@ -72,6 +82,8 @@ export const Fleetmanager = () => {
       <directionalLight intensity={2} position={ [-5, 5, -5] } />
 
       <Controls />
+      {/* autoRotate={ true } */}
+      <OrbitControls makeDefault screenSpacePanning={ false } maxPolarAngle={Math.PI/2} enableZoom={ false } enablePan={ true } target={ [0, 1, 0] } />
 
       {/* <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
         preset={ locSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 

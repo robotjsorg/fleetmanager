@@ -12,8 +12,6 @@ import { IRobot } from "../@types/robot";
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
-// import { state } from "../components/Fleetmanager";
-
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168");
 const localFilepath = "../../assets/gltf/";
 const filename = "abb_irb52_7_120.glb";

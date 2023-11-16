@@ -273,16 +273,6 @@ export const RobotSelection = () => {
                   {...toolForm.getInputProps("X")}
                 />
                 <NumberInput disabled={!moveRobot}
-                  leftSection={<Text span size="xs">Y</Text>}
-                  size="xs"
-                  clampBehavior="strict"
-                  step={0.1}
-                  startValue={0}
-                  min={-10}
-                  max={10}
-                  {...toolForm.getInputProps("Y")}
-                />
-                <NumberInput disabled={!moveRobot}
                   leftSection={<Text span size="xs">Z</Text>}
                   size="xs"
                   clampBehavior="strict"
@@ -291,6 +281,16 @@ export const RobotSelection = () => {
                   min={-10}
                   max={10}
                   {...toolForm.getInputProps("Z")}
+                />
+                <NumberInput disabled={!moveRobot}
+                  leftSection={<Text span size="xs">&theta;</Text>}
+                  size="xs"
+                  clampBehavior="strict"
+                  step={0.1}
+                  startValue={0}
+                  min={-10}
+                  max={10}
+                  {...toolForm.getInputProps("Y")}
                 />
               </Flex>
             </Group>
