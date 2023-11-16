@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable react/no-unknown-property */
+/* eslint-disable react/prop-types */
 import { Suspense, useState } from 'react';
 
 import { Canvas, Euler, Vector3, useThree } from '@react-three/fiber';
@@ -48,9 +48,9 @@ function Model({ ...props }) {
       onPointerMissed={(e) => e.type === 'click' && (state.current = "")}
       onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
       onPointerOut={() => setHovered(false)}
-      name={props.name}
-      position={props.position}
-      rotation={props.rotation}
+      name={props.name as string}
+      position={props.position as Vector3}
+      rotation={props.rotation as Euler}
       geometry={nodes.cardboard_box_01.geometry}
       material={materials.cardboard_box_01}
       castShadow={SHADOWS}
