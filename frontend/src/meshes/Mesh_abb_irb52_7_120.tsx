@@ -74,7 +74,6 @@ export const Mesh_abb_irb52_7_120 = ({
     config: config.wobbly
   });
 
-  // TODO: Use task states
   const { tasks } = useContext( RobotContext );
   const [ containsSpinAroundDesc, setContainsSpinAroundDesc ] = useState( false );
   const [ containsRandomPositionsDesc, setContainsRandomPositionsDesc ] = useState( false );
@@ -112,7 +111,7 @@ export const Mesh_abb_irb52_7_120 = ({
     } // else Idle
   }
 
-  const handleStates = ( delta: number ) => { // TODO: Move to useEffect()
+  const handleStates = ( delta: number ) => {
     switch( robot.state ) {
       case "Error": { 
         break; 

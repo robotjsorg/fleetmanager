@@ -16,8 +16,6 @@ import { moveRobotContext } from "../context/moveRobotContext";
 import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
 import { Mesh_cardboard_box_01 } from "../meshes/Mesh_cardboard_box_01";
 
-import { proxy, useSnapshot } from 'valtio'
-
 export const Fleetmanager = () => {
   const theme = useMantineContext();
   const { robots } = useContext( RobotContext );
@@ -34,8 +32,6 @@ export const Fleetmanager = () => {
   // useEffect(() => {
   //   setSelectedRobot( robots.filter(( robot )=>( robot.locationid == guiSelection ))[0] );
   // }, [guiSelection, robots]);
-
-  const state = proxy({ current: null as string | null })
 
   const updatePosition=()=>{
     console.log("updatePosition");
@@ -71,8 +67,8 @@ export const Fleetmanager = () => {
       <Mesh_cardboard_box_01 />
       <Mesh_cardboard_box_01 />
       
-      <gridHelper args={[8, 8, theme.colorScheme == "dark" ? "white" : "gray", "gray"]} position={[0, -0.02, 0]} rotation={[0, 0, 0]} />
-      <axesHelper args={[1]} position={[0, -0.01, 0]} />
+      <gridHelper args={[8, 8, theme.colorScheme == "dark" ? "white" : "black", "gray"]} position={[0, -0.02, 0]} rotation={[0, 0, 0]} />
+      <axesHelper args={[1]} position={[-0.01, -0.01, -0.01]} />
       <Text color={"red"} rotation={[Math.PI/2, Math.PI, Math.PI]} position={[0.9, 0, -0.1]} fontSize={0.12}>X</Text>
       <Text color={"blue"} rotation={[Math.PI/2, Math.PI, Math.PI]} position={[0.1, 0, 0.9]} fontSize={0.12}>Z</Text>
 
