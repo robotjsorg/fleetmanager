@@ -1,6 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useReducer, useState } from "react";
 
-import { Text, Box, Table, Button, Divider, NumberInput, Group, Flex } from "@mantine/core";
+import { Text, Box, Table, Button, Divider, NumberInput, Group, Flex, Select } from "@mantine/core";
+import { useForm } from "@mantine/form";
+
+import { IconArrowBadgeLeft, IconArrowBadgeRight, IconLock, IconLockOpen } from "@tabler/icons-react";
 
 import { IRobot } from "../@types/robot";
 import { ITask } from "../@types/task";
@@ -9,91 +12,74 @@ import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { moveRobotContext } from "../context/moveRobotContext";
 
+import { GRID_BOUND } from "./Fleetmanager";
 import { JOINT_LIMITS } from "../meshes/Mesh_abb_irb52_7_120";
-import { useForm } from "@mantine/form";
-import { IconLock, IconLockOpen } from "@tabler/icons-react";
 
-export const RobotSelection = () => {
+export const RobotSelection = (
+  {
+  updateRobot
+}: {
+  updateRobot: (childData: {id: string, state: string, position: number[], rotation: number[]}) => void
+}
+) => {
   const { robots, tasks } = useContext( RobotContext );
   const { guiSelection } = useContext( guiSelectionContext );
-  const { moveRobot, setMoveRobot } = useContext(moveRobotContext);
-
-  const [ selectedRobot, setSelectedRobot ] = useState<IRobot | null>(null);
-  useEffect(()=>{
-    const selectedRobots = robots.filter(( robot ) => ( robot.id == guiSelection ));
-    if ( Array.isArray( selectedRobots ) && selectedRobots.length > 0 ) {
-      setSelectedRobot( selectedRobots[0] );
-    }
-  }, [guiSelection, robots]);
-
-  const [ jointAngles, setJointAngles ] = useState<number[]>([0, 0, 0, 0, 0, 0]);
-  const [description, setDescription] = useState("");
-  const [createdAt, setCreatedAt] = useState("");
-  const [state, setState] = useState("");
-  const [toolState, setToolState] = useState("");
-  const [toggleManual, setToggleManual] = useState(true);
-  const [position, setPosition] = useState([0, 0, 0]);
-  const [rotation, setRotation] = useState([0, 0 ,0]);
-  useEffect(()=>{
-    if ( selectedRobot ) {
-      setJointAngles( selectedRobot.jointAngles );
-      setDescription( selectedRobot.description );
-      setCreatedAt( selectedRobot.created_at );
-      setState( selectedRobot.state );
-      setToolState( selectedRobot.toolState );
-      setPosition( selectedRobot.position as [number, number, number] );
-      setRotation( selectedRobot.rotation as [number, number, number] );  
-    }
-  }, [selectedRobot])
-  
+  const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)]);
   const [ filteredTasks, setFilteredTasks ] = useState<ITask[]>([]);
+
+  const { moveRobot, setMoveRobot } = useContext( moveRobotContext );
+  const [ toggleManual, setToggleManual ] = useState( true );
+
+  const [ state, setState ] = useState("");
+  const [ position, setPosition ] = useState<number[]>();
+  const [ rotation, setRotation ] = useState<number[]>();
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+
   useEffect(()=>{
-    setFilteredTasks(tasks.filter(( task ) => ( task.robotid == guiSelection )) );
-  }, [guiSelection, tasks])
-
-  const handleOff = () => {
-    setState( "Off" );
+    const index = robots.findIndex((robot) => robot.id == guiSelection);
+    setSelectedRobot( robots[index] );
+  }, [guiSelection, robots]);
+  useEffect(()=>{
     if ( selectedRobot ) {
-      selectedRobot.state = "Off";
+      setState( selectedRobot.state );
+      setPosition( selectedRobot.position );
+      setRotation( selectedRobot.rotation );
+      console.log("TEST!")
+      console.log(selectedRobot.position);
+      forceUpdate();
     }
-  };
+  }, [selectedRobot]);
+  useEffect(()=>{
+    setFilteredTasks( tasks.filter(( task ) => ( task.robotid == guiSelection )) );
+  }, [guiSelection, tasks]);
 
-  const handleOn = () => {
-    setState( "Error" );
-    if ( selectedRobot ) {
-      selectedRobot.state = "Error";
+  const moveRobotForm = useForm({
+    initialValues: {
+      X: 0,
+      Z: 0,
+      theta: 0
     }
-  };
-
-  const handleReset = () => {
-    setState( "Manual" );
-    if ( selectedRobot ) {
-      selectedRobot.state = "Manual";
+  });
+  const handleMoveRobot = moveRobotForm.onSubmit(
+    useCallback(
+    ({ X, Z, theta }) => {
+      selectedRobot && updateRobot({
+        id: selectedRobot.id, 
+        state: "Off", 
+        position: [X, selectedRobot.position[1], Z], 
+        rotation: [selectedRobot.rotation[0], selectedRobot.rotation[1], theta]});
     }
-  }
-
-  const handleManual = () => {
-    setState( "Manual" );
-    if ( selectedRobot ) {
-      selectedRobot.state = "Manual";
-    }
-  };
-
-  const handleAuto = () => {
-    setState( "Auto" );
-    if ( selectedRobot ) {
-      selectedRobot.state = "Auto" ;
-    }
-  };
+    , [selectedRobot, updateRobot])
+  );
 
   const jointsForm = useForm({
     initialValues: {
-      J1: jointAngles[0],
-      J2: jointAngles[1],
-      J3: jointAngles[2],
-      J4: jointAngles[3],
-      J5: jointAngles[4],
-      J6: jointAngles[5]
+      J1: selectedRobot ? selectedRobot.jointAngles[0] : 0,
+      J2: selectedRobot ? selectedRobot.jointAngles[1] : 0,
+      J3: selectedRobot ? selectedRobot.jointAngles[2] : 0,
+      J4: selectedRobot ? selectedRobot.jointAngles[3] : 0,
+      J5: selectedRobot ? selectedRobot.jointAngles[4] : 0,
+      J6: selectedRobot ? selectedRobot.jointAngles[5] : 0
     },
     validate: {
       J1: (value) => (value),
@@ -104,6 +90,11 @@ export const RobotSelection = () => {
       J6: (value) => (value)
     }
   });
+  // const handleManualJoints = form.onSubmit(
+  //   ({ J1, J2, J3, J4, J5, J6 }) => {
+  //     setJointAngles([J1, J2, J3, J4, J5, J6]);
+  //   }
+  // );
 
   const toolForm = useForm({
     initialValues: {
@@ -117,13 +108,6 @@ export const RobotSelection = () => {
       Z: (value) => (value)
     }
   });
-
-  // const handleManualJoints = form.onSubmit(
-  //   ({ J1, J2, J3, J4, J5, J6 }) => {
-  //     setJointAngles([J1, J2, J3, J4, J5, J6]);
-  //   }
-  // );
-
   // const handleManualTool = form.onSubmit(
   //   ({ X, Y, Z }) => {
   //     // TODO: Inverse kinematics
@@ -131,7 +115,52 @@ export const RobotSelection = () => {
   //   }
   // );
 
-  const robotSelected = guiSelection != "no selection";
+  const handleOff = () => {
+    selectedRobot.state = "Off";
+    updateRobot({ id: selectedRobot.id, state: selectedRobot.state, position: selectedRobot.position, rotation: selectedRobot.rotation })
+    setSelectedRobot( selectedRobot );
+    setState("Off");
+  };
+  const handleOn = () => {
+    selectedRobot.state = "Error";
+    updateRobot({ id: selectedRobot.id, state: "Error", position: selectedRobot.position, rotation: selectedRobot.rotation })
+    setSelectedRobot( selectedRobot );
+    setState("Error");
+    setMoveRobot(false);
+  };
+  const handleReset = () => {
+    selectedRobot.state = "Manual";
+    updateRobot({ id: selectedRobot.id, state: "Manual", position: selectedRobot.position, rotation: selectedRobot.rotation })
+    setSelectedRobot( selectedRobot );
+    setState("Manual");
+    setMoveRobot(false);
+  }
+  const handleManual = () => {
+    selectedRobot.state = "Manual";
+    updateRobot({ id: selectedRobot.id, state: "Manual", position: selectedRobot.position, rotation: selectedRobot.rotation })
+    setSelectedRobot( selectedRobot );
+    setState("Manual");
+    setMoveRobot(false);
+  };
+  const handleAuto = () => {
+    selectedRobot.state = "Auto";
+    updateRobot({ id: selectedRobot.id, state: "Auto", position: selectedRobot.position, rotation: selectedRobot.rotation })
+    setSelectedRobot( selectedRobot );
+    setState("Auto");
+    setMoveRobot(false);
+  };
+
+  // const handleActuate = () = {
+
+  // }
+  // const handleUnactuate = () = {
+    
+  // }
+
+  const precise = (x: number) => {
+    const X = Number(x);
+    return X.toFixed(2);
+  };
 
   return (
     <Box>
@@ -141,13 +170,13 @@ export const RobotSelection = () => {
             <Table.Th w="50%">
               <Text size="xs">
               <Text span c="gray" inherit>name: </Text>
-                { robotSelected ? description : "-"}
+                { selectedRobot ? selectedRobot.description : "-"}
               </Text>
             </Table.Th>
             <Table.Th w="50%">
               <Text size="xs">
                 <Text span c="gray" inherit>type: </Text>
-                { robotSelected ? "ABB IRB 52" : "-"}
+                { selectedRobot ? "ABB IRB 52" : "-"}
               </Text>
             </Table.Th>
           </Table.Tr>
@@ -157,21 +186,21 @@ export const RobotSelection = () => {
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>part: </Text>
-                { robotSelected ? "Not Present" : "-"}
+                { selectedRobot ? "Not Present" : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>tool: </Text>
-                { robotSelected ? toolState : "-"}
+                { selectedRobot ? selectedRobot.toolState : "-"}
               </Text>
             </Table.Td>
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>created: </Text>
-                { robotSelected ? createdAt.split(" ")[0] : "-"}
+                { selectedRobot ? selectedRobot.created_at.split(" ")[0] : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>updated: </Text>
-                { robotSelected ? createdAt.split(" ")[0] : "-"}
+                { selectedRobot ? selectedRobot.created_at.split(" ")[0] : "-"}
               </Text>
             </Table.Td>
           </Table.Tr>
@@ -179,29 +208,29 @@ export const RobotSelection = () => {
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>x: </Text>
-                { position[0] && robotSelected ? position[0].toPrecision(3) : "-"}
+                { selectedRobot ? precise(selectedRobot.position[0]) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>y: </Text>
-                { position[1] && robotSelected ? position[1].toPrecision(3) : "-"}
+                { selectedRobot ? precise(selectedRobot.position[1]) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>z: </Text>
-                { position[2] && robotSelected ? position[2].toPrecision(3) : "-"}
+                { selectedRobot ? precise(selectedRobot.position[2]) : "-"}
               </Text>
             </Table.Td>
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>&phi;: </Text>
-                { rotation[0] && robotSelected ? rotation[0].toPrecision(3) : "-"}
+                { selectedRobot ? precise(selectedRobot.rotation[0]) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>&theta;: </Text>
-                { rotation[1] && robotSelected ? rotation[1].toPrecision(3) : "-"}
+                { selectedRobot ? precise(selectedRobot.rotation[1]) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>&psi;: </Text>
-                { rotation[2] && robotSelected ? rotation[2].toPrecision(3) : "-"}
+                { selectedRobot ? precise(selectedRobot.rotation[2]) : "-"}
               </Text>
             </Table.Td>
           </Table.Tr>
@@ -209,13 +238,13 @@ export const RobotSelection = () => {
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>state: </Text>
-                { robotSelected ? state : "-"}
+                { selectedRobot ? selectedRobot.state : "-"}
               </Text>    
             </Table.Td>
             <Table.Td>
-              { !robotSelected ?
+              { !selectedRobot ?
                 <Box h={30}></Box>
-              : state == "Error" ?
+              : selectedRobot.state == "Error" ?
                 <>
                   <Button onClick={handleReset} variant="default" color="gray" size="xs">
                     Reset
@@ -224,7 +253,7 @@ export const RobotSelection = () => {
                     Off
                   </Button>
                 </>
-              : state == "Manual" ?
+              : selectedRobot.state == "Manual" ?
                 <>
                   <Button onClick={handleAuto} variant="default" color="gray" size="xs">
                     Auto
@@ -233,7 +262,7 @@ export const RobotSelection = () => {
                     Off
                   </Button>
                 </>
-              : state == "Auto" ?
+              : selectedRobot.state == "Auto" ?
                 <>
                   <Button onClick={handleManual} variant="default" color="gray" size="xs">
                     Manual
@@ -251,10 +280,10 @@ export const RobotSelection = () => {
           </Table.Tr>
         </Table.Tbody>
       </Table>
-      {state == "Off" && robotSelected ?
+      { selectedRobot && state == "Off" ?
         <>
           <Divider mx="xs" />
-          <form>
+          <form onSubmit={handleMoveRobot}>
             <Group gap={0} p="xs">
               <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column" align="center">
                 <Button onClick={()=>{moveRobot ? setMoveRobot(false) : setMoveRobot(true)}}
@@ -268,37 +297,38 @@ export const RobotSelection = () => {
                   leftSection={<Text span size="xs">X</Text>}
                   size="xs"
                   clampBehavior="strict"
-                  step={0.1}
-                  startValue={0}
-                  min={-10}
-                  max={10}
-                  {...toolForm.getInputProps("X")}
+                  step={0.5}
+                  startValue={selectedRobot.position[0]}
+                  min={-GRID_BOUND}
+                  max={GRID_BOUND}
+                  {...moveRobotForm.getInputProps("X")}
                 />
                 <NumberInput disabled={!moveRobot}
                   leftSection={<Text span size="xs">Z</Text>}
                   size="xs"
                   clampBehavior="strict"
-                  step={0.1}
-                  startValue={0}
-                  min={-10}
-                  max={10}
-                  {...toolForm.getInputProps("Z")}
+                  step={0.5}
+                  startValue={selectedRobot.position[2]}
+                  min={-GRID_BOUND}
+                  max={GRID_BOUND}
+                  {...moveRobotForm.getInputProps("Z")}
                 />
                 <NumberInput disabled={!moveRobot}
                   leftSection={<Text span size="xs">&theta;</Text>}
                   size="xs"
                   clampBehavior="strict"
-                  step={0.1}
-                  startValue={0}
-                  min={-10}
-                  max={10}
-                  {...toolForm.getInputProps("Y")}
+                  step={0.5}
+                  startValue={selectedRobot.rotation[2]}
+                  min={-Math.PI}
+                  max={Math.PI}
+                  {...moveRobotForm.getInputProps("theta")}
                 />
+                <Button disabled={!moveRobot} color="gray" type="submit">Move</Button>
               </Flex>
             </Group>
           </form>
         </>
-        : state == "Error" && robotSelected ?
+        : selectedRobot && state == "Error" ?
         <>
           <Divider mx="xs" />
           <Group gap={0} p="xs">
@@ -308,7 +338,7 @@ export const RobotSelection = () => {
             </Text>
           </Group>
         </>
-      : state == "Manual" && robotSelected ?
+      : selectedRobot && state == "Manual" ?
         <>
           <Divider mx="xs" />
           <Group gap="xs" py="xs" justify="center">
@@ -328,7 +358,7 @@ export const RobotSelection = () => {
                     size="xs"
                     clampBehavior="strict"
                     step={0.1}
-                    startValue={jointAngles[0]}
+                    startValue={selectedRobot.jointAngles[0]}
                     min={JOINT_LIMITS[0][0]}
                     max={JOINT_LIMITS[0][1]}
                     {...jointsForm.getInputProps("J1")}
@@ -338,7 +368,7 @@ export const RobotSelection = () => {
                     size="xs"
                     clampBehavior="strict"
                     step={0.1}
-                    startValue={jointAngles[1]}
+                    startValue={selectedRobot.jointAngles[1]}
                     min={JOINT_LIMITS[1][0]}
                     max={JOINT_LIMITS[1][1]}
                     {...jointsForm.getInputProps("J2")}
@@ -348,7 +378,7 @@ export const RobotSelection = () => {
                     size="xs"
                     clampBehavior="strict"
                     step={0.1}
-                    startValue={jointAngles[2]}
+                    startValue={selectedRobot.jointAngles[2]}
                     min={JOINT_LIMITS[2][0]}
                     max={JOINT_LIMITS[2][1]}
                     {...jointsForm.getInputProps("J3")}
@@ -360,7 +390,7 @@ export const RobotSelection = () => {
                     size="xs"
                     clampBehavior="strict"
                     step={0.1}
-                    startValue={jointAngles[3]}
+                    startValue={selectedRobot.jointAngles[3]}
                     min={JOINT_LIMITS[3][0]}
                     max={JOINT_LIMITS[3][1]}
                     {...jointsForm.getInputProps("J4")}
@@ -370,7 +400,7 @@ export const RobotSelection = () => {
                     size="xs"
                     clampBehavior="strict"
                     step={0.1}
-                    startValue={jointAngles[4]}
+                    startValue={selectedRobot.jointAngles[4]}
                     min={JOINT_LIMITS[4][0]}
                     max={JOINT_LIMITS[4][1]}
                     {...jointsForm.getInputProps("J5")}
@@ -380,7 +410,7 @@ export const RobotSelection = () => {
                     size="xs"
                     clampBehavior="strict"
                     step={0.1}
-                    startValue={jointAngles[5]}
+                    startValue={selectedRobot.jointAngles[5]}
                     min={JOINT_LIMITS[5][0]}
                     max={JOINT_LIMITS[5][1]}
                     {...jointsForm.getInputProps("J6")}
@@ -424,24 +454,25 @@ export const RobotSelection = () => {
                   />
                 </Flex>
                 <Flex w="50%" gap="xs" px="xs" direction="column">
-                  <Button onClick={()=>{setToolState("Actuated")}} size="xs" variant="default">
+                  <Button onClick={()=>{ selectedRobot.toolState = "Actuated" }}
+                    size="xs" variant="default" rightSection={<IconArrowBadgeRight size={18}/>}>
                     Actuate
                   </Button>
-                  <Button onClick={()=>{setToolState("Unactuated")}} size="xs" variant="default">
+                  <Button onClick={()=>{ selectedRobot.toolState = "Unactuated" }}
+                    size="xs" variant="default" leftSection={<IconArrowBadgeLeft size={18}/>}>
                     Unactuate
                   </Button>
-                  {/* <Select
+                  <Select
                     size="xs"
-                    data={['Actuated', 'Unactuated']}
-                    defaultValue={toolState}
-                    onChange={(e)=>{setToolState(e!.valueOf())}}
-                  /> */}
+                    placeholder="Move"
+                    data={['Home', 'Pre Pick A', 'Pick A', 'Post Pick A', 'Pre Place B', 'Place B', 'Post Place B']}
+                  />
                 </Flex>
               </Group>
             </form> 
           }
         </>
-      : state == "Auto" && robotSelected &&
+      : selectedRobot && state == "Auto" &&
         <>
           <Divider mx="xs" />
           <Table withRowBorders={false}>

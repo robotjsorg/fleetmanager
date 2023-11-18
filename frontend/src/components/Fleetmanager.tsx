@@ -3,7 +3,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useMantineContext } from "@mantine/core";
 
-import { Canvas, Euler, Vector3, useThree } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { Text, OrbitControls, TransformControls } from "@react-three/drei";
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
 
@@ -18,12 +18,14 @@ import { proxy, useSnapshot } from "valtio";
 
 import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
 
+export const GRID_BOUND = 4;
+
 const state = proxy({ current: "" });
 
 export const Fleetmanager = ({
   updateRobot
 }: {
-  updateRobot: (childData: {id: string, position: Vector3, rotation: Euler}) => void
+  updateRobot: (childData: {id: string, state: string, position: number[], rotation: number[]}) => void
 }) => {
   const theme = useMantineContext();
   const { robots } = useContext( RobotContext );
@@ -37,22 +39,40 @@ export const Fleetmanager = ({
   }, [locSelection, robots]);
 
   const Controls = () => {
-    const snap = useSnapshot(state);
+    // const snap = useSnapshot(state);
     const scene = useThree((state) => state.scene);
-    const object = scene.getObjectByName(snap.current);
+    const object = scene.getObjectByName(guiSelection); //snap.current
+
+    const Bound = (input: number, bound: number) => {
+      if ( input > bound ) {
+        return bound
+      }
+      if ( input < -bound ) {
+        return -bound;
+      }
+      return input;
+    };
 
     return (
       <>
-        {snap.current && moveRobot && <TransformControls showY={false} object={object} mode={"translate"} 
+        {guiSelection && moveRobot && <TransformControls showY={false} object={object} mode={"translate"} // snap.current
           onMouseUp={()=>{
             object &&
-            updateRobot({id: object.name, position: object.position, rotation: object.rotation})
+            updateRobot({
+              id: object.name,
+              state: "Off",
+              position: [Bound(object.position.x, GRID_BOUND), object.position.y, Bound(object.position.z, GRID_BOUND)],
+              rotation: [object.rotation.x, object.rotation.y, Bound(object.rotation.z, Math.PI)]})
           }}
           />}
-        {snap.current && moveRobot  && <TransformControls showX={false} showZ={false} object={object} mode={"rotate"} 
+        {guiSelection && moveRobot  && <TransformControls showX={false} showZ={false} object={object} mode={"rotate"} // snap.current
           onMouseUp={()=>{
             object &&
-            updateRobot({id: object.name, position: object.position, rotation: object.rotation})
+            updateRobot({
+              id: object.name,
+              state: "Off",
+              position: [Bound(object.position.x, GRID_BOUND), object.position.y, Bound(object.position.z, GRID_BOUND)],
+              rotation: [object.rotation.x, object.rotation.y, Bound(object.rotation.z, Math.PI)]})
           }}
           />}
       </>
@@ -64,7 +84,7 @@ export const Fleetmanager = ({
   };
 
   return (
-    <Canvas dpr={[1, 2]} camera={{ position: [0, 4, 1], near: 0.01, far: 20 }}
+    <Canvas dpr={[1, 2]} camera={{ position: [1, 2, 3], near: 0.01, far: 20 }}
       onPointerMissed={() => setGuiSelection("no selection")}>
       <Selection>
         <EffectComposer multisampling={8} autoClear={false}>
@@ -74,9 +94,8 @@ export const Fleetmanager = ({
           <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent}/>
         ))}
       </Selection>
-      
-      
-      <gridHelper args={[8, 8, theme.colorScheme == "dark" ? "white" : "black", "gray"]} position={[0, -0.02, 0]} rotation={[0, 0, 0]} />
+
+      <gridHelper args={[GRID_BOUND*2, GRID_BOUND*2, theme.colorScheme == "dark" ? "white" : "black", "gray"]} position={[0, -0.02, 0]} rotation={[0, 0, 0]} />
       <axesHelper args={[1]} position={[-0.01, -0.01, -0.01]} />
       <Text color={"#E03131"} rotation={[Math.PI/2, Math.PI, Math.PI]} position={[0.9, 0, -0.1]} fontSize={0.12}>X</Text>
       <Text color={"#1971C2"} rotation={[Math.PI/2, Math.PI, Math.PI]} position={[0.1, 0, 0.9]} fontSize={0.12}>Z</Text>
@@ -87,7 +106,7 @@ export const Fleetmanager = ({
       <directionalLight intensity={2} position={ [-5, 5, -5] } />
 
       <Controls />
-      <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0, 1, 0] } />
+      <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0.25, 0, 1] } />
       {/* autoRotate={ true } */}
 
       {/* <Mesh_cardboard_box_01 /> */}

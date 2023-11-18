@@ -70,7 +70,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
                 "24db4c5b-1e3a-4853-8316-1d6ad07beed1",
                 "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
-                "ABB IRB 52 001"
+                "Rusty"
             ).await;
             execute!(
                 "INSERT OR IGNORE INTO tasks (id, robotid, description, completed, created_at) VALUES (?, ?, ?, false, datetime('now'))",
@@ -82,7 +82,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
                 "402e7545-512b-4b7d-b570-e94311b38ab6",
                 "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
-                "ABB IRB 52 002"
+                "D.A.R.Y.L."
             ).await;
             execute!(
                 "INSERT OR IGNORE INTO tasks (id, robotid, description, completed, created_at) VALUES (?, ?, ?, true, datetime('now'))",
@@ -94,13 +94,13 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
                 "f7a3408d-6329-47fd-ada9-72e6f249c3e2",
                 "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
-                "ABB IRB 52 003"
+                "Nozzle"
             ).await;
             execute!(
                 "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
                 "c583ab7f-fd7d-4100-9c3e-aa343ea1c232",
                 "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
-                "ABB IRB 52 004"
+                "Sprocket"
             ).await;
             execute!(
                 "INSERT OR IGNORE INTO locations (id, description, created_at) VALUES (?, ?, datetime('now'))",

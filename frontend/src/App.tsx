@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { sql } from "@orbitinghail/sqlsync-react";
@@ -6,7 +6,6 @@ import { useMantineColorScheme, MantineProvider, Box, Button, Divider, AppShell,
 import { useViewportSize, useDisclosure } from "@mantine/hooks";
 
 import { IconChecklist, IconHome, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react";
-import { Euler, Vector3 } from "@react-three/fiber";
 
 import { useMutate, useQuery } from "./doctype";
 import { ILocation } from "./@types/location";
@@ -28,7 +27,7 @@ import { LocationList } from "./components/LocationList";
 import { RobotList } from "./components/RobotList";
 import { RobotSelection } from "./components/RobotSelection";
 
-import { randomJointAngles } from "./meshes/Mesh_abb_irb52_7_120";
+import { zeroJointAngles } from "./meshes/Mesh_abb_irb52_7_120"; //, randomJointAngles
 
 const NAVBAR_WIDTH   = 300; // nav width 300
 const HEADER_HEIGHT  = 60;  // topbar 60
@@ -37,15 +36,21 @@ const CONTENT_OFFSET = 61;  // topbar 60 + divider 1
 const WIDGET_OFFSET  = 117; // topbar 60 + divider (19 * 3)
 const VIEW_OFFSET    = 222; // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
 
+// const zeroPosition = () => {
+//   return [0, -0.02, 0];
+// };
+const zeroRotation = () => {
+  return [-Math.PI/2, 0, -Math.PI/4];
+};
 const randomPosition = () => {
   const x = 4 * (Math.random() - 0.5);
-  const z = 2 * (Math.random() - 0.5);
-  return [x, -0.02, z] as Vector3;
+  const z = 2 * (Math.random() - 0.5) + 1;
+  return [x, -0.02, z];
 };
-const randomRotationRobot = () => {
-  const theta = 2*Math.PI * (Math.random() - 0.0);
-  return [-Math.PI/2, 0, theta] as Euler;
-};
+// const randomRotationRobot = () => {
+//   const theta = 2*Math.PI * (Math.random() - 0.0);
+//   return [-Math.PI/2, 0, theta];
+// };
 
 export const App = ({ docId }: { docId: JournalId; }) => {
   const mutate = useMutate( docId );
@@ -141,42 +146,36 @@ export const App = ({ docId }: { docId: JournalId; }) => {
 
   // Add data to robots
   const [ robots, setRobots ] = useState<IRobot[]>([]);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
   useEffect(()=>{
     const newRobots: IRobot[] = [];
+
     if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
       robotsQuery.map(( robot ) => ( 
         newRobots.push( robot as IRobot ))
       );
-      newRobots.filter((robot) => (robot.id == "24db4c5b-1e3a-4853-8316-1d6ad07beed1" ?
-        robot.state = "Auto" : robot.id == "402e7545-512b-4b7d-b570-e94311b38ab6" ?
-        robot.state = "Error" : robot.state = "Off"
+      newRobots.filter((robot) => (
+        robot.id == "24db4c5b-1e3a-4853-8316-1d6ad07beed1" ? robot.state = "Auto" :
+        robot.id == "402e7545-512b-4b7d-b570-e94311b38ab6" ? robot.state = "Error" :
+        robot.state = "Off"
       ));
       newRobots.filter((robot) => (robot.position = randomPosition()));
-      newRobots.filter((robot) => (robot.rotation = randomRotationRobot()));
-      newRobots.filter((robot) => (robot.jointAngles = randomJointAngles()));
+      newRobots.filter((robot) => (robot.rotation = zeroRotation()));
+      newRobots.filter((robot) => (robot.jointAngles = zeroJointAngles()));
       newRobots.filter((robot) => (robot.toolState = "Unactuated"));
       setRobots(newRobots);
     }
   }, [robotsQuery]);
 
-    // Update robot position on child callback
-    const updateRobot = (childData: {id: string, position: Vector3, rotation: Euler}) => {
-      const index = robots.findIndex((robot) => robot.id == childData.id);
-      const newRobot: IRobot = {
-        id: robots[index].id,
-        locationid: robots[index].locationid,
-        description: robots[index].description,
-        created_at: robots[index].created_at,
-        state: robots[index].state,
-        toolState: robots[index].toolState,
-        position: childData.position,
-        rotation: childData.rotation,
-        jointAngles: robots[index].jointAngles
-      }
-      robots.splice(index, 1);
-      robots.push(newRobot);
-      setRobots( robots );
-    }
+  // Update robot position on Fleetmanager and RobotSelection callback
+  const updateRobot = (childData: {id: string, state: string, position: number[], rotation: number[]}) => {
+    const index = robots.findIndex((robot) => robot.id == childData.id);
+    robots[index].state = childData.state;
+    robots[index].position = childData.position;
+    robots[index].rotation = childData.rotation;
+    setRobots(robots);
+    forceUpdate;
+  }
 
   // Add data to tasks
   const [ tasks, setTasks ] = useState<ITask[]>([]);
@@ -304,7 +303,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                   </Stack>
                   <Box h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
                     <Divider />
-                    <RobotSelection />
+                    <RobotSelection updateRobot={updateRobot} />
                   </Box>
                 </Stack>
               </AppShell.Aside>

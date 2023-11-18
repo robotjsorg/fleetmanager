@@ -42,6 +42,9 @@ type GLTFResult = GLTF & {
   };
 };
 
+export const zeroJointAngles = () => {
+  return [Math.PI/4, -Math.PI/4, Math.PI/4, 0, 0, 0];
+}
 export const randomJointAngles = () => {
   const angles = [0, 0, 0, 0, 0, 0];
   for( let i = 0; i < JOINT_LIMITS.length; i++ ){
