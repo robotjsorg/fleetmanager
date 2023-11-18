@@ -14,7 +14,6 @@ import { IRobotQuery, IRobot } from "./@types/robot";
 import { ITask, ITaskQuery } from "./@types/task";
 
 import { RobotProvider } from "./context/robotContext";
-import { BoxProvider } from "./context/boxContext";
 import { guiSelectionContext } from "./context/guiSelectionContext";
 import { locSelectionContext } from "./context/locSelectionContext";
 import { moveRobotContext } from "./context/moveRobotContext";
@@ -46,10 +45,6 @@ const randomPosition = () => {
 const randomRotationRobot = () => {
   const theta = 2*Math.PI * (Math.random() - 0.0);
   return [-Math.PI/2, 0, theta] as Euler;
-};
-const randomRotationBox = () => {
-  const theta = 2*Math.PI * (Math.random() - 0.0);
-  return [0, theta, 0] as Euler;
 };
 
 export const App = ({ docId }: { docId: JournalId; }) => {
@@ -158,9 +153,8 @@ export const App = ({ docId }: { docId: JournalId; }) => {
       ));
       newRobots.filter((robot) => (robot.position = randomPosition()));
       newRobots.filter((robot) => (robot.rotation = randomRotationRobot()));
-      newRobots.filter((robot) => (robot.jointAngles = randomJointAngles())); // jointAngles and tool state shouldn't be stored
-      // newRobots.filter((robot) => (robot.partpresent = "Unactuated"));
-      // newRobots.filter((robot) => (robot.toolState = "Unactuated"));
+      newRobots.filter((robot) => (robot.jointAngles = randomJointAngles()));
+      newRobots.filter((robot) => (robot.toolState = "Unactuated"));
       setRobots(newRobots);
     }
   }, [robotsQuery]);
@@ -174,6 +168,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
         description: robots[index].description,
         created_at: robots[index].created_at,
         state: robots[index].state,
+        toolState: robots[index].toolState,
         position: childData.position,
         rotation: childData.rotation,
         jointAngles: robots[index].jointAngles

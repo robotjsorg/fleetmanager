@@ -47,12 +47,14 @@ export const Fleetmanager = ({
           onMouseUp={()=>{
             object &&
             updateRobot({id: object.name, position: object.position, rotation: object.rotation})
-          }}/>}
+          }}
+          />}
         {snap.current && moveRobot  && <TransformControls showX={false} showZ={false} object={object} mode={"rotate"} 
           onMouseUp={()=>{
             object &&
             updateRobot({id: object.name, position: object.position, rotation: object.rotation})
-          }} />}
+          }}
+          />}
       </>
     );
   };

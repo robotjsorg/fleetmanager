@@ -11,6 +11,7 @@ export interface IRobot {
   description: string;
   created_at: string;
   state: string;
+  toolState: string;
   position: Vector3;
   rotation: Euler;
   jointAngles: number[];

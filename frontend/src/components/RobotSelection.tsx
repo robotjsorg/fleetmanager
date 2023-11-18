@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 
-import { Text, Box, Table, Button, Divider, NumberInput, Group, Flex, Select } from "@mantine/core";
+import { Text, Box, Table, Button, Divider, NumberInput, Group, Flex } from "@mantine/core";
 
 import { IRobot } from "../@types/robot";
 import { ITask } from "../@types/task";
@@ -30,6 +30,7 @@ export const RobotSelection = () => {
   const [description, setDescription] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [state, setState] = useState("");
+  const [toolState, setToolState] = useState("");
   const [toggleManual, setToggleManual] = useState(true);
   const [position, setPosition] = useState([0, 0, 0]);
   const [rotation, setRotation] = useState([0, 0 ,0]);
@@ -39,6 +40,7 @@ export const RobotSelection = () => {
       setDescription( selectedRobot.description );
       setCreatedAt( selectedRobot.created_at );
       setState( selectedRobot.state );
+      setToolState( selectedRobot.toolState );
       setPosition( selectedRobot.position as [number, number, number] );
       setRotation( selectedRobot.rotation as [number, number, number] );  
     }
@@ -48,8 +50,6 @@ export const RobotSelection = () => {
   useEffect(()=>{
     setFilteredTasks(tasks.filter(( task ) => ( task.robotid == guiSelection )) );
   }, [guiSelection, tasks])
-
-  const [ toolState, setToolState ] = useState( "Unactuated" );
 
   const handleOff = () => {
     setState( "Off" );
@@ -131,6 +131,8 @@ export const RobotSelection = () => {
   //   }
   // );
 
+  const robotSelected = guiSelection != "no selection";
+
   return (
     <Box>
       <Table withRowBorders={false}>
@@ -139,13 +141,13 @@ export const RobotSelection = () => {
             <Table.Th w="50%">
               <Text size="xs">
               <Text span c="gray" inherit>name: </Text>
-                { description ? description : "-"}
+                { robotSelected ? description : "-"}
               </Text>
             </Table.Th>
             <Table.Th w="50%">
               <Text size="xs">
                 <Text span c="gray" inherit>type: </Text>
-                { guiSelection != "no selection" ? "ABB IRB 52" : "-"}
+                { robotSelected ? "ABB IRB 52" : "-"}
               </Text>
             </Table.Th>
           </Table.Tr>
@@ -155,21 +157,21 @@ export const RobotSelection = () => {
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>part: </Text>
-                { guiSelection != "no selection" ? "Not Present" : "-"}
+                { robotSelected ? "Not Present" : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>tool: </Text>
-                { guiSelection != "no selection" ? toolState : "-"}
+                { robotSelected ? toolState : "-"}
               </Text>
             </Table.Td>
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>created: </Text>
-                { createdAt ? createdAt.split(" ")[0] : "-"}
+                { robotSelected ? createdAt.split(" ")[0] : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>updated: </Text>
-                { createdAt ? createdAt.split(" ")[0] : "-"}
+                { robotSelected ? createdAt.split(" ")[0] : "-"}
               </Text>
             </Table.Td>
           </Table.Tr>
@@ -177,29 +179,29 @@ export const RobotSelection = () => {
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>x: </Text>
-                { position[0] ? position[0].toPrecision(3) : "-"}
+                { position[0] && robotSelected ? position[0].toPrecision(3) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>y: </Text>
-                { position[1] ? position[1].toPrecision(3) : "-"}
+                { position[1] && robotSelected ? position[1].toPrecision(3) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>z: </Text>
-                { position[2] ? position[2].toPrecision(3) : "-"}
+                { position[2] && robotSelected ? position[2].toPrecision(3) : "-"}
               </Text>
             </Table.Td>
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>&phi;: </Text>
-                { rotation[0] ? rotation[0].toPrecision(3) : "-"}
+                { rotation[0] && robotSelected ? rotation[0].toPrecision(3) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>&theta;: </Text>
-                { rotation[1] ? rotation[1].toPrecision(3) : "-"}
+                { rotation[1] && robotSelected ? rotation[1].toPrecision(3) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>&psi;: </Text>
-                { rotation[2] ? rotation[2].toPrecision(3) : "-"}
+                { rotation[2] && robotSelected ? rotation[2].toPrecision(3) : "-"}
               </Text>
             </Table.Td>
           </Table.Tr>
@@ -207,11 +209,11 @@ export const RobotSelection = () => {
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>state: </Text>
-                { state ? state : "-"}
+                { robotSelected ? state : "-"}
               </Text>    
             </Table.Td>
             <Table.Td>
-              { guiSelection == "no selection" ?
+              { !robotSelected ?
                 <Box h={30}></Box>
               : state == "Error" ?
                 <>
@@ -249,7 +251,7 @@ export const RobotSelection = () => {
           </Table.Tr>
         </Table.Tbody>
       </Table>
-      {state == "Off" && guiSelection != "no selection" ?
+      {state == "Off" && robotSelected ?
         <>
           <Divider mx="xs" />
           <form>
@@ -296,7 +298,7 @@ export const RobotSelection = () => {
             </Group>
           </form>
         </>
-        : state == "Error" && guiSelection != "no selection" ?
+        : state == "Error" && robotSelected ?
         <>
           <Divider mx="xs" />
           <Group gap={0} p="xs">
@@ -306,7 +308,7 @@ export const RobotSelection = () => {
             </Text>
           </Group>
         </>
-      : state == "Manual" && guiSelection != "no selection" ?
+      : state == "Manual" && robotSelected ?
         <>
           <Divider mx="xs" />
           <Group gap="xs" py="xs" justify="center">
@@ -439,7 +441,7 @@ export const RobotSelection = () => {
             </form> 
           }
         </>
-      : state == "Auto" && guiSelection != "no selection" &&
+      : state == "Auto" && robotSelected &&
         <>
           <Divider mx="xs" />
           <Table withRowBorders={false}>

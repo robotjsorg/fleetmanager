@@ -4,6 +4,6 @@
 import { createContext } from "react";
 
 export const guiSelectionContext = createContext({
-  guiSelection: "no selection",
+  guiSelection: "",
   setGuiSelection: (_foo: any) => {}
 });
