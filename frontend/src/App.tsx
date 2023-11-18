@@ -243,22 +243,22 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                       </Button>
                     </Box>
                     <Button visibleFrom="xs" color="gray"
-                      onClick={() => (setPseudoRoute("robots"))}
+                      onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
                       variant={ route != "robots" ? "subtle" : "light" }>
                       Robots
                     </Button>
                     <Button hiddenFrom="xs" color="gray"
-                      onClick={() => (setPseudoRoute("robots"))}
+                      onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
                       variant={ route != "robots" ? "subtle" : "light" }>
                       <IconRobot size={18} />
                     </Button>
                     <Button visibleFrom="xs" color="gray" 
-                      onClick={() => (setPseudoRoute("tasks"))}
+                      onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
                       variant={ route != "tasks" ? "subtle" : "light" }>
                       Tasks
                     </Button>
                     <Button hiddenFrom="xs" color="gray"
-                      onClick={() => (setPseudoRoute("tasks"))}
+                      onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
                       variant={ route != "tasks" ? "subtle" : "light" }>
                       <IconChecklist size={18} />
                     </Button>
@@ -275,7 +275,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                 </Stack>
                 <Group justify="center" p="lg">
                   <Button variant="default"
-                    onClick={() => (closeNav(), setPseudoRoute("locations"))}
+                    onClick={() => {closeNav(), setPseudoRoute("locations"), setMoveRobot( false )}}
                     leftSection={<IconSettings size={18} />}>
                     Edit
                   </Button>
