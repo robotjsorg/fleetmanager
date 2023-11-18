@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useReducer, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { Text, Box, Table, Button, Divider, NumberInput, Group, Flex, Select } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -15,6 +15,11 @@ import { moveRobotContext } from "../context/moveRobotContext";
 import { GRID_BOUND } from "./Fleetmanager";
 import { JOINT_LIMITS } from "../meshes/Mesh_abb_irb52_7_120";
 
+const precise = (x: number) => {
+  const X = Number(x);
+  return X.toFixed(2);
+};
+
 export const RobotSelection = (
   {
   updateRobot
@@ -26,39 +31,38 @@ export const RobotSelection = (
   const { guiSelection } = useContext( guiSelectionContext );
   const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)]);
   const [ filteredTasks, setFilteredTasks ] = useState<ITask[]>([]);
+  useEffect(()=>{
+    setFilteredTasks( tasks.filter(( task ) => ( task.robotid == guiSelection )) );
+  }, [guiSelection, tasks]);
 
   const { moveRobot, setMoveRobot } = useContext( moveRobotContext );
   const [ toggleManual, setToggleManual ] = useState( true );
 
   const [ state, setState ] = useState("");
-  const [ position, setPosition ] = useState<number[]>();
-  const [ rotation, setRotation ] = useState<number[]>();
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
-
   useEffect(()=>{
     const index = robots.findIndex((robot) => robot.id == guiSelection);
     setSelectedRobot( robots[index] );
   }, [guiSelection, robots]);
+
+  const [ initFields, setInitFields ] = useState( false );
   useEffect(()=>{
     if ( selectedRobot ) {
       setState( selectedRobot.state );
-      setPosition( selectedRobot.position );
-      setRotation( selectedRobot.rotation );
-      console.log("TEST!")
-      console.log(selectedRobot.position);
-      forceUpdate();
     }
+    setInitFields( false );
   }, [selectedRobot]);
-  useEffect(()=>{
-    setFilteredTasks( tasks.filter(( task ) => ( task.robotid == guiSelection )) );
-  }, [guiSelection, tasks]);
 
   const moveRobotForm = useForm({
     initialValues: {
       X: 0,
       Z: 0,
       theta: 0
-    }
+    },
+    // validate: {
+    //   X: (value) => (value),
+    //   Z: (value) => (value),
+    //   theta: (value) => (value)
+    // }
   });
   const handleMoveRobot = moveRobotForm.onSubmit(
     useCallback(
@@ -67,10 +71,18 @@ export const RobotSelection = (
         id: selectedRobot.id, 
         state: "Off", 
         position: [X, selectedRobot.position[1], Z], 
-        rotation: [selectedRobot.rotation[0], selectedRobot.rotation[1], theta]});
+        rotation: [selectedRobot.rotation[0], selectedRobot.rotation[1], theta/57.2958]});
     }
     , [selectedRobot, updateRobot])
   );
+  useEffect(()=>{
+    if( selectedRobot && !initFields ) {
+      moveRobotForm.setFieldValue('X', selectedRobot.position[0]);
+      moveRobotForm.setFieldValue('Z', selectedRobot.position[2]);
+      moveRobotForm.setFieldValue('theta', selectedRobot.rotation[2]*57.2958);
+      setInitFields( true );
+    }
+  }, [initFields, moveRobotForm, selectedRobot]);
 
   const jointsForm = useForm({
     initialValues: {
@@ -157,11 +169,6 @@ export const RobotSelection = (
     
   // }
 
-  const precise = (x: number) => {
-    const X = Number(x);
-    return X.toFixed(2);
-  };
-
   return (
     <Box>
       <Table withRowBorders={false}>
@@ -222,15 +229,15 @@ export const RobotSelection = (
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>&phi;: </Text>
-                { selectedRobot ? precise(selectedRobot.rotation[0]) : "-"}
+                { selectedRobot ? precise(selectedRobot.rotation[0]*57.2958) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>&theta;: </Text>
-                { selectedRobot ? precise(selectedRobot.rotation[1]) : "-"}
+                { selectedRobot ? precise(selectedRobot.rotation[1]*57.2958) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>&psi;: </Text>
-                { selectedRobot ? precise(selectedRobot.rotation[2]) : "-"}
+                { selectedRobot ? precise(selectedRobot.rotation[2]*57.2958) : "-"}
               </Text>
             </Table.Td>
           </Table.Tr>
@@ -292,38 +299,40 @@ export const RobotSelection = (
                   Move Robot
                 </Button>
               </Flex>
-              <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column" align="center">
+              <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column" align="center" onMouseUp={()=>handleMoveRobot()}>
                 <NumberInput disabled={!moveRobot}
                   leftSection={<Text span size="xs">X</Text>}
                   size="xs"
                   clampBehavior="strict"
-                  step={0.5}
-                  startValue={selectedRobot.position[0]}
+                  step={0.1}
                   min={-GRID_BOUND}
                   max={GRID_BOUND}
+                  decimalScale={1}
+                  onKeyUp={()=>handleMoveRobot()}
                   {...moveRobotForm.getInputProps("X")}
                 />
                 <NumberInput disabled={!moveRobot}
                   leftSection={<Text span size="xs">Z</Text>}
                   size="xs"
                   clampBehavior="strict"
-                  step={0.5}
-                  startValue={selectedRobot.position[2]}
+                  step={0.1}
                   min={-GRID_BOUND}
                   max={GRID_BOUND}
+                  decimalScale={1}
+                  onKeyUp={()=>handleMoveRobot()}
                   {...moveRobotForm.getInputProps("Z")}
                 />
                 <NumberInput disabled={!moveRobot}
                   leftSection={<Text span size="xs">&theta;</Text>}
                   size="xs"
                   clampBehavior="strict"
-                  step={0.5}
-                  startValue={selectedRobot.rotation[2]}
-                  min={-Math.PI}
-                  max={Math.PI}
+                  step={15.0}
+                  min={0}
+                  max={2*Math.PI*57.2958}
+                  allowDecimal={false}
+                  onKeyUp={()=>handleMoveRobot()}
                   {...moveRobotForm.getInputProps("theta")}
                 />
-                <Button disabled={!moveRobot} color="gray" type="submit">Move</Button>
               </Flex>
             </Group>
           </form>

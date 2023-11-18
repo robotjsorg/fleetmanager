@@ -14,7 +14,7 @@ import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locSelectionContext } from "../context/locSelectionContext";
 import { moveRobotContext } from "../context/moveRobotContext";
 
-import { proxy, useSnapshot } from "valtio";
+import { proxy } from "valtio";
 
 import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
 
@@ -39,9 +39,8 @@ export const Fleetmanager = ({
   }, [locSelection, robots]);
 
   const Controls = () => {
-    // const snap = useSnapshot(state);
     const scene = useThree((state) => state.scene);
-    const object = scene.getObjectByName(guiSelection); //snap.current
+    const object = scene.getObjectByName(guiSelection);
 
     const Bound = (input: number, bound: number) => {
       if ( input > bound ) {

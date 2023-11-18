@@ -146,7 +146,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
 
   // Add data to robots
   const [ robots, setRobots ] = useState<IRobot[]>([]);
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const [, forceUpdate] = useReducer(x => x + 1 as number, 0);
   useEffect(()=>{
     const newRobots: IRobot[] = [];
 
@@ -174,7 +174,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
     robots[index].position = childData.position;
     robots[index].rotation = childData.rotation;
     setRobots(robots);
-    forceUpdate;
+    forceUpdate();
   }
 
   // Add data to tasks
