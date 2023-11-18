@@ -11,7 +11,7 @@ export interface IRobot {
   description: string;
   created_at: string;
   state: string;
-  lastKnownPosition: Vector3;
-  lastKnownRotation: Vector3;
-  lastKnownJointAngles: number[];
+  position: Vector3;
+  rotation: Euler;
+  jointAngles: number[];
 }

@@ -1,8 +1,9 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/no-unknown-property */
 import { useContext, useEffect, useState } from "react";
 import { useMantineContext } from "@mantine/core";
 
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, Euler, Vector3, useThree } from "@react-three/fiber";
 import { Text, OrbitControls, TransformControls } from "@react-three/drei";
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
 
@@ -13,10 +14,17 @@ import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locSelectionContext } from "../context/locSelectionContext";
 import { moveRobotContext } from "../context/moveRobotContext";
 
-import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
-import { Mesh_cardboard_box_01 } from "../meshes/Mesh_cardboard_box_01";
+import { proxy, useSnapshot } from "valtio";
 
-export const Fleetmanager = () => {
+import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
+
+const state = proxy({ current: "" });
+
+export const Fleetmanager = ({
+  updateRobot
+}: {
+  updateRobot: (childData: {id: string, position: Vector3, rotation: Euler}) => void
+}) => {
   const theme = useMantineContext();
   const { robots } = useContext( RobotContext );
   const { locSelection } = useContext( locSelectionContext );
@@ -28,28 +36,29 @@ export const Fleetmanager = () => {
     setLocationRobots( robots.filter(( robot )=>( robot.locationid == locSelection )) );
   }, [locSelection, robots]);
 
-  // const [ selectedRobot, setSelectedRobot ] = useState<IRobot>();
-  // useEffect(() => {
-  //   setSelectedRobot( robots.filter(( robot )=>( robot.locationid == guiSelection ))[0] );
-  // }, [guiSelection, robots]);
-
-  const updatePosition=()=>{
-    console.log("updatePosition");
-  }
-  const updateRotation=()=>{
-    console.log("updatePosition");
-  }
-
   const Controls = () => {
-    const scene = useThree((state) => (state.scene));
-    const object = scene.getObjectByName(guiSelection);
+    const snap = useSnapshot(state);
+    const scene = useThree((state) => state.scene);
+    const object = scene.getObjectByName(snap.current);
 
     return (
       <>
-        {guiSelection != "" && moveRobot && <TransformControls object={object} showY={false} mode="translate" onMouseUp={updatePosition} />}
-        {guiSelection != "" && moveRobot && <TransformControls object={object} showX={false} showZ={false} mode="rotate" onMouseUp={updateRotation} />}
+        {snap.current && moveRobot && <TransformControls showY={false} object={object} mode={"translate"} 
+          onMouseUp={()=>{
+            object &&
+            updateRobot({id: object.name, position: object.position, rotation: object.rotation})
+          }}/>}
+        {snap.current && moveRobot  && <TransformControls showX={false} showZ={false} object={object} mode={"rotate"} 
+          onMouseUp={()=>{
+            object &&
+            updateRobot({id: object.name, position: object.position, rotation: object.rotation})
+          }} />}
       </>
     );
+  };
+
+  const robotCurrent = (childData: string) => {
+    state.current = childData;
   };
 
   return (
@@ -60,17 +69,15 @@ export const Fleetmanager = () => {
           <Outline visibleEdgeColor={theme.colorScheme == "dark" ? "white" : "blue"} blur edgeStrength={100} width={1000} />
         </EffectComposer>
         {locationsRobots.map((robot) => (
-          <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} />
+          <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent}/>
         ))}
       </Selection>
-      <Mesh_cardboard_box_01 />
-      <Mesh_cardboard_box_01 />
-      <Mesh_cardboard_box_01 />
+      
       
       <gridHelper args={[8, 8, theme.colorScheme == "dark" ? "white" : "black", "gray"]} position={[0, -0.02, 0]} rotation={[0, 0, 0]} />
       <axesHelper args={[1]} position={[-0.01, -0.01, -0.01]} />
-      <Text color={"red"} rotation={[Math.PI/2, Math.PI, Math.PI]} position={[0.9, 0, -0.1]} fontSize={0.12}>X</Text>
-      <Text color={"blue"} rotation={[Math.PI/2, Math.PI, Math.PI]} position={[0.1, 0, 0.9]} fontSize={0.12}>Z</Text>
+      <Text color={"#E03131"} rotation={[Math.PI/2, Math.PI, Math.PI]} position={[0.9, 0, -0.1]} fontSize={0.12}>X</Text>
+      <Text color={"#1971C2"} rotation={[Math.PI/2, Math.PI, Math.PI]} position={[0.1, 0, 0.9]} fontSize={0.12}>Z</Text>
 
       <directionalLight intensity={2} position={ [5, 5, 5] } />
       <directionalLight intensity={2} position={ [5, 5, -5] } />
@@ -78,8 +85,12 @@ export const Fleetmanager = () => {
       <directionalLight intensity={2} position={ [-5, 5, -5] } />
 
       <Controls />
-      {/* autoRotate={ true } */}
       <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0, 1, 0] } />
+      {/* autoRotate={ true } */}
+
+      {/* <Mesh_cardboard_box_01 /> */}
+      {/* <Mesh_cardboard_box_01 /> */}
+      {/* <Mesh_cardboard_box_01 /> */}
 
       {/* <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
         preset={ locSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 

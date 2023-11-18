@@ -14,6 +14,7 @@ import { IRobotQuery, IRobot } from "./@types/robot";
 import { ITask, ITaskQuery } from "./@types/task";
 
 import { RobotProvider } from "./context/robotContext";
+import { BoxProvider } from "./context/boxContext";
 import { guiSelectionContext } from "./context/guiSelectionContext";
 import { locSelectionContext } from "./context/locSelectionContext";
 import { moveRobotContext } from "./context/moveRobotContext";
@@ -24,7 +25,6 @@ import { TasksView } from "./views/TasksView";
 
 import { ConnectionStatus } from "./components/ConnectionStatus";
 import { Fleetmanager } from "./components/Fleetmanager";
-// import MoveStuffTest from "./components/MoveStuffTest";
 import { LocationList } from "./components/LocationList";
 import { RobotList } from "./components/RobotList";
 import { RobotSelection } from "./components/RobotSelection";
@@ -43,9 +43,13 @@ const randomPosition = () => {
   const z = 2 * (Math.random() - 0.5);
   return [x, -0.02, z] as Vector3;
 };
-const randomRotation = () => {
-  const z = 2*Math.PI * (Math.random() - 0.0);
-  return [-Math.PI/2, 0, z] as Euler;
+const randomRotationRobot = () => {
+  const theta = 2*Math.PI * (Math.random() - 0.0);
+  return [-Math.PI/2, 0, theta] as Euler;
+};
+const randomRotationBox = () => {
+  const theta = 2*Math.PI * (Math.random() - 0.0);
+  return [0, theta, 0] as Euler;
 };
 
 export const App = ({ docId }: { docId: JournalId; }) => {
@@ -152,14 +156,32 @@ export const App = ({ docId }: { docId: JournalId; }) => {
         robot.state = "Auto" : robot.id == "402e7545-512b-4b7d-b570-e94311b38ab6" ?
         robot.state = "Error" : robot.state = "Off"
       ));
-      newRobots.filter((robot) => (robot.lastKnownPosition = randomPosition()));
-      newRobots.filter((robot) => (robot.lastKnownRotation = randomRotation()));
-      newRobots.filter((robot) => (robot.lastKnownJointAngles = randomJointAngles())); // jointAngles and tool state shouldn't be stored
+      newRobots.filter((robot) => (robot.position = randomPosition()));
+      newRobots.filter((robot) => (robot.rotation = randomRotationRobot()));
+      newRobots.filter((robot) => (robot.jointAngles = randomJointAngles())); // jointAngles and tool state shouldn't be stored
       // newRobots.filter((robot) => (robot.partpresent = "Unactuated"));
       // newRobots.filter((robot) => (robot.toolState = "Unactuated"));
       setRobots(newRobots);
     }
   }, [robotsQuery]);
+
+    // Update robot position on child callback
+    const updateRobot = (childData: {id: string, position: Vector3, rotation: Euler}) => {
+      const index = robots.findIndex((robot) => robot.id == childData.id);
+      const newRobot: IRobot = {
+        id: robots[index].id,
+        locationid: robots[index].locationid,
+        description: robots[index].description,
+        created_at: robots[index].created_at,
+        state: robots[index].state,
+        position: childData.position,
+        rotation: childData.rotation,
+        jointAngles: robots[index].jointAngles
+      }
+      robots.splice(index, 1);
+      robots.push(newRobot);
+      setRobots( robots );
+    }
 
   // Add data to tasks
   const [ tasks, setTasks ] = useState<ITask[]>([]);
@@ -275,8 +297,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                 : route == "location" && // Fleetmanager
                   <Box h={ fixHeight - CONTENT_OFFSET }>
                     <Divider />
-                    <Fleetmanager />
-                    {/* <MoveStuffTest /> */}
+                    <Fleetmanager updateRobot={updateRobot} />
                   </Box>
                 }
               </AppShell.Main>

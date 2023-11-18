@@ -35,12 +35,12 @@ export const RobotSelection = () => {
   const [rotation, setRotation] = useState([0, 0 ,0]);
   useEffect(()=>{
     if ( selectedRobot ) {
-      setJointAngles( selectedRobot.lastKnownJointAngles as [number, number, number, number, number, number]  );
+      setJointAngles( selectedRobot.jointAngles );
       setDescription( selectedRobot.description );
       setCreatedAt( selectedRobot.created_at );
       setState( selectedRobot.state );
-      setPosition( selectedRobot.lastKnownPosition as [number, number, number] );
-      setRotation( selectedRobot.lastKnownPosition as [number, number, number] );  
+      setPosition( selectedRobot.position as [number, number, number] );
+      setRotation( selectedRobot.rotation as [number, number, number] );  
     }
   }, [selectedRobot])
   
@@ -139,7 +139,7 @@ export const RobotSelection = () => {
             <Table.Th w="50%">
               <Text size="xs">
               <Text span c="gray" inherit>name: </Text>
-                { guiSelection != "no selection" ? description : "-"}
+                { description ? description : "-"}
               </Text>
             </Table.Th>
             <Table.Th w="50%">
@@ -165,11 +165,11 @@ export const RobotSelection = () => {
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>created: </Text>
-                { guiSelection != "no selection" ? createdAt.split(" ")[0] : "-"}
+                { createdAt ? createdAt.split(" ")[0] : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>updated: </Text>
-                { guiSelection != "no selection" ? createdAt.split(" ")[0] : "-"}
+                { createdAt ? createdAt.split(" ")[0] : "-"}
               </Text>
             </Table.Td>
           </Table.Tr>
@@ -177,29 +177,29 @@ export const RobotSelection = () => {
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>x: </Text>
-                { guiSelection != "no selection" ? position[0].toPrecision(3) : "-"}
+                { position[0] ? position[0].toPrecision(3) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>y: </Text>
-                { guiSelection != "no selection" ? position[1].toPrecision(3) : "-"}
+                { position[1] ? position[1].toPrecision(3) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>z: </Text>
-                { guiSelection != "no selection" ? position[2].toPrecision(3) : "-"}
+                { position[2] ? position[2].toPrecision(3) : "-"}
               </Text>
             </Table.Td>
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>&phi;: </Text>
-                { guiSelection != "no selection" ? rotation[0].toPrecision(3) : "-"}
+                { rotation[0] ? rotation[0].toPrecision(3) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>&theta;: </Text>
-                { guiSelection != "no selection" ? rotation[1].toPrecision(3) : "-"}
+                { rotation[1] ? rotation[1].toPrecision(3) : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>&psi;: </Text>
-                { guiSelection != "no selection" ? rotation[2].toPrecision(3) : "-"}
+                { rotation[2] ? rotation[2].toPrecision(3) : "-"}
               </Text>
             </Table.Td>
           </Table.Tr>
@@ -207,7 +207,7 @@ export const RobotSelection = () => {
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>state: </Text>
-                { guiSelection != "no selection" ? state : "-"}
+                { state ? state : "-"}
               </Text>    
             </Table.Td>
             <Table.Td>

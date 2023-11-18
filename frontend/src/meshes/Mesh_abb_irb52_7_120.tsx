@@ -2,7 +2,7 @@
 import { useRef, useContext, useState, useEffect } from "react";
 
 import { Euler, Vector3, useFrame } from "@react-three/fiber";
-import { useGLTF } from "@react-three/drei";
+import { useCursor, useGLTF } from "@react-three/drei";
 import { Select } from "@react-three/postprocessing";
 import { GLTF } from "three-stdlib";
 import { useSpring, animated, config } from "@react-spring/three";
@@ -56,17 +56,17 @@ export const randomJointAngles = () => {
 
 export const Mesh_abb_irb52_7_120 = ({
   robot,
-  selected
+  selected,
+  robotCurrent
 } : {
   robot: IRobot;
   selected: boolean;
+  robotCurrent: (childData: string) => void;
 }) => {
   const ref = useRef<THREE.Mesh>(null!);
   const { nodes, materials } = useGLTF( filepath ) as GLTFResult;
   const { setGuiSelection } = useContext( guiSelectionContext );
-  const [ position ] = useState( robot.lastKnownPosition as Vector3 );
-  const [ rotation ] = useState( robot.lastKnownRotation as Euler );
-  const [ jointAngles, setJointAngles ] = useState( robot.lastKnownJointAngles );
+  const [ jointAngles, setJointAngles ] = useState( robot.jointAngles );
 
   const SHADOWS = false;
   const { scale } = useSpring({
@@ -92,9 +92,7 @@ export const Mesh_abb_irb52_7_120 = ({
   }, [robot.id, tasks]);
 
   const [ hovered, hover ] = useState( false );
-  useEffect(() => {
-    document.body.style.cursor = hovered ? "pointer" : "auto";
-  }, [hovered]);
+  useCursor( hovered );
 
   const handleTasks = ( delta: number ) => {
     if ( containsSpinAroundDesc ) {
@@ -141,17 +139,19 @@ export const Mesh_abb_irb52_7_120 = ({
 
   return (
     <Select enabled={ selected || hovered }>
-      <group name={robot.id} dispose={null}>
+      {/* <group name={robot.id} dispose={null}> */}
         <animated.mesh
+          name={robot.id} 
           ref={ref}
           scale={scale}
-          onClick={(e) => (e.stopPropagation(), setGuiSelection(robot.id))}
+          onClick={(e) => (e.stopPropagation(), setGuiSelection(robot.id), robotCurrent(robot.id))}
+          onPointerMissed={(e) => e.type === 'click' && robotCurrent("")}
           onPointerOver={(e) => (e.stopPropagation(), hover(true))}
           onPointerOut={() => hover(false)}
           geometry={nodes.base_link.geometry}
           material={materials.gkmodel0_base_link_geom0}
-          position={position}
-          rotation={rotation}
+          position={robot.position as Vector3}
+          rotation={robot.rotation as Euler}
           castShadow={SHADOWS}
           receiveShadow={SHADOWS}>
           <mesh
@@ -195,7 +195,7 @@ export const Mesh_abb_irb52_7_120 = ({
             </mesh>
           </mesh>
         </animated.mesh>
-      </group>
+      {/* </group> */}
     </Select>
   );
 }
