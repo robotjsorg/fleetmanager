@@ -53,7 +53,8 @@ export const Fleetmanager = ({
 
     return (
       <>
-        {guiSelection && moveRobot && <TransformControls showY={false} object={object} mode={"translate"} // snap.current
+        {guiSelection && moveRobot && <TransformControls showY={false} object={object} mode="translate"
+          translationSnap={0.1}
           onMouseUp={()=>{
             object &&
             updateRobot({
@@ -63,7 +64,8 @@ export const Fleetmanager = ({
               rotation: [object.rotation.x, object.rotation.y, Bound(object.rotation.z, Math.PI)]})
           }}
           />}
-        {guiSelection && moveRobot  && <TransformControls showX={false} showZ={false} object={object} mode={"rotate"} // snap.current
+        {guiSelection && moveRobot  && <TransformControls showX={false} showZ={false} object={object} mode="rotate"
+          rotationSnap={15*0.0174533}
           onMouseUp={()=>{
             object &&
             updateRobot({

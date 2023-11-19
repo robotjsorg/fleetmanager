@@ -37,17 +37,23 @@ export const RobotSelection = (
 
   const [ state, setState ] = useState("");
   const [ initFields, setInitFields ] = useState( true );
+  
   useEffect(()=>{
     const index = robots.findIndex((robot) => robot.id == guiSelection);
     setSelectedRobot( robots[index] );
     setInitFields( true );
   }, [guiSelection, robots]);
 
+  const [ position, setPosition ] = useState([0,0,0]);
   useEffect(()=>{
     if ( selectedRobot ) {
       setState( selectedRobot.state );
+      if ( position != selectedRobot.position ) {
+        setInitFields( true );
+      }
+      setPosition(selectedRobot.position);
     }
-  }, [selectedRobot]);
+  }, [position, selectedRobot]); 
 
   const moveRobotForm = useForm({
     initialValues: {
@@ -55,11 +61,11 @@ export const RobotSelection = (
       Z: 0,
       theta: 0
     },
-    // validate: {
-    //   X: (value) => (value),
-    //   Z: (value) => (value),
-    //   theta: (value) => (value)
-    // }
+    validate: {
+      X: (value) => (value < -GRID_BOUND || value > GRID_BOUND || value.toString() == "" || value.toString() == "-" && "Enter a number"),
+      Z: (value) => (value < -GRID_BOUND || value > GRID_BOUND || value.toString() == "" || value.toString() == "-" && "Enter a number"),
+      theta: (value) => (value < -Math.PI*RADS_DEGS || value > Math.PI*RADS_DEGS || value.toString() == "" || value.toString() == "-" && "Enter a number"),
+    }
   });
   const handleMoveRobot = moveRobotForm.onSubmit(
     useCallback(
@@ -72,17 +78,12 @@ export const RobotSelection = (
     }
     , [selectedRobot, updateRobot])
   );
-  // TODO: Update field controls when transform controls updates, more than once. Field controls should only require one click.
   useEffect(()=>{
     if ( selectedRobot && initFields ) {
-      if ( moveRobotForm.isTouched() ) {
-        setInitFields( false );
-      }
       moveRobotForm.setFieldValue('X', selectedRobot.position[0]);
       moveRobotForm.setFieldValue('Z', selectedRobot.position[2]);
       moveRobotForm.setFieldValue('theta', selectedRobot.rotation[2]*RADS_DEGS);
-      moveRobotForm.resetTouched();
-      moveRobotForm.resetDirty();
+      setInitFields( false );
     }
   }, [initFields, moveRobotForm, selectedRobot]);
 
@@ -114,12 +115,18 @@ export const RobotSelection = (
     initialValues: {
       X: 0,
       Y: 0,
-      Z: 0
+      Z: 0,
+      phi: 0,
+      theta: 0,
+      psi: 0
     },
     validate: {
       X: (value) => (value),
       Y: (value) => (value),
-      Z: (value) => (value)
+      Z: (value) => (value),
+      phi: (value) => (value),
+      theta: (value) => (value),
+      psi: (value) => (value)
     }
   });
   // const handleManualTool = form.onSubmit(
@@ -231,11 +238,11 @@ export const RobotSelection = (
             <Table.Td>
               <Text size="xs">
                 <Text span c="gray" inherit>&phi;: </Text>
-                { selectedRobot ? <NumberFormatter value={selectedRobot.rotation[0]*RADS_DEGS} decimalScale={1} /> : "-"}
+                { selectedRobot ? <NumberFormatter value={selectedRobot.rotation[0]*RADS_DEGS} decimalScale={0} /> : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>&theta;: </Text>
-                { selectedRobot ? <NumberFormatter value={selectedRobot.rotation[1]*RADS_DEGS} decimalScale={1} /> : "-"}
+                { selectedRobot ? <NumberFormatter value={selectedRobot.rotation[1]*RADS_DEGS} decimalScale={0} /> : "-"}
               </Text>
               <Text size="xs">
                 <Text span c="gray" inherit>&psi;: </Text>
@@ -301,7 +308,7 @@ export const RobotSelection = (
                   Move Robot
                 </Button>
               </Flex>
-              <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column" align="center" onMouseUp={()=>{handleMoveRobot()}}>
+              <Flex w="50%" gap="xs" px="xs" pb="xs" direction="column" align="center">
                 <NumberInput disabled={!moveRobot}
                   leftSection={<Text span size="xs">X</Text>}
                   size="xs"
@@ -310,7 +317,10 @@ export const RobotSelection = (
                   min={-GRID_BOUND}
                   max={GRID_BOUND}
                   decimalScale={1}
-                  onKeyUp={()=>{handleMoveRobot()}}
+                  onFocus={()=>{setInitFields( true )}}
+                  onMouseOver={()=>{setInitFields( true )}}
+                  onKeyUp={(e)=>{if(e.key != "Delete"){handleMoveRobot()}}}
+                  onMouseUp={()=>handleMoveRobot()}
                   {...moveRobotForm.getInputProps("X")}
                 />
                 <NumberInput disabled={!moveRobot}
@@ -321,7 +331,10 @@ export const RobotSelection = (
                   min={-GRID_BOUND}
                   max={GRID_BOUND}
                   decimalScale={1}
-                  onKeyUp={()=>{handleMoveRobot()}}
+                  onFocus={()=>{setInitFields( true )}}
+                  onMouseOver={()=>{setInitFields( true )}}
+                  onKeyUp={(e)=>{if(e.key != "Delete"){handleMoveRobot()}}}
+                  onMouseUp={()=>handleMoveRobot()}
                   {...moveRobotForm.getInputProps("Z")}
                 />
                 <NumberInput disabled={!moveRobot}
@@ -332,7 +345,10 @@ export const RobotSelection = (
                   min={-Math.PI*RADS_DEGS}
                   max={Math.PI*RADS_DEGS}
                   allowDecimal={false}
-                  onKeyUp={()=>{handleMoveRobot()}}
+                  onFocus={()=>{setInitFields( true )}}
+                  onMouseOver={()=>{setInitFields( true )}}
+                  onKeyUp={(e)=>{if(e.key != "Delete"){handleMoveRobot()}}}
+                  onMouseUp={()=>handleMoveRobot()}
                   {...moveRobotForm.getInputProps("theta")}
                 />
               </Flex>
@@ -429,7 +445,7 @@ export const RobotSelection = (
                 </Flex>
               </Group>
             </form>
-          : // Tool
+          : // Tool // TODO: Also needs roll, pitch, yaw
             <form>
               <Group gap={0} px="xs" pb="xs">
                 <Flex w="50%" gap="xs" px="xs" direction="column">
