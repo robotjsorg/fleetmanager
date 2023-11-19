@@ -6,6 +6,7 @@ import { useMantineContext } from "@mantine/core";
 import { Canvas, useThree } from "@react-three/fiber";
 import { Text, OrbitControls, TransformControls } from "@react-three/drei";
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
+import { proxy } from "valtio";
 
 import { IRobot } from "../@types/robot";
 
@@ -13,8 +14,6 @@ import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locSelectionContext } from "../context/locSelectionContext";
 import { moveRobotContext } from "../context/moveRobotContext";
-
-import { proxy } from "valtio";
 
 import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
 
