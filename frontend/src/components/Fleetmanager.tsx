@@ -15,7 +15,7 @@ import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locSelectionContext } from "../context/locSelectionContext";
 import { moveRobotContext } from "../context/moveRobotContext";
 
-import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
+import { Mesh_abb_irb52_7_120, zeroJointAngles } from "../meshes/Mesh_abb_irb52_7_120";
 
 export const GRID_BOUND = 4;
 
@@ -24,7 +24,7 @@ const state = proxy({ current: "" });
 export const Fleetmanager = ({
   updateRobot
 }: {
-  updateRobot: (childData: {id: string, state: string, position: number[], rotation: number[]}) => void
+  updateRobot: (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => void
 }) => {
   const theme = useMantineContext();
   const { robots } = useContext( RobotContext );
@@ -60,8 +60,11 @@ export const Fleetmanager = ({
             updateRobot({
               id: object.name,
               state: "Off",
+              toolState: robots[robots.findIndex((robot) => robot.id == guiSelection)].toolState,
               position: [Bound(object.position.x, GRID_BOUND), object.position.y, Bound(object.position.z, GRID_BOUND)],
-              rotation: [object.rotation.x, object.rotation.y, Bound(object.rotation.z, Math.PI)]})
+              rotation: [object.rotation.x, object.rotation.y, Bound(object.rotation.z, Math.PI)],
+              jointAngles: zeroJointAngles()
+            })
           }}
           />}
         {guiSelection && moveRobot  && <TransformControls showX={false} showZ={false} object={object} mode="rotate"
@@ -71,8 +74,11 @@ export const Fleetmanager = ({
             updateRobot({
               id: object.name,
               state: "Off",
+              toolState: robots[robots.findIndex((robot) => robot.id == guiSelection)].toolState,
               position: [Bound(object.position.x, GRID_BOUND), object.position.y, Bound(object.position.z, GRID_BOUND)],
-              rotation: [object.rotation.x, object.rotation.y, Bound(object.rotation.z, Math.PI)]})
+              rotation: [object.rotation.x, object.rotation.y, Bound(object.rotation.z, Math.PI)],
+              jointAngles: zeroJointAngles()
+            })
           }}
           />}
       </>

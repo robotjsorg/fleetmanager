@@ -168,11 +168,13 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   }, [robotsQuery]);
 
   // Update robot position on Fleetmanager and RobotSelection callback
-  const updateRobot = (childData: {id: string, state: string, position: number[], rotation: number[]}) => {
+  const updateRobot = (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => {
     const index = robots.findIndex((robot) => robot.id == childData.id);
     robots[index].state = childData.state;
+    robots[index].toolState = childData.toolState;
     robots[index].position = childData.position;
     robots[index].rotation = childData.rotation;
+    robots[index].jointAngles = childData.jointAngles;
     setRobots(robots);
     forceUpdate();
   }
@@ -297,7 +299,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
               </AppShell.Main>
               <AppShell.Aside withBorder={true}>
                 <Stack>
-                  <Stack px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
+                  <Stack px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 } visibleFrom="md"> 
                     <Divider label="Robots" labelPosition="center" />
                     <RobotList docId={docId} fbDisabled={true} />
                   </Stack>

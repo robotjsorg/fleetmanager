@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { ScrollArea, Text } from "@mantine/core";
+import { Stack, ScrollArea, Text } from "@mantine/core";
 
 import { IRobot } from "../@types/robot";
 
@@ -26,11 +26,13 @@ export const RobotList = ({
 
   return (
     <ScrollArea type="auto">
+      <Stack gap="xs">
       {filteredRobots.length == 0 ? <Text>No Robots</Text> :
         filteredRobots.map((robot) => (
           <RobotItem docId={docId} key={robot.id} robot={robot} fbDisabled={fbDisabled} />
         ))
       }
+      </Stack>
     </ScrollArea>
   );
 };

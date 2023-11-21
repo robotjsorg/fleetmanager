@@ -9,7 +9,7 @@ export const RobotsView = ({ docId, h }: { docId: JournalId; h: number; }) => {
   return (
     <>
       <Divider />
-      <Stack h={h} p="lg">
+      <Stack h={h} p="lg" maw={800} mx="auto">
         <RobotList docId={docId} fbDisabled={false}/>
         {/* <RobotTable /> */}
       </Stack>

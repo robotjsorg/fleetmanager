@@ -97,6 +97,10 @@ export const Mesh_abb_irb52_7_120 = ({
   const [ hovered, hover ] = useState( false );
   useCursor( hovered );
 
+  const handleManual = () => {
+    setJointAngles(robot.jointAngles);
+  }
+
   const handleTasks = ( delta: number ) => {
     if ( containsSpinAroundDesc ) {
       const newJointAngles = jointAngles;
@@ -118,6 +122,7 @@ export const Mesh_abb_irb52_7_120 = ({
         break; 
       } 
       case "Manual": { 
+        handleManual();
         break; 
       } 
       case "Auto": { 

@@ -9,7 +9,7 @@ export const TasksView = ({ docId, h }: { docId: JournalId; h: number; }) => {
   return (
     <>
       <Divider />
-      <Stack h={h} p="lg">
+      <Stack h={h} p="lg" maw={800} mx="auto">
         <TaskList docId={docId} fbDisabled={false} />
         {/* <TaskTable /> */}
       </Stack>
