@@ -105,10 +105,15 @@ export const Mesh_abb_irb52_7_120 = ({
   const [ currentTask, setCurrentTask ] = useState<ITask>();
   useEffect(() => {
     const activeTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" )).toSorted();
+    const queuedTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Queued" )).toSorted();
     if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
       setCurrentTask( activeTasks[0] );
-    }  
-  }, [robot.id, tasks]);
+    } else if ( !Array.isArray( activeTasks ) || activeTasks.length == 0 ) {
+      if ( Array.isArray( queuedTasks ) && queuedTasks.length > 0 && robot.state == "Auto" ) {
+        queuedTasks[0].state = "Active"
+      }
+    }
+  }, [robot.id, robot.state, tasks]);
 
   useEffect(()=>{
     if( currentTask && currentTask.state == "Active" ) { 
