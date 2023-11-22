@@ -22,7 +22,7 @@ enum Mutation {
 
     DeleteTask { id: String },
 
-    ToggleCompleted { id: String }
+    UpdateTaskState { id: String, state: String }
 }
 
 init_reducer!(reducer);
@@ -53,7 +53,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                     id TEXT PRIMARY KEY,
                     robotid TEXT NOT NULL,
                     description TEXT NOT NULL,
-                    completed BOOLEAN NOT NULL,
+                    state TEXT NOT NULL,
                     created_at TEXT NOT NULL
                 )"
             )
@@ -73,10 +73,11 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 "Rusty"
             ).await;
             execute!(
-                "INSERT OR IGNORE INTO tasks (id, robotid, description, completed, created_at) VALUES (?, ?, ?, false, datetime('now'))",
+                "INSERT OR IGNORE INTO tasks (id, robotid, description, state, created_at) VALUES (?, ?, ?, ?, datetime('now'))",
                 "48228b08-1b8a-4d54-9b90-16f1f73fb1cc",
                 "24db4c5b-1e3a-4853-8316-1d6ad07beed1",
-                "Spin Around"
+                "Random positions (continuous)",
+                "Active"
             ).await;
             execute!(
                 "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
@@ -85,10 +86,11 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 "D.A.R.Y.L."
             ).await;
             execute!(
-                "INSERT OR IGNORE INTO tasks (id, robotid, description, completed, created_at) VALUES (?, ?, ?, true, datetime('now'))",
+                "INSERT OR IGNORE INTO tasks (id, robotid, description, state, created_at) VALUES (?, ?, ?, ?, datetime('now'))",
                 "ea131ae6-13a8-4a23-9436-5f46f3dcffd1",
                 "402e7545-512b-4b7d-b570-e94311b38ab6",
-                "Random Positions"
+                "Move pre-pick",
+                "Active"
             ).await;
             execute!(
                 "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
@@ -124,8 +126,8 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
         Mutation::CreateLocation { id, description } => {
             log::debug!("appending location({}): {}", id, description);
             execute!(
-                "insert into locations (id, description, created_at)
-                    values (?, ?, datetime('now'))",
+                "INSERT INTO locations (id, description, created_at)
+                    VALUES (?, ?, datetime('now'))",
                 id,
                 description
             ).await;
@@ -133,15 +135,15 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
 
         Mutation::DeleteLocation { id } => {
             execute!(
-                "delete from locations where id = ?", id
+                "DELETE FROM locations WHERE id = ?", id
             ).await;
         }
 
         Mutation::CreateRobot { id, locationid, description } => {
             log::debug!("appending robot({}): {}", id, description);
             execute!(
-                "insert into robots (id, locationid, description, created_at)
-                    values (?, ?, ?, datetime('now'))",
+                "INSERT INTO robots (id, locationid, description, created_at)
+                    VALUES (?, ?, ?, datetime('now'))",
                 id,
                 locationid,
                 description
@@ -150,29 +152,31 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
 
         Mutation::DeleteRobot { id } => {
             execute!(
-                "delete from robots where id = ?", id
+                "DELETE FROM robots WHERE id = ?", id
             ).await;
         }
 
         Mutation::CreateTask { id, robotid, description } => {
             log::debug!("appending task({}) to robot({}): {}", id, robotid, description);
             execute!(
-                "insert into tasks (id, robotid, description, completed, created_at)
-                    values (?, ?, ?, false, datetime('now'))",
+                "INSERT INTO tasks (id, robotid, description, state, created_at)
+                    VALUES (?, ?, ?, ?, datetime('now'))",
                 id,
                 robotid,
-                description
+                description,
+                "Queued"
             )
             .await;
         }
 
         Mutation::DeleteTask { id } => {
-            execute!("delete from tasks where id = ?", id).await;
+            execute!("DELETE FROM tasks WHERE id = ?", id).await;
         }
 
-        Mutation::ToggleCompleted { id } => {
+        Mutation::UpdateTaskState { id, state } => {
             execute!(
-                "update tasks set completed = not completed where id = ?",
+                "UPDATE tasks SET state = ? WHERE id = ?",
+                state,
                 id
             )
             .await;

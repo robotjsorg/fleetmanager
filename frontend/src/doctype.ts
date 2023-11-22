@@ -42,8 +42,9 @@ export type Mutation =
       id: string;
     }
   | {
-      tag: "ToggleCompleted";
+      tag: "UpdateTaskState";
       id: string;
+      state: string;
   };
 
 export const TaskDocType: DocType<Mutation> = {
