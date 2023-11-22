@@ -12,6 +12,8 @@ import { IRobot } from "../@types/robot";
 import { RobotContext } from "../context/robotContext";
 import { guiSelectionContext } from "../context/guiSelectionContext";
 
+import { ITask } from "../@types/task";
+
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168");
 const localFilepath = "../../assets/gltf/";
 const filename = "abb_irb52_7_120.glb";
@@ -45,16 +47,34 @@ type GLTFResult = GLTF & {
 export const zeroJointAngles = () => {
   return [Math.PI/4, -Math.PI/4, Math.PI/4, 0, 0, 0];
 }
-export const randomJointAngles = () => {
+const randomJointAngles = () => {
   const angles = [0, 0, 0, 0, 0, 0];
   for( let i = 0; i < JOINT_LIMITS.length; i++ ){
     const big = JOINT_LIMITS[i][1];
     const small = JOINT_LIMITS[i][0];
-    angles[ i ] = Math.random() * ( big - small ) - small;
+    angles[ i ] = Math.random() * ( big - small ) + small;
   }
   return (
     angles
   );
+}
+const prepick = () => {
+  return [Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0];
+}
+const pick = () => {
+  return [Math.PI/6, Math.PI/3, -Math.PI/6, 0, Math.PI/3, 0];
+}
+const postpick = () => {
+  return [Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0];
+}
+const preplace = () => {
+  return [-Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0];
+}
+const place = () => {
+  return [-Math.PI/6, Math.PI/3, -Math.PI/6, 0, Math.PI/3, 0];
+}
+const postplace = () => {
+  return [-Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0];
 }
 
 export const Mesh_abb_irb52_7_120 = ({
@@ -72,138 +92,163 @@ export const Mesh_abb_irb52_7_120 = ({
   const [ jointAngles, setJointAngles ] = useState( robot.jointAngles );
 
   const SHADOWS = false;
-  const { scale } = useSpring({
-    scale: selected ? 1.2 : 1,
-    config: config.wobbly
-  });
+
+  const [springs, api] = useSpring(
+    () => ({
+      jointAngles: zeroJointAngles(),
+      config: config.molasses
+    }),
+    []
+  )
 
   const { tasks } = useContext( RobotContext );
-  const [ containsSpinAroundDesc, setContainsSpinAroundDesc ] = useState( false );
-  const [ containsRandomPositionsDesc, setContainsRandomPositionsDesc ] = useState( false );
+  const [ currentTask, setCurrentTask ] = useState<ITask>();
   useEffect(() => {
-    const filteredTasks = tasks.filter(( task ) => ( task.robotid == robot.id ));
-    setContainsSpinAroundDesc(
-      filteredTasks.reduce(
-        (contains, task) => {return contains || (task.description == "Spin Around" && !task.completed)}, false
-      )
-    );
-    setContainsRandomPositionsDesc(
-      filteredTasks.reduce(
-        (contains, task) => {return contains || (task.description == "Random Positions" && !task.completed)}, false
-      )
-    );
+    const filteredTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" )).toSorted();
+    if ( Array.isArray( filteredTasks ) && filteredTasks.length > 0 ) {
+      setCurrentTask( filteredTasks[0] );
+    }  
   }, [robot.id, tasks]);
+
+  useEffect(()=>{
+    if( currentTask ) { 
+      if ( currentTask.description == "Random position (one-shot)" ) {
+        api.start({
+          jointAngles: randomJointAngles()
+        })
+      } else if ( currentTask.description == "Random positions (continuous)" ) {
+        if ( springs.jointAngles.idle ) {
+          api.start({
+            jointAngles: randomJointAngles()
+          })
+        }
+      } else if ( currentTask.description == "Move pre-pick" ) {
+        api.start({
+          jointAngles: prepick()
+        })
+      } else if ( currentTask.description == "Move pick" ) {
+        api.start({
+          jointAngles: pick()
+        })
+      } else if ( currentTask.description == "Move post-pick" ) {
+        api.start({
+          jointAngles: postpick()
+        })
+      } else if ( currentTask.description == "Move pre-place" ) {
+        api.start({
+          jointAngles: preplace()
+        })
+      } else if ( currentTask.description == "Move place" ) {
+        api.start({
+          jointAngles: place()
+        })
+      } else if ( currentTask.description == "Move post-place" ) {
+        api.start({
+          jointAngles: postplace()
+        })
+      } else if ( currentTask.description == "Pick and Place (one-shot)" ) {
+        api.start({
+          jointAngles: randomJointAngles()
+        })
+      } else if ( currentTask.description == "Pick and Place (continuous)" ) {
+        if ( springs.jointAngles.idle ) {
+          api.start({
+            jointAngles: randomJointAngles()
+          })
+        }
+      }
+      if ( springs.jointAngles.idle && currentTask.description != "Random positions (continuous)" && currentTask.description != "Pick and Place (continuous)" ) {
+        currentTask.state = "Completed"
+      }
+    }
+  }, [api, currentTask, springs.jointAngles.idle])
 
   const [ hovered, hover ] = useState( false );
   useCursor( hovered );
 
-  const handleManual = () => {
-    setJointAngles(robot.jointAngles);
-  }
-
-  const handleTasks = ( delta: number ) => {
-    if ( containsSpinAroundDesc ) {
-      const newJointAngles = jointAngles;
-      newJointAngles[0] += delta;
-      newJointAngles[1] += delta;
-      newJointAngles[2] += delta;
-      newJointAngles[3] += delta;
-      newJointAngles[4] += delta;
-      newJointAngles[5] += delta;
-      setJointAngles( newJointAngles );
-    } else if ( containsRandomPositionsDesc ) {
-      setJointAngles( randomJointAngles() );
-    } // else Idle
-  }
-
-  const handleStates = ( delta: number ) => {
+  const handleStates = () => { // delta: number
     switch( robot.state ) {
-      case "Error": { 
-        break; 
-      } 
       case "Manual": { 
-        handleManual();
+        setJointAngles( robot.jointAngles );
         break; 
       } 
-      case "Auto": { 
-        handleTasks( delta );
+      case "Auto": {
+        robot.jointAngles = springs.jointAngles.get();
+        setJointAngles( springs.jointAngles.get() ); // delta
         break; 
       } 
-      default: { // "Off"
+      default: { // Off, Error
         break; 
       } 
     }
   };
 
-  useFrame(( _state, delta ) => (
-    handleStates(delta),
-    ref.current.children[0].rotation.z = jointAngles[0],
-    ref.current.children[0].children[0].rotation.y = jointAngles[1],
-    ref.current.children[0].children[0].children[0].rotation.y = jointAngles[2],
-    ref.current.children[0].children[0].children[0].children[0].rotation.x = jointAngles[3],
-    ref.current.children[0].children[0].children[0].children[0].children[0].rotation.y = jointAngles[4],
-    ref.current.children[0].children[0].children[0].children[0].children[0].children[0].rotation.x = jointAngles[5]
+  useFrame(() => ( // _state, delta
+    handleStates() // delta
   ));
 
   return (
     <Select enabled={ selected || hovered }>
-      {/* <group name={robot.id} dispose={null}> */}
-        <animated.mesh
-          name={robot.id} 
-          ref={ref}
-          scale={scale}
-          onClick={(e) => (e.stopPropagation(), setGuiSelection(robot.id), robotCurrent(robot.id))}
-          onPointerMissed={(e) => e.type === 'click' && robotCurrent("")}
-          onPointerOver={(e) => (e.stopPropagation(), hover(true))}
-          onPointerOut={() => hover(false)}
-          geometry={nodes.base_link.geometry}
-          material={materials.gkmodel0_base_link_geom0}
-          position={robot.position as Vector3}
-          rotation={robot.rotation as Euler}
+      <animated.mesh
+        ref={ref}
+        name={robot.id}
+        onClick={(e) => (e.stopPropagation(), setGuiSelection(robot.id), robotCurrent(robot.id))}
+        onPointerMissed={(e) => e.type === 'click' && robotCurrent("")}
+        onPointerOver={(e) => (e.stopPropagation(), hover(true))}
+        onPointerOut={() => hover(false)}
+        geometry={nodes.base_link.geometry}
+        material={materials.gkmodel0_base_link_geom0}
+        position={robot.position as Vector3}
+        rotation={robot.rotation as Euler}
+        castShadow={SHADOWS}
+        receiveShadow={SHADOWS}>
+        <mesh
+          geometry={nodes.link_1.geometry}
+          material={materials.gkmodel0_link_1_geom0}
+          position={[0, 0, 0.486]}
+          rotation={[0,0,jointAngles[0]]}
           castShadow={SHADOWS}
           receiveShadow={SHADOWS}>
           <mesh
-            geometry={nodes.link_1.geometry}
-            material={materials.gkmodel0_link_1_geom0}
-            position={[0, 0, 0.486]}
+            geometry={nodes.link_2.geometry}
+            material={materials.gkmodel0_link_2_geom0}
+            position={[0.15, 0, 0]}
+            rotation={[0,jointAngles[1],0]}
             castShadow={SHADOWS}
             receiveShadow={SHADOWS}>
             <mesh
-              geometry={nodes.link_2.geometry}
-              material={materials.gkmodel0_link_2_geom0}
-              position={[0.15, 0, 0]}
+              geometry={nodes.link_3.geometry}
+              material={materials.gkmodel0_link_3_geom0}
+              position={[0, 0, 0.475]}
+              rotation={[0,jointAngles[2],0]}
               castShadow={SHADOWS}
               receiveShadow={SHADOWS}>
               <mesh
-                geometry={nodes.link_3.geometry}
-                material={materials.gkmodel0_link_3_geom0}
-                position={[0, 0, 0.475]}
+                geometry={nodes.link_4.geometry}
+                material={materials.gkmodel0_link_4_geom0}
+                position={[0.6, 0, 0]}
+                rotation={[jointAngles[3],0,0]}
                 castShadow={SHADOWS}
                 receiveShadow={SHADOWS}>
                 <mesh
-                  geometry={nodes.link_4.geometry}
-                  material={materials.gkmodel0_link_4_geom0}
-                  position={[0.6, 0, 0]}
+                  rotation={[0,jointAngles[4],0]}
+                  geometry={nodes.link_5.geometry}
+                  material={materials.gkmodel0_link_5_geom0}
                   castShadow={SHADOWS}
                   receiveShadow={SHADOWS}>
                   <mesh
-                    geometry={nodes.link_5.geometry}
-                    material={materials.gkmodel0_link_5_geom0}
+                    geometry={nodes.link_6.geometry}
+                    material={materials.gkmodel0_link_6_geom0}
+                    position={[0.065, 0, 0]}
+                    rotation={[jointAngles[5],0,0]}
                     castShadow={SHADOWS}
-                    receiveShadow={SHADOWS}>
-                    <mesh
-                      geometry={nodes.link_6.geometry}
-                      material={materials.gkmodel0_link_6_geom0}
-                      position={[0.065, 0, 0]}
-                      castShadow={SHADOWS}
-                      receiveShadow={SHADOWS}/>
-                  </mesh>
+                    receiveShadow={SHADOWS}/>
                 </mesh>
               </mesh>
             </mesh>
           </mesh>
-        </animated.mesh>
-      {/* </group> */}
+        </mesh>
+      </animated.mesh>
     </Select>
   );
 }

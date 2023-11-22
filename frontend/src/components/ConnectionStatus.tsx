@@ -27,11 +27,11 @@ export const ConnectionStatus = ({ docId }: { docId: JournalId }) => {
   let color, icon, loading;
   switch (status) {
     case "disabled":
-      color = "gray";
+      color = "red";
       icon = <IconWifiOff size={18} />;
       break;
     case "disconnected":
-      color = "gray";
+      color = "red";
       icon = <IconWifiOff size={18} />;
       break;
     case "connecting":
@@ -46,7 +46,7 @@ export const ConnectionStatus = ({ docId }: { docId: JournalId }) => {
 
   return (
     <Button
-      variant="light"
+      variant="outline"
       color={color}
       // rightSection={icon}
       loading={loading}

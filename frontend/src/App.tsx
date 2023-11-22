@@ -10,7 +10,7 @@ import { IconChecklist, IconHome, IconMoon, IconRobot, IconSettings, IconSun } f
 import { useMutate, useQuery } from "./doctype";
 import { ILocation } from "./@types/location";
 import { IRobotQuery, IRobot } from "./@types/robot";
-import { ITask, ITaskQuery } from "./@types/task";
+import { ITask } from "./@types/task";
 
 import { RobotProvider } from "./context/robotContext";
 import { guiSelectionContext } from "./context/guiSelectionContext";
@@ -27,7 +27,7 @@ import { LocationList } from "./components/LocationList";
 import { RobotList } from "./components/RobotList";
 import { RobotSelection } from "./components/RobotSelection";
 
-import { zeroJointAngles } from "./meshes/Mesh_abb_irb52_7_120"; //, randomJointAngles
+import { zeroJointAngles } from "./meshes/Mesh_abb_irb52_7_120";
 
 const NAVBAR_WIDTH   = 300; // nav width 300
 const HEADER_HEIGHT  = 60;  // topbar 60
@@ -36,21 +36,14 @@ const CONTENT_OFFSET = 61;  // topbar 60 + divider 1
 const WIDGET_OFFSET  = 117; // topbar 60 + divider (19 * 3)
 const VIEW_OFFSET    = 222; // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
 
-// const zeroPosition = () => {
-//   return [0, -0.02, 0];
-// };
-const zeroRotation = () => {
-  return [-Math.PI/2, 0, -Math.PI/4];
-};
 const randomPosition = () => {
   const x = 4 * (Math.random() - 0.5);
   const z = 2 * (Math.random() - 0.5) + 1;
   return [x, -0.02, z];
 };
-// const randomRotationRobot = () => {
-//   const theta = 2*Math.PI * (Math.random() - 0.0);
-//   return [-Math.PI/2, 0, theta];
-// };
+const zeroRotation = () => {
+  return [-Math.PI/2, 0, -Math.PI/4];
+};
 
 export const App = ({ docId }: { docId: JournalId; }) => {
   const mutate = useMutate( docId );
@@ -64,7 +57,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
     docId,
     sql`SELECT * FROM robots`
   );
-  const { rows: tasksQuery } = useQuery<ITaskQuery>(
+  const { rows: tasks } = useQuery<ITask>(
     docId,
     sql`SELECT * FROM tasks`
   );
@@ -146,7 +139,6 @@ export const App = ({ docId }: { docId: JournalId; }) => {
 
   // Add data to robots
   const [ robots, setRobots ] = useState<IRobot[]>([]);
-  const [, forceUpdate] = useReducer(x => x + 1 as number, 0);
   useEffect(()=>{
     const newRobots: IRobot[] = [];
 
@@ -156,7 +148,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
       );
       newRobots.filter((robot) => (
         robot.id == "24db4c5b-1e3a-4853-8316-1d6ad07beed1" ? robot.state = "Auto" :
-        robot.id == "402e7545-512b-4b7d-b570-e94311b38ab6" ? robot.state = "Error" :
+        robot.id == "402e7545-512b-4b7d-b570-e94311b38ab6" ? robot.state = "Auto" :
         robot.state = "Off"
       ));
       newRobots.filter((robot) => (robot.position = randomPosition()));
@@ -167,7 +159,8 @@ export const App = ({ docId }: { docId: JournalId; }) => {
     }
   }, [robotsQuery]);
 
-  // Update robot position on Fleetmanager and RobotSelection callback
+  const [, forceUpdate] = useReducer(x => x + 1 as number, 0);
+  // Update robot position on Fleetmanager and RobotSelection callback TODO: database mutation
   const updateRobot = (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => {
     const index = robots.findIndex((robot) => robot.id == childData.id);
     robots[index].state = childData.state;
@@ -178,19 +171,6 @@ export const App = ({ docId }: { docId: JournalId; }) => {
     setRobots(robots);
     forceUpdate();
   }
-
-  // Add data to tasks
-  const [ tasks, setTasks ] = useState<ITask[]>([]);
-  useEffect(()=>{
-    const newTasks: ITask[] = [];
-    if ( Array.isArray( tasksQuery ) && tasksQuery.length > 0 ) {
-      tasksQuery.map(( task ) => ( 
-        newTasks.push( task as ITask ))
-      )
-      newTasks.filter((task) => (task.state = "Unknown"));
-      setTasks(newTasks);
-    }
-  }, [tasksQuery]);
 
   // Selected location description
   const [ selectedLocationDescription, setSelectedLocationDescription ] = useState("");
