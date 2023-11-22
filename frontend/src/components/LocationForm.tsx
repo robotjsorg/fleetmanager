@@ -57,7 +57,7 @@ export const LocationForm = ({ docId }: { docId: JournalId; }) => {
           styles={{ input: { fontSize: "16px" } }}
           {...form.getInputProps("description")}
         />
-        <Button color="gray" type="submit">Add</Button>
+        <Button color="gray" variant="default" type="submit">Add</Button>
       </Group>
     </form>
   );

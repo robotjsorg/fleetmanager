@@ -13,7 +13,7 @@ import { RobotContext } from "../context/robotContext";
 import { locSelectionContext } from "../context/locSelectionContext";
 
 export const TaskForm = ({ docId }: { docId: JournalId }) => {
-  const { robots, tasks } = useContext( RobotContext );
+  const { robots } = useContext( RobotContext );
   const { locSelection } = useContext( locSelectionContext );
   const [filteredRobots, setFilteredRobots] = useState<IRobot[]>([]);
   useEffect(()=>{
@@ -64,19 +64,17 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           {...form.getInputProps("robot")}
         />
        <Select
-          label="New Task"
-          description="Select discrete task"
-          placeholder="Select task"
+          label="Task"
+          description="Queue a new task"
+          placeholder="Queue task"
           clearable
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
-          data={['Idle', 'Actuate tool', 'Unactuate tool', 'Random position (one-shot)', 'Random positions (continuous)',
-            'Move pre-pick', 'Move pick', 'Move post-pick', 'Move pre-place', 'Move place', 'Move post-place',
-            'Pick and Place (one-shot)', 'Pick and Place (continuous)'
-          ]}
+          data={['Random positions (continuous)',
+          'Move pre-pick', 'Move pick', 'Move post-pick', 'Move pre-place', 'Move place', 'Move post-place']}
           {...form.getInputProps("description")}
         />
-        <Button color="gray" type="submit">Add</Button>
+        <Button color="gray" variant="default" type="submit">Queue</Button>
       </Group>
     </form>
   );

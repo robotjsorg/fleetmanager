@@ -285,7 +285,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                   </Stack>
                   <Box h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
                     <Divider />
-                    <RobotSelection updateRobot={updateRobot} />
+                    <RobotSelection docId={docId} updateRobot={updateRobot} />
                   </Box>
                 </Stack>
               </AppShell.Aside>

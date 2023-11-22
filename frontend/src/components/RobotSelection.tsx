@@ -4,6 +4,7 @@ import { Text, Button, Divider, NumberInput, Group, Flex, Select, NumberFormatte
 import { useForm } from "@mantine/form";
 
 import { IconAngle, IconArrowBadgeLeft, IconArrowBadgeRight, IconLock, IconLockOpen, IconPlayerPause, IconPlayerStop, IconTool } from "@tabler/icons-react";
+import { v4 as uuidv4 } from "uuid";
 
 import { IRobot } from "../@types/robot";
 import { ITask } from "../@types/task";
@@ -14,22 +15,29 @@ import { moveRobotContext } from "../context/moveRobotContext";
 
 import { GRID_BOUND } from "./Fleetmanager";
 import { JOINT_LIMITS } from "../meshes/Mesh_abb_irb52_7_120";
+import { JournalId } from "@orbitinghail/sqlsync-worker";
+import { useMutate } from "../doctype";
 
 const RADS_DEGS = 57.2958;
 
-export const RobotSelection = (
-  {
+export const RobotSelection = ({
+  docId,
   updateRobot
 }: {
+  docId: JournalId;
   updateRobot: (childData: {id: string, toolState: string, state: string, position: number[], rotation: number[], jointAngles: number[]}) => void
-}
-) => {
+}) => {
   const { robots, tasks } = useContext( RobotContext );
   const { guiSelection } = useContext( guiSelectionContext );
   const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)]);
-  const [ filteredTasks, setFilteredTasks ] = useState<ITask[]>([]);
-  useEffect(()=>{
-    setFilteredTasks( tasks.filter(( task ) => ( task.robotid == guiSelection )) );
+  const [ currentTask, setCurrentTask ] = useState<ITask>();
+  useEffect(() => {
+    const activeTasks = tasks.filter(( task ) => ( task.robotid == guiSelection && task.state == "Active" )).toSorted();
+    if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
+      setCurrentTask( activeTasks[0] );
+    } else {
+      setCurrentTask( undefined );
+    }
   }, [guiSelection, tasks]);
 
   const { moveRobot, setMoveRobot } = useContext( moveRobotContext );
@@ -141,6 +149,35 @@ export const RobotSelection = (
       }
     }
   }, [jointAngleFields, jointsForm, selectedRobot]);
+
+  const autoSelectForm = useForm({
+    initialValues: {
+      description: ""
+    },
+    validate: {
+      description: (value) => (value.trim().length === 0 ? "Select Task" : null)
+    }
+  });
+
+  const mutate = useMutate( docId );
+
+  const handleAutoSelect = autoSelectForm.onSubmit(
+    useCallback(
+      ({ description }) => {
+        const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
+          mutate({ tag: "CreateTask", id, robotid: selectedRobot.id, description })
+          .then(() => {
+            autoSelectForm.reset();
+            console.log("Task created.");
+          })
+          .catch((err) => {
+            autoSelectForm.setFieldError("description", String(err));
+            autoSelectForm.setErrors({ description: String(err) });
+            console.error("Failed to create task", err);
+          });
+      }, [autoSelectForm, mutate, selectedRobot]
+    )
+  )
 
   const handleOff = () => {
     selectedRobot.state = "Off";
@@ -321,7 +358,7 @@ export const RobotSelection = (
               Move
             </Button>
           </Center>
-          <form onSubmit={handleMoveRobot}>
+          <form>
             <Center>
               <Stack gap="xs" w="50%" px="xs"
                 onMouseOver={()=>{setPositionFields( true )}}
@@ -473,36 +510,46 @@ export const RobotSelection = (
       : selectedRobot && state == "Auto" &&
         <>
           <Divider mx="xs" />
-          <Group gap={0} py="xs">
+          <Group gap={0} p="xs">
             <Flex w="50%" gap="xs" px="xs" direction="column">
               <Text size="xs" truncate="end">
                 <Text span c="gray" inherit>task: </Text>
-                {filteredTasks.length > 0 ? filteredTasks.map(( task ) => ( task.description )) : "-"}
+                {currentTask ? currentTask.description : "-"}
               </Text>
               <Text size="xs" truncate="end">
                 <Text span c="gray" inherit>type: </Text>
-                todo
+                {currentTask ? currentTask.description == "Random positions (continuous)" || currentTask.description == "Pick and Place (continuous)" ? "Continuous" : "One-Shot" : "-"}
               </Text>
               <Text size="xs" truncate="end">
                 <Text span c="gray" inherit>state: </Text>
-                {filteredTasks.length > 0 ? filteredTasks.map(( task ) => ( task.state )) : "-"}
+                {currentTask ? currentTask.state : "-"}
               </Text>
             </Flex>
-            <Flex w="50%" gap="xs" px="xs" direction="column">
-              <Select size="xs" disabled
-                placeholder="Select Auto task"
-                data={['Idle', 'Actuate tool', 'Unactuate tool', 'Random position (one-shot)', 'Move A: pre-pick', 'Move A: pick', 'Move A: post-pick', 'Move B: pre-pick', 'Move B: pick', 'Move B: post-pick']}
-              />
+            {/* <Flex w="50%" gap="xs" px="xs" direction="column">
               <Group justify="center">
-                <Button variant="default" color="gray" size="xs" disabled>
+                <Button variant="default" color="gray" size="xs" onClick={()=>{ currentTask ? currentTask.state = "Failed" : null }} disabled={ currentTask?.state != "Active" }>
                   <IconPlayerStop size={18} />
                 </Button>
-                <Button variant="default" color="gray" size="xs" disabled>
+                <Button variant="default" color="gray" size="xs" onClick={()=>{ currentTask ? currentTask.state = "Paused" : null }} disabled={ currentTask?.state != "Active" }>
                   <IconPlayerPause size={18} />
                 </Button>
               </Group>
-            </Flex>
+            </Flex> */}
           </Group>
+          <Center>
+            <form onSubmit={handleAutoSelect}>
+              <Group>
+                <Select
+                  size="xs"
+                  placeholder="Queue task"
+                  data={['Random positions (continuous)',
+                    'Move pre-pick', 'Move pick', 'Move post-pick', 'Move pre-place', 'Move place', 'Move post-place']}
+                  {...autoSelectForm.getInputProps("description")}
+                />
+                <Button size="xs" color="gray" variant="default" type="submit">Queue</Button>
+              </Group>
+            </form>
+          </Center>
         </>
       }
     </>
