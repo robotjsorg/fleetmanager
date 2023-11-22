@@ -59,7 +59,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   );
   const { rows: tasks } = useQuery<ITask>(
     docId,
-    sql`SELECT * FROM tasks`
+    sql`SELECT * FROM tasks ORDER BY created_at`
   );
 
   const [ route, setPseudoRoute ] = useState("location");

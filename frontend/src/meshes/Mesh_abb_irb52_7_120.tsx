@@ -111,60 +111,62 @@ export const Mesh_abb_irb52_7_120 = ({
     } else if ( !Array.isArray( activeTasks ) || activeTasks.length == 0 ) {
       if ( Array.isArray( queuedTasks ) && queuedTasks.length > 0 && robot.state == "Auto" ) {
         queuedTasks[0].state = "Active"
+        setCurrentTask( queuedTasks[0] );
       }
     }
   }, [robot.id, robot.state, tasks]);
 
   useEffect(()=>{
-    if( currentTask && currentTask.state == "Active" ) { 
-      if ( currentTask.description == "Random position (one-shot)" ) {
-        api.start({
-          jointAngles: randomJointAngles()
-        })
-      } else if ( currentTask.description == "Random positions (continuous)" ) {
-        if ( springs.jointAngles.idle ) {
+    if( currentTask ) { 
+      if ( currentTask.state == "Active" ) {
+        if ( currentTask.description == "Random position (one-shot)" ) { // loops for some reasons
           api.start({
             jointAngles: randomJointAngles()
           })
-        }
-      } else if ( currentTask.description == "Move pre-pick" ) {
-        api.start({
-          jointAngles: prepick()
-        })
-      } else if ( currentTask.description == "Move pick" ) {
-        api.start({
-          jointAngles: pick()
-        })
-      } else if ( currentTask.description == "Move post-pick" ) {
-        api.start({
-          jointAngles: postpick()
-        })
-      } else if ( currentTask.description == "Move pre-place" ) {
-        api.start({
-          jointAngles: preplace()
-        })
-      } else if ( currentTask.description == "Move place" ) {
-        api.start({
-          jointAngles: place()
-        })
-      } else if ( currentTask.description == "Move post-place" ) {
-        api.start({
-          jointAngles: postplace()
-        })
-      } else if ( currentTask.description == "Pick and Place (one-shot)" ) {
-        api.start({
-          jointAngles: randomJointAngles()
-        })
-      } else if ( currentTask.description == "Pick and Place (continuous)" ) {
-        if ( springs.jointAngles.idle ) {
+        } else if ( currentTask.description == "Random positions (continuous)" ) {
+          if ( springs.jointAngles.idle ) {
+            api.start({
+              jointAngles: randomJointAngles()
+            })
+          }
+        } else if ( currentTask.description == "Move pre-pick" ) {
+          api.start({
+            jointAngles: prepick()
+          })
+        } else if ( currentTask.description == "Move pick" ) {
+          api.start({
+            jointAngles: pick()
+          })
+        } else if ( currentTask.description == "Move post-pick" ) {
+          api.start({
+            jointAngles: postpick()
+          })
+        } else if ( currentTask.description == "Move pre-place" ) {
+          api.start({
+            jointAngles: preplace()
+          })
+        } else if ( currentTask.description == "Move place" ) {
+          api.start({
+            jointAngles: place()
+          })
+        } else if ( currentTask.description == "Move post-place" ) {
+          api.start({
+            jointAngles: postplace()
+          })
+        } else if ( currentTask.description == "Pick and Place (one-shot)" ) {
           api.start({
             jointAngles: randomJointAngles()
           })
+        } else if ( currentTask.description == "Pick and Place (continuous)" ) {
+          if ( springs.jointAngles.idle ) {
+            api.start({
+              jointAngles: randomJointAngles()
+            })
+          }
         }
-      }
-      // TODO: Handle task states via mutation, and later specify subscribe vs sim
-      if ( springs.jointAngles.idle && currentTask.description != "Random positions (continuous)" && currentTask.description != "Pick and Place (continuous)" ) {
-        currentTask.state = "Completed"
+        if ( springs.jointAngles.idle && currentTask.description != "Random positions (continuous)" && currentTask.description != "Pick and Place (continuous)" ) {
+          currentTask.state = "Completed"
+        }
       }
     }
   }, [api, currentTask, springs.jointAngles.idle])
