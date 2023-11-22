@@ -104,14 +104,14 @@ export const Mesh_abb_irb52_7_120 = ({
   const { tasks } = useContext( RobotContext );
   const [ currentTask, setCurrentTask ] = useState<ITask>();
   useEffect(() => {
-    const filteredTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" )).toSorted();
-    if ( Array.isArray( filteredTasks ) && filteredTasks.length > 0 ) {
-      setCurrentTask( filteredTasks[0] );
+    const activeTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" )).toSorted();
+    if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
+      setCurrentTask( activeTasks[0] );
     }  
   }, [robot.id, tasks]);
 
   useEffect(()=>{
-    if( currentTask ) { 
+    if( currentTask && currentTask.state == "Active" ) { 
       if ( currentTask.description == "Random position (one-shot)" ) {
         api.start({
           jointAngles: randomJointAngles()
@@ -157,6 +157,7 @@ export const Mesh_abb_irb52_7_120 = ({
           })
         }
       }
+      // TODO: Handle task states via mutation, and later specify subscribe vs sim
       if ( springs.jointAngles.idle && currentTask.description != "Random positions (continuous)" && currentTask.description != "Pick and Place (continuous)" ) {
         currentTask.state = "Completed"
       }
@@ -169,15 +170,23 @@ export const Mesh_abb_irb52_7_120 = ({
   const handleStates = () => { // delta: number
     switch( robot.state ) {
       case "Manual": { 
+        springs.jointAngles.set( robot.jointAngles );
         setJointAngles( robot.jointAngles );
         break; 
       } 
       case "Auto": {
-        robot.jointAngles = springs.jointAngles.get();
-        setJointAngles( springs.jointAngles.get() ); // delta
+        if ( currentTask ) {
+          robot.jointAngles = springs.jointAngles.get();
+          setJointAngles( springs.jointAngles.get() );
+        } else {
+          springs.jointAngles.set( robot.jointAngles );
+          setJointAngles( robot.jointAngles );
+        }
         break; 
       } 
       default: { // Off, Error
+        springs.jointAngles.set( robot.jointAngles );
+        setJointAngles( robot.jointAngles );
         break; 
       } 
     }
@@ -206,32 +215,32 @@ export const Mesh_abb_irb52_7_120 = ({
           geometry={nodes.link_1.geometry}
           material={materials.gkmodel0_link_1_geom0}
           position={[0, 0, 0.486]}
-          rotation={[0,0,jointAngles[0]]}
+          rotation={[0, 0, jointAngles[0]]}
           castShadow={SHADOWS}
           receiveShadow={SHADOWS}>
           <mesh
             geometry={nodes.link_2.geometry}
             material={materials.gkmodel0_link_2_geom0}
             position={[0.15, 0, 0]}
-            rotation={[0,jointAngles[1],0]}
+            rotation={[0, jointAngles[1], 0]}
             castShadow={SHADOWS}
             receiveShadow={SHADOWS}>
             <mesh
               geometry={nodes.link_3.geometry}
               material={materials.gkmodel0_link_3_geom0}
               position={[0, 0, 0.475]}
-              rotation={[0,jointAngles[2],0]}
+              rotation={[0, jointAngles[2], 0]}
               castShadow={SHADOWS}
               receiveShadow={SHADOWS}>
               <mesh
                 geometry={nodes.link_4.geometry}
                 material={materials.gkmodel0_link_4_geom0}
                 position={[0.6, 0, 0]}
-                rotation={[jointAngles[3],0,0]}
+                rotation={[jointAngles[3], 0, 0]}
                 castShadow={SHADOWS}
                 receiveShadow={SHADOWS}>
                 <mesh
-                  rotation={[0,jointAngles[4],0]}
+                  rotation={[0, jointAngles[4], 0]}
                   geometry={nodes.link_5.geometry}
                   material={materials.gkmodel0_link_5_geom0}
                   castShadow={SHADOWS}
@@ -240,7 +249,7 @@ export const Mesh_abb_irb52_7_120 = ({
                     geometry={nodes.link_6.geometry}
                     material={materials.gkmodel0_link_6_geom0}
                     position={[0.065, 0, 0]}
-                    rotation={[jointAngles[5],0,0]}
+                    rotation={[jointAngles[5], 0, 0]}
                     castShadow={SHADOWS}
                     receiveShadow={SHADOWS}/>
                 </mesh>

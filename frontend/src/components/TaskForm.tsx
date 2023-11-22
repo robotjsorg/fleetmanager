@@ -34,23 +34,17 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ robot, description }) => {
-        const robotTasks = tasks.filter(( task ) => ( task.robotid == robot ));
-        const robotTaskDescriptions = robotTasks.map(( task ) => ( task.description ));
-        if ( robotTaskDescriptions.includes( description ) ) {
-          form.setFieldError("description", "Duplicate task assigned");
-        } else {
-          const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
-          mutate({ tag: "CreateTask", id, robotid: robot, description })
-            .then(() => {
-              form.reset();
-            })
-            .catch((err) => {
-              form.setFieldError("description", String(err));
-              form.setErrors({ robot: String(err), description: String(err) });
-              console.error("Failed to create task", err);
-            });
-        }    
-      }, [tasks, mutate, form]
+        const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
+        mutate({ tag: "CreateTask", id, robotid: robot, description })
+          .then(() => {
+            form.reset();
+          })
+          .catch((err) => {
+            form.setFieldError("description", String(err));
+            form.setErrors({ robot: String(err), description: String(err) });
+            console.error("Failed to create task", err);
+          });
+      }, [mutate, form]
     )
   );
 

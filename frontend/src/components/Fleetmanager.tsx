@@ -15,7 +15,7 @@ import { guiSelectionContext } from "../context/guiSelectionContext";
 import { locSelectionContext } from "../context/locSelectionContext";
 import { moveRobotContext } from "../context/moveRobotContext";
 
-import { Mesh_abb_irb52_7_120, zeroJointAngles } from "../meshes/Mesh_abb_irb52_7_120";
+import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
 
 export const GRID_BOUND = 4;
 
@@ -63,7 +63,7 @@ export const Fleetmanager = ({
               toolState: robots[robots.findIndex((robot) => robot.id == guiSelection)].toolState,
               position: [Bound(object.position.x, GRID_BOUND), object.position.y, Bound(object.position.z, GRID_BOUND)],
               rotation: [object.rotation.x, object.rotation.y, Bound(object.rotation.z, Math.PI)],
-              jointAngles: zeroJointAngles()
+              jointAngles: robots[robots.findIndex((robot) => robot.id == guiSelection)].jointAngles
             })
           }}
           />}
@@ -77,7 +77,7 @@ export const Fleetmanager = ({
               toolState: robots[robots.findIndex((robot) => robot.id == guiSelection)].toolState,
               position: [Bound(object.position.x, GRID_BOUND), object.position.y, Bound(object.position.z, GRID_BOUND)],
               rotation: [object.rotation.x, object.rotation.y, Bound(object.rotation.z, Math.PI)],
-              jointAngles: zeroJointAngles()
+              jointAngles: robots[robots.findIndex((robot) => robot.id == guiSelection)].jointAngles
             })
           }}
           />}
