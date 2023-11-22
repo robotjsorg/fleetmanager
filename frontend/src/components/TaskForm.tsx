@@ -70,7 +70,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           clearable
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
-          data={['Random positions (continuous)',
+          data={['Random positions (continuous)', 'Home',
           'Move pre-pick', 'Move pick', 'Move post-pick', 'Move pre-place', 'Move place', 'Move post-place']}
           {...form.getInputProps("description")}
         />

@@ -58,6 +58,9 @@ const randomJointAngles = () => {
     angles
   );
 }
+const home = () => {
+  return [0, 0, 0, 0, 0, 0];
+}
 const prepick = () => {
   return [Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0];
 }
@@ -119,16 +122,16 @@ export const Mesh_abb_irb52_7_120 = ({
   useEffect(()=>{
     if( currentTask ) { 
       if ( currentTask.state == "Active" ) {
-        if ( currentTask.description == "Random position (one-shot)" ) { // loops for some reasons
-          api.start({
-            jointAngles: randomJointAngles()
-          })
-        } else if ( currentTask.description == "Random positions (continuous)" ) {
+        if ( currentTask.description == "Random positions (continuous)" ) {
           if ( springs.jointAngles.idle ) {
             api.start({
               jointAngles: randomJointAngles()
             })
           }
+        } else if ( currentTask.description == "Home" ) {
+          api.start({
+            jointAngles: home()
+          })
         } else if ( currentTask.description == "Move pre-pick" ) {
           api.start({
             jointAngles: prepick()
@@ -153,16 +156,6 @@ export const Mesh_abb_irb52_7_120 = ({
           api.start({
             jointAngles: postplace()
           })
-        } else if ( currentTask.description == "Pick and Place (one-shot)" ) {
-          api.start({
-            jointAngles: randomJointAngles()
-          })
-        } else if ( currentTask.description == "Pick and Place (continuous)" ) {
-          if ( springs.jointAngles.idle ) {
-            api.start({
-              jointAngles: randomJointAngles()
-            })
-          }
         }
         if ( springs.jointAngles.idle && currentTask.description != "Random positions (continuous)" && currentTask.description != "Pick and Place (continuous)" ) {
           currentTask.state = "Completed"

@@ -3,7 +3,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { Text, Button, Divider, NumberInput, Group, Flex, Select, NumberFormatter, Stack, Center } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-import { IconAngle, IconArrowBadgeLeft, IconArrowBadgeRight, IconLock, IconLockOpen, IconPlayerPause, IconPlayerStop, IconTool } from "@tabler/icons-react";
+import { IconAngle, IconArrowBadgeLeft, IconArrowBadgeRight, IconLock, IconLockOpen, IconTool } from "@tabler/icons-react";
 import { v4 as uuidv4 } from "uuid";
 
 import { IRobot } from "../@types/robot";
@@ -542,7 +542,7 @@ export const RobotSelection = ({
                 <Select
                   size="xs"
                   placeholder="Queue task"
-                  data={['Random positions (continuous)',
+                  data={['Random positions (continuous)', 'Home',
                     'Move pre-pick', 'Move pick', 'Move post-pick', 'Move pre-place', 'Move place', 'Move post-place']}
                   {...autoSelectForm.getInputProps("description")}
                 />
