@@ -51,13 +51,13 @@ export const LocationForm = ({ docId }: { docId: JournalId; }) => {
       <Group gap="xs" align="flex-end">
         <TextInput
           label="New Location"
-          description="Description"
-          placeholder="New location description"
+          description="Name"
+          placeholder="Name the new location"
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           {...form.getInputProps("description")}
         />
-        <Button color="gray" variant="default" type="submit">Add</Button>
+        <Button variant="default" type="submit">Create</Button>
       </Group>
     </form>
   );

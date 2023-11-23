@@ -46,9 +46,8 @@ export const ConnectionStatus = ({ docId }: { docId: JournalId }) => {
 
   return (
     <Button
-      variant="outline"
+      variant="subtle"
       color={color}
-      // rightSection={icon}
       loading={loading}
       onClick={handleClick}
     >

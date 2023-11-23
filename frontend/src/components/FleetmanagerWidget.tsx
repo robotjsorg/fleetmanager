@@ -3,7 +3,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { Text, Button, Divider, NumberInput, Group, Flex, Select, NumberFormatter, Stack, Center } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-import { IconAngle, IconArrowBadgeLeft, IconArrowBadgeRight, IconLock, IconLockOpen, IconTool } from "@tabler/icons-react";
+import { IconAngle, IconArrowBadgeLeft, IconArrowBadgeRight, IconBrandAppleArcade, IconLock, IconLockOpen, IconPower, IconSettingsAutomation, IconTool } from "@tabler/icons-react";
 import { v4 as uuidv4 } from "uuid";
 
 import { IRobot } from "../@types/robot";
@@ -20,7 +20,7 @@ import { useMutate } from "../doctype";
 
 const RADS_DEGS = 57.2958;
 
-export const RobotSelection = ({
+export const FleetmanagerWidget = ({
   docId,
   updateRobot
 }: {
@@ -316,33 +316,39 @@ export const RobotSelection = ({
             <></>
           : state == "Error" ?
             <Group>
-              <Button onClick={handleReset} variant="default" color="gray" size="xs">
+              <Button onClick={handleReset} variant="default" size="xs">
                 Reset
               </Button>
-              <Button onClick={handleOff} variant="default" color="gray" size="xs">
+              <Button onClick={handleOff} variant="default" size="xs"
+                leftSection={<IconPower size={18} />}>
                 Off
               </Button>
             </Group>
           : state == "Manual" ?
             <Group>
-              <Button onClick={handleAuto} variant="default" color="gray" size="xs">
+              <Button onClick={handleAuto} variant="default" size="xs"
+                leftSection={<IconSettingsAutomation size={18} />}>
                 Auto
               </Button>
-              <Button onClick={handleOff} variant="default" color="gray" size="xs">
+              <Button onClick={handleOff} variant="default" size="xs"
+                leftSection={<IconPower size={18} />}>
                 Off
               </Button>
             </Group>
           : state == "Auto" ?
             <Group>
-              <Button onClick={handleManual} variant="default" color="gray" size="xs">
+              <Button onClick={handleManual} variant="default" size="xs"
+                leftSection={<IconBrandAppleArcade size={18} />}>
                 Manual
               </Button>
-              <Button onClick={handleOff} variant="default" color="gray" size="xs">
+              <Button onClick={handleOff} variant="default" size="xs"
+                leftSection={<IconPower size={18} />}>
                 Off
               </Button>
             </Group>
           : // state == "Off"
-            <Button onClick={handleOn} variant="default" color="gray" size="xs">
+            <Button onClick={handleOn} variant="default" size="xs"
+              leftSection={<IconPower size={18} />}>
               Power On
             </Button>
           }
@@ -353,7 +359,7 @@ export const RobotSelection = ({
           <Divider mx="xs" />
           <Center p="xs">
             <Button onClick={()=>{moveRobot ? setMoveRobot(false) : setMoveRobot(true)}}
-              variant={moveRobot ? "outline" : "default"} color="gray" size="xs"
+              variant={moveRobot ? "outline" : "default"} size="xs"
               leftSection={moveRobot ? <IconLockOpen size={18} /> : <IconLock size={18} />}>
               Move
             </Button>
@@ -415,10 +421,10 @@ export const RobotSelection = ({
           <Divider mx="xs" />
           <Group gap="xs" p="xs" justify="center">
             {/* <SegmentedControl data={['Joints', 'Tool']} /> */}
-            <Button onClick={()=>setToggleManual(true)} variant={toggleManual ? "light" : "subtle"} color="gray" size="xs" leftSection={<IconAngle size={18}/>}>
+            <Button color="gray" onClick={()=>setToggleManual(true)} variant={toggleManual ? "light" : "subtle"} size="xs" leftSection={<IconAngle size={18}/>}>
               Joints
             </Button>
-            <Button onClick={()=>setToggleManual(false)} variant={!toggleManual ? "light" : "subtle"}  color="gray" size="xs" leftSection={<IconTool size={18}/>}>
+            <Button color="gray" onClick={()=>setToggleManual(false)} variant={!toggleManual ? "light" : "subtle"} size="xs" leftSection={<IconTool size={18}/>}>
               Tool
             </Button>
           </Group>
@@ -527,10 +533,10 @@ export const RobotSelection = ({
             </Flex>
             {/* <Flex w="50%" gap="xs" px="xs" direction="column">
               <Group justify="center">
-                <Button variant="default" color="gray" size="xs" onClick={()=>{ currentTask ? currentTask.state = "Failed" : null }} disabled={ currentTask?.state != "Active" }>
+                <Button variant="default" size="xs" onClick={()=>{ currentTask ? currentTask.state = "Failed" : null }} disabled={ currentTask?.state != "Active" }>
                   <IconPlayerStop size={18} />
                 </Button>
-                <Button variant="default" color="gray" size="xs" onClick={()=>{ currentTask ? currentTask.state = "Paused" : null }} disabled={ currentTask?.state != "Active" }>
+                <Button variant="default" size="xs" onClick={()=>{ currentTask ? currentTask.state = "Paused" : null }} disabled={ currentTask?.state != "Active" }>
                   <IconPlayerPause size={18} />
                 </Button>
               </Group>
@@ -546,7 +552,7 @@ export const RobotSelection = ({
                     'Move pre-pick', 'Move pick', 'Move post-pick', 'Move pre-place', 'Move place', 'Move post-place']}
                   {...autoSelectForm.getInputProps("description")}
                 />
-                <Button size="xs" color="gray" variant="default" type="submit">Queue</Button>
+                <Button size="xs" variant="default" type="submit">Queue</Button>
               </Group>
             </form>
           </Center>

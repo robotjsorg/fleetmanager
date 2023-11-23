@@ -157,6 +157,7 @@ export const Mesh_abb_irb52_7_120 = ({
             jointAngles: postplace()
           })
         }
+        // TODO: Make this a db mutation and callback fn, in simulation mode only
         if ( springs.jointAngles.idle && currentTask.description != "Random positions (continuous)" && currentTask.description != "Pick and Place (continuous)" ) {
           currentTask.state = "Completed"
         }
@@ -175,13 +176,13 @@ export const Mesh_abb_irb52_7_120 = ({
         break; 
       } 
       case "Auto": {
-        if ( currentTask ) {
+        // if ( currentTask ) {
           robot.jointAngles = springs.jointAngles.get();
           setJointAngles( springs.jointAngles.get() );
-        } else {
-          springs.jointAngles.set( robot.jointAngles );
-          setJointAngles( robot.jointAngles );
-        }
+        // } else {
+        //   springs.jointAngles.set( robot.jointAngles );
+        //   setJointAngles( robot.jointAngles );
+        // }
         break; 
       } 
       default: { // Off, Error

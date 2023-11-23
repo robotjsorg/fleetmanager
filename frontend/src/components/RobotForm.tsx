@@ -59,13 +59,13 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
       <Group align="flex-end" gap="xs" onClick={() => setGuiSelection("no selection")}>
         <TextInput
           label="New Robot"
-          description="Description"
-          placeholder="New robot description"
+          description="Name"
+          placeholder="Name the new robot"
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           {...form.getInputProps("description")}
         />
-        <Button color="gray" variant="default" type="submit">Add</Button>
+        <Button variant="default" type="submit">Add</Button>
       </Group>
     </form>
   );

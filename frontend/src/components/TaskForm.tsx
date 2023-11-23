@@ -74,7 +74,7 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
           'Move pre-pick', 'Move pick', 'Move post-pick', 'Move pre-place', 'Move place', 'Move post-place']}
           {...form.getInputProps("description")}
         />
-        <Button color="gray" variant="default" type="submit">Queue</Button>
+        <Button variant="default" type="submit">Queue</Button>
       </Group>
     </form>
   );

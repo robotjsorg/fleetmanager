@@ -25,7 +25,7 @@ import { ConnectionStatus } from "./components/ConnectionStatus";
 import { Fleetmanager } from "./components/Fleetmanager";
 import { LocationList } from "./components/LocationList";
 import { RobotList } from "./components/RobotList";
-import { RobotSelection } from "./components/RobotSelection";
+import { FleetmanagerWidget } from "./components/FleetmanagerWidget";
 
 import { zeroJointAngles } from "./meshes/Mesh_abb_irb52_7_120";
 
@@ -172,6 +172,8 @@ export const App = ({ docId }: { docId: JournalId; }) => {
     forceUpdate();
   }
 
+  // TODO: Set most recent Queued task to Active is robot has not task and is in Auto
+
   // Selected location description
   const [ selectedLocationDescription, setSelectedLocationDescription ] = useState("");
   useEffect(()=>{
@@ -285,7 +287,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                   </Stack>
                   <Box h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
                     <Divider />
-                    <RobotSelection docId={docId} updateRobot={updateRobot} />
+                    <FleetmanagerWidget docId={docId} updateRobot={updateRobot} />
                   </Box>
                 </Stack>
               </AppShell.Aside>
