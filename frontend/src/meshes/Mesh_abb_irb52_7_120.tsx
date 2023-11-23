@@ -176,13 +176,13 @@ export const Mesh_abb_irb52_7_120 = ({
         break; 
       } 
       case "Auto": {
-        // if ( currentTask ) {
+        if ( currentTask ) {
           robot.jointAngles = springs.jointAngles.get();
           setJointAngles( springs.jointAngles.get() );
-        // } else {
-        //   springs.jointAngles.set( robot.jointAngles );
-        //   setJointAngles( robot.jointAngles );
-        // }
+        } else {
+          springs.jointAngles.set( robot.jointAngles );
+          setJointAngles( robot.jointAngles );
+        }
         break; 
       } 
       default: { // Off, Error

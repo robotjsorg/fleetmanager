@@ -358,7 +358,7 @@ export const FleetmanagerWidget = ({
         <>
           <Divider mx="xs" />
           <Center p="xs">
-            <Button onClick={()=>{moveRobot ? setMoveRobot(false) : setMoveRobot(true)}}
+            <Button color="gray" onClick={()=>{moveRobot ? setMoveRobot(false) : setMoveRobot(true)}}
               variant={moveRobot ? "outline" : "default"} size="xs"
               leftSection={moveRobot ? <IconLockOpen size={18} /> : <IconLock size={18} />}>
               Move
@@ -516,7 +516,7 @@ export const FleetmanagerWidget = ({
       : selectedRobot && state == "Auto" &&
         <>
           <Divider mx="xs" />
-          <Group gap={0} p="xs">
+          <Group gap={0} py="xs">
             <Flex w="50%" gap="xs" px="xs" direction="column">
               <Text size="xs" truncate="end">
                 <Text span c="gray" inherit>task: </Text>
