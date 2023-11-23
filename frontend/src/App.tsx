@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { sql } from "@orbitinghail/sqlsync-react";
@@ -122,10 +122,9 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   };
 
   // Initialize database
-  const [initDB, setInitDB] = useState( true );
-  useEffect(() => {    
-    if (initDB){
-      setInitDB( false );
+  const [ initDB, setInitDB ] = useState( true );
+  useEffect(() => {
+    if ( initDB ){
       console.log("[INFO] Init DB")
       mutate({ tag: "InitSchema" })
         .catch(( err ) => {console.error( "Failed to init schema", err )});

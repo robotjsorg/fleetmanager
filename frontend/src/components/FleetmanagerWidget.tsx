@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 
-import { Text, Button, Divider, NumberInput, Group, Flex, Select, NumberFormatter, Stack, Center } from "@mantine/core";
+import { Text, Button, Divider, NumberInput, Group, Flex, Select, NumberFormatter, Stack, Center, useMantineContext } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 import { IconAngle, IconArrowBadgeLeft, IconArrowBadgeRight, IconBrandAppleArcade, IconLock, IconLockOpen, IconPower, IconSettingsAutomation, IconTool } from "@tabler/icons-react";
@@ -27,6 +27,7 @@ export const FleetmanagerWidget = ({
   docId: JournalId;
   updateRobot: (childData: {id: string, toolState: string, state: string, position: number[], rotation: number[], jointAngles: number[]}) => void
 }) => {
+  const theme = useMantineContext();
   const { robots, tasks } = useContext( RobotContext );
   const { guiSelection } = useContext( guiSelectionContext );
   const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)]);
@@ -290,8 +291,8 @@ export const FleetmanagerWidget = ({
             <Text span c="gray" inherit>tool: </Text>
             { selectedRobot ? toolState : "-"}
           </Text>
-          <Text size="xs" truncate="end">
-            <Text span c="gray" inherit>state: </Text>
+          <Text size="xs" truncate="end" fw="bold" c={theme.colorScheme == "dark" ? "white" : "black"}>
+            <Text span c="gray" fw="normal" inherit>state: </Text>
             { selectedRobot ? state : "-"}
           </Text>
         </Stack>
