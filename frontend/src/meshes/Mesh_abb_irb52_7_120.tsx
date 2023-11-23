@@ -113,7 +113,7 @@ export const Mesh_abb_irb52_7_120 = ({
       setCurrentTask( activeTasks[0] );
     } else if ( !Array.isArray( activeTasks ) || activeTasks.length == 0 ) {
       if ( Array.isArray( queuedTasks ) && queuedTasks.length > 0 && robot.state == "Auto" ) {
-        queuedTasks[0].state = "Active"
+        queuedTasks[0].state = "Active" // TODO: THIS SHOULD BE A CALLBACK
         setCurrentTask( queuedTasks[0] );
       }
     }
@@ -157,7 +157,7 @@ export const Mesh_abb_irb52_7_120 = ({
             jointAngles: postplace()
           })
         }
-        // TODO: Make this a db mutation and callback fn, in simulation mode only
+        // TODO: THIS SHOULD BE A CALLBACK
         if ( springs.jointAngles.idle && currentTask.description != "Random positions (continuous)" && currentTask.description != "Pick and Place (continuous)" ) {
           currentTask.state = "Completed"
         }

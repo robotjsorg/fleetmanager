@@ -155,9 +155,9 @@ export const FleetmanagerWidget = ({
     initialValues: {
       description: ""
     },
-    validate: {
-      description: (value) => (value.trim().length === 0 ? "Select Task" : null)
-    }
+    // validate: {
+    //   description: (value) => (value.trim().length === 0 ? "Select Task" : null)
+    // }
   });
 
   const mutate = useMutate( docId );
@@ -166,16 +166,15 @@ export const FleetmanagerWidget = ({
     useCallback(
       ({ description }) => {
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
-          mutate({ tag: "CreateTask", id, robotid: selectedRobot.id, description })
-          .then(() => {
-            autoSelectForm.reset();
-            console.log("Task created.");
-          })
-          .catch((err) => {
-            autoSelectForm.setFieldError("description", String(err));
-            autoSelectForm.setErrors({ description: String(err) });
-            console.error("Failed to create task", err);
-          });
+        mutate({ tag: "CreateTask", id, robotid: selectedRobot.id, description })
+        .then(() => {
+          autoSelectForm.reset();
+        })
+        .catch((err) => {
+          autoSelectForm.setFieldError("description", String(err));
+          autoSelectForm.setErrors({ description: String(err) });
+          console.error("Failed to create task", err);
+        });
       }, [autoSelectForm, mutate, selectedRobot]
     )
   )
@@ -291,10 +290,16 @@ export const FleetmanagerWidget = ({
             <Text span c="gray" inherit>tool: </Text>
             { selectedRobot ? toolState : "-"}
           </Text>
-          <Text size="xs" truncate="end" fw="bold" c={theme.colorScheme == "dark" ? "white" : "black"}>
-            <Text span c="gray" fw="normal" inherit>state: </Text>
-            { selectedRobot ? state : "-"}
-          </Text>
+          { selectedRobot ? 
+            <Text size="xs" truncate="end" fw="bold" c={theme.colorScheme == "dark" ? "white" : "black"}>
+              <Text span c="gray" fw="normal" inherit>state: </Text>
+              { selectedRobot ? state : "-"}
+            </Text>
+          :
+            <Text size="xs" fw="normal">
+              <Text span c="gray" fw="normal" inherit>state: </Text>-
+            </Text>
+          }
         </Stack>
         <Stack w="50%" gap="xs">
           <Text size="xs" truncate="end">
