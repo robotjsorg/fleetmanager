@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { sql } from "@orbitinghail/sqlsync-react";
@@ -63,7 +63,10 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   );
 
   const [ route, setPseudoRoute ] = useState("location");
-  const [ locSelection, setLocationSelection ] = useState("no selection");
+  const [ locSelection, setLocationSelection ] = useState("c0f67f5f-3414-4e50-9ea7-9ae053aa1f99");  // Select the "Warehouse" location
+  // if ( locSelection == "no selection" ) {
+  //   setLocationSelection("c0f67f5f-3414-4e50-9ea7-9ae053aa1f99");
+  // }
   const [ guiSelection, setGuiSelection ] = useState("no selection");
   const [ moveRobot, setMoveRobot ] = useState( false );
   useEffect(()=>{
@@ -119,23 +122,20 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   };
 
   // Initialize database
-  const [initDB, setInitDB] = useState( false );
+  const [initDB, setInitDB] = useState( true );
   useEffect(() => {    
-    if (!initDB){
+    if (initDB){
+      setInitDB( false );
       console.log("[INFO] Init DB")
       mutate({ tag: "InitSchema" })
         .catch(( err ) => {console.error( "Failed to init schema", err )});
       mutate({ tag: "PopulateDB" })
         .catch(( err ) => {console.error( "Failed to populate database", err )});
-      // Select the "Warehouse" location
-      if ( locSelection == "no selection" ) {
-        setLocationSelection("c0f67f5f-3414-4e50-9ea7-9ae053aa1f99");
-      }
     }
     return () => {
-      setInitDB( true );
+      setInitDB( false );
     };
-  }, [initDB, locSelection, mutate]);
+  }, [initDB, mutate]);
 
   // Add data to robots
   const [ robots, setRobots ] = useState<IRobot[]>([]);
