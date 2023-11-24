@@ -35,6 +35,9 @@ export const FMWidgetAuto = ({
   const autoSelectForm = useForm({
     initialValues: {
       description: ""
+    },
+    validate: {
+      description: (value) => (value.trim().length === 0 ? "Select Task" : null)
     }
   });
 
