@@ -110,7 +110,7 @@ export const FMWidgetOff = ({
               {...moveRobotForm.getInputProps("Z")}
             />
             <NumberInput disabled={!moveRobot}
-              leftSection={<Text span size="xs">&theta</Text>}
+              leftSection={<Text span size="xs">&theta;</Text>}
               size="xs"
               clampBehavior="blur"
               step={15.0}

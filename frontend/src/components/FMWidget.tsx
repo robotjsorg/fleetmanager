@@ -141,7 +141,7 @@ export const FMWidget = ({
             { selectedRobot ? <NumberFormatter value={selectedRobot.position[0]} decimalScale={1} /> : "-"}<br/>
             <Text span c="gray" inherit>z: </Text>
             { selectedRobot ? <NumberFormatter value={selectedRobot.position[2]} decimalScale={1} /> : "-"}<br/>
-            <Text span c="gray" inherit>&theta: </Text>
+            <Text span c="gray" inherit>&theta;: </Text>
             { selectedRobot ? <NumberFormatter value={selectedRobot.rotation[2]*RADS_DEGS} decimalScale={0} /> : "-"}
           </Text>
         </Stack>
