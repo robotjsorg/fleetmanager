@@ -1,57 +1,57 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-unknown-property */
-import { useContext, useEffect, useState } from "react";
-import { useMantineContext } from "@mantine/core";
+import { useContext, useEffect, useState } from "react"
+import { useMantineContext } from "@mantine/core"
 
-import { Canvas, useThree } from "@react-three/fiber";
-import { Text, OrbitControls, TransformControls } from "@react-three/drei";
-import { Selection, EffectComposer, Outline } from "@react-three/postprocessing";
-import { proxy } from "valtio";
+import { Canvas, useThree } from "@react-three/fiber"
+import { Text, OrbitControls, TransformControls } from "@react-three/drei"
+import { Selection, EffectComposer, Outline } from "@react-three/postprocessing"
+import { proxy } from "valtio"
 
-import { IRobot } from "../@types/robot";
+import { IRobot } from "../@types/robot"
 
-import { RobotContext } from "../context/robotContext";
-import { guiSelectionContext } from "../context/guiSelectionContext";
-import { locSelectionContext } from "../context/locSelectionContext";
-import { moveRobotContext } from "../context/moveRobotContext";
+import { RobotContext } from "../context/robotContext"
+import { guiSelectionContext } from "../context/guiSelectionContext"
+import { locSelectionContext } from "../context/locSelectionContext"
+import { moveRobotContext } from "../context/moveRobotContext"
 
-import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120";
+import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120"
 
-export const GRID_BOUND = 4;
+export const GRID_BOUND = 4
 
-const state = proxy({ current: "" });
+const state = proxy({ current: "" })
 
 export const Fleetmanager = ({
   updateRobot,
   updateTask
 }: {
-  updateRobot: (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => void;
-  updateTask: (childData: {id: string, state: string}) => void;
+  updateRobot: (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => void
+  updateTask: (childData: {id: string, state: string}) => void
 }) => {
-  const theme = useMantineContext();
-  const { robots } = useContext( RobotContext );
-  const { locSelection } = useContext( locSelectionContext );
-  const { guiSelection, setGuiSelection } = useContext( guiSelectionContext );
-  const { moveRobot } = useContext( moveRobotContext );
+  const theme = useMantineContext()
+  const { robots } = useContext( RobotContext )
+  const { locSelection } = useContext( locSelectionContext )
+  const { guiSelection, setGuiSelection } = useContext( guiSelectionContext )
+  const { moveRobot } = useContext( moveRobotContext )
 
-  const [ locationsRobots, setLocationRobots ] = useState<IRobot[]>([]);
+  const [ locationsRobots, setLocationRobots ] = useState<IRobot[]>([])
   useEffect(() => {
-    setLocationRobots( robots.filter(( robot )=>( robot.locationid == locSelection )) );
-  }, [locSelection, robots]);
+    setLocationRobots( robots.filter(( robot )=>( robot.locationid == locSelection )) )
+  }, [locSelection, robots])
 
   const Controls = () => {
-    const scene = useThree((state) => state.scene);
-    const object = scene.getObjectByName(guiSelection);
+    const scene = useThree((state) => state.scene)
+    const object = scene.getObjectByName(guiSelection)
 
     const Bound = (input: number, bound: number) => {
       if ( input > bound ) {
         return bound
       }
       if ( input < -bound ) {
-        return -bound;
+        return -bound
       }
-      return input;
-    };
+      return input
+    }
 
     return (
       <>
@@ -84,12 +84,12 @@ export const Fleetmanager = ({
           }}
           />}
       </>
-    );
-  };
+    )
+  }
 
   const robotCurrent = (childData: string) => {
-    state.current = childData;
-  };
+    state.current = childData
+  }
 
   return (
     <Canvas dpr={[1, 2]} camera={{ position: [1, 2, 3], near: 0.01, far: 20 }}
@@ -132,5 +132,5 @@ export const Fleetmanager = ({
       {/* <ambientLight intensity={1} /> */}
       {/* <ContactShadows scale={ 150 } position={ [0.33, -0.33, 0.33] } opacity={ 1.5 } /> */}
     </Canvas>
-  );
-};
+  )
+}

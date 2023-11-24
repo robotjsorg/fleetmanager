@@ -1,28 +1,28 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Stack, ScrollArea, Text } from "@mantine/core";
+import { JournalId } from "@orbitinghail/sqlsync-worker"
+import { Stack, ScrollArea, Text } from "@mantine/core"
 
-import { IRobot } from "../@types/robot";
+import { IRobot } from "../@types/robot"
 
-import { RobotContext } from "../context/robotContext";
-import { locSelectionContext } from "../context/locSelectionContext";
+import { RobotContext } from "../context/robotContext"
+import { locSelectionContext } from "../context/locSelectionContext"
 
-import { RobotItem } from "./RobotItem";
+import { RobotItem } from "./RobotItem"
 
 export const RobotList = ({
   docId,
   fbDisabled
 }: {
-  docId: JournalId;
-  fbDisabled: boolean;
+  docId: JournalId
+  fbDisabled: boolean
 }) => {
-  const { robots } = useContext( RobotContext );
-  const { locSelection } = useContext( locSelectionContext );
-  const [filteredRobots, setFilteredRobots] = useState<IRobot[]>([]);
+  const { robots } = useContext( RobotContext )
+  const { locSelection } = useContext( locSelectionContext )
+  const [filteredRobots, setFilteredRobots] = useState<IRobot[]>([])
   useEffect(()=>{
-    setFilteredRobots(robots.filter(( robot ) => ( robot.locationid == locSelection )));
-  }, [locSelection, robots]);
+    setFilteredRobots(robots.filter(( robot ) => ( robot.locationid == locSelection )))
+  }, [locSelection, robots])
 
   return (
     <ScrollArea type="auto">
@@ -34,5 +34,5 @@ export const RobotList = ({
       }
       </Stack>
     </ScrollArea>
-  );
-};
+  )
+}

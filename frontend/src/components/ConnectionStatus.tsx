@@ -1,47 +1,51 @@
-import { useCallback } from "react";
+import { useCallback } from "react"
 
-import { useConnectionStatus } from "@orbitinghail/sqlsync-react";
-import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Button } from "@mantine/core";
+import { useConnectionStatus } from "@orbitinghail/sqlsync-react"
+import { JournalId } from "@orbitinghail/sqlsync-worker"
+import { Button } from "@mantine/core"
 
-import { IconWifi, IconWifiOff } from "@tabler/icons-react";
+import { IconWifi, IconWifiOff } from "@tabler/icons-react"
 
-import { useSetConnectionEnabled } from "../doctype";
+import { useSetConnectionEnabled } from "../doctype"
 
-export const ConnectionStatus = ({ docId }: { docId: JournalId }) => {
-  const status = useConnectionStatus();
-  const setConnectionEnabled = useSetConnectionEnabled( docId );
+export const ConnectionStatus = ({
+  docId
+}: {
+  docId: JournalId
+}) => {
+  const status = useConnectionStatus()
+  const setConnectionEnabled = useSetConnectionEnabled( docId )
 
   const handleClick = useCallback(() => {
     if (status === "disabled") {
       setConnectionEnabled(true).catch((err) => {
-        console.error("Failed to enable connection", err);
-      });
+        console.error("Failed to enable connection", err)
+      })
     } else {
       setConnectionEnabled(false).catch((err) => {
-        console.error("Failed to disable connection", err);
-      });
+        console.error("Failed to disable connection", err)
+      })
     }
-  }, [status, setConnectionEnabled]);
+  }, [status, setConnectionEnabled])
 
-  let color, icon, loading;
+  let color, icon, loading
   switch (status) {
     case "disabled":
-      color = "red";
-      icon = <IconWifiOff size={18} />;
-      break;
+      color = "red"
+      icon = <IconWifiOff size={18} />
+      break
     case "disconnected":
-      color = "red";
-      icon = <IconWifiOff size={18} />;
-      break;
+      color = "red"
+      icon = <IconWifiOff size={18} />
+      break
     case "connecting":
-      color = "yellow";
-      loading = true;
-      break;
+      color = "yellow"
+      loading = true
+      break
     case "connected":
-      color = "green";
-      icon = <IconWifi size={18} />;
-      break;
+      color = "green"
+      icon = <IconWifi size={18} />
+      break
   }
 
   return (
@@ -53,5 +57,5 @@ export const ConnectionStatus = ({ docId }: { docId: JournalId }) => {
     >
       {icon}
     </Button>
-  );
-};
+  )
+}

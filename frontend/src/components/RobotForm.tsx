@@ -1,21 +1,25 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Button, Group, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { JournalId } from "@orbitinghail/sqlsync-worker"
+import { Button, Group, TextInput } from "@mantine/core"
+import { useForm } from "@mantine/form"
 
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid"
 
-import { useMutate } from "../doctype";
+import { useMutate } from "../doctype"
 
-import { RobotContext } from "../context/robotContext";
-import { guiSelectionContext } from "../context/guiSelectionContext";
-import { locSelectionContext } from "../context/locSelectionContext";
+import { RobotContext } from "../context/robotContext"
+import { guiSelectionContext } from "../context/guiSelectionContext"
+import { locSelectionContext } from "../context/locSelectionContext"
 
-export const RobotForm = ({ docId }: { docId: JournalId }) => {
-  const { robots } = useContext( RobotContext );
-  const { locSelection } = useContext( locSelectionContext );
-  const { setGuiSelection } = useContext( guiSelectionContext );
+export const RobotForm = ({
+  docId
+}: {
+  docId: JournalId
+}) => {
+  const { robots } = useContext( RobotContext )
+  const { locSelection } = useContext( locSelectionContext )
+  const { setGuiSelection } = useContext( guiSelectionContext )
   
   const form = useForm({
     initialValues: {
@@ -24,35 +28,35 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
     validate: {
       description: (value) => (value.trim().length === 0 ? "Enter Description" : null)
     },
-  });
-  const mutate = useMutate( docId );
+  })
+  const mutate = useMutate( docId )
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ description }) => {
         if ( locSelection == "no selection" ) {
-          form.setFieldError("description", "No Locations exist");
+          form.setFieldError("description", "No Locations exist")
         } else {
-          const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ));
-          const robotDescriptions = filteredRobots.map(( robot ) => ( robot.description ));
+          const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ))
+          const robotDescriptions = filteredRobots.map(( robot ) => ( robot.description ))
           if (robotDescriptions.includes(description)) {
-            form.setFieldError("description", "Duplicate robot description");
+            form.setFieldError("description", "Duplicate robot description")
           } else {
-            const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
+            const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
             mutate({ tag: "CreateRobot", id, locationid: locSelection, description })
               .then(() => {
-                setGuiSelection(id);
-                form.reset();
+                setGuiSelection(id)
+                form.reset()
               })
               .catch(( err ) => {
-                form.setFieldError("description", String(err));
-                console.error("Failed to create robot", err);
-                form.setValues( { description: "" } );
-              });
+                form.setFieldError("description", String(err))
+                console.error("Failed to create robot", err)
+                form.setValues( { description: "" } )
+              })
           }
         }
       }, [robots, locSelection, form, mutate, setGuiSelection]
     )
-  );
+  )
 
   return (
     <form onSubmit={handleSubmit}>
@@ -68,5 +72,5 @@ export const RobotForm = ({ docId }: { docId: JournalId }) => {
         <Button variant="default" type="submit">Add</Button>
       </Group>
     </form>
-  );
-};
+  )
+}

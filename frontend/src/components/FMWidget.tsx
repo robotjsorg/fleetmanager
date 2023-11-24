@@ -1,59 +1,54 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Text, Button, Group, NumberFormatter, Stack, Center, useMantineContext } from "@mantine/core";
+import { JournalId } from "@orbitinghail/sqlsync-worker"
+import { Text, Button, Group, NumberFormatter, Stack, Center, useMantineContext } from "@mantine/core"
 
-import { IconBrandAppleArcade, IconPower, IconSettingsAutomation } from "@tabler/icons-react";
+import { IconBrandAppleArcade, IconPower, IconSettingsAutomation } from "@tabler/icons-react"
 
-import { IRobot } from "../@types/robot";
-import { ITask } from "../@types/task";
+import { IRobot } from "../@types/robot"
 
-import { RobotContext } from "../context/robotContext";
-import { guiSelectionContext } from "../context/guiSelectionContext";
-import { moveRobotContext } from "../context/moveRobotContext";
+import { RobotContext } from "../context/robotContext"
+import { guiSelectionContext } from "../context/guiSelectionContext"
+import { moveRobotContext } from "../context/moveRobotContext"
 
-import { FMWidgetOff } from "./FMWidgetOff";
-import { FMWidgetAuto } from "./FMWidgetAuto";
-import { FMWidgetManual } from "./FMWidgetManual";
-import { FMWidgetError } from "./FMWidgetError";
+import { FMWidgetOff } from "./FMWidgetOff"
+import { FMWidgetAuto } from "./FMWidgetAuto"
+import { FMWidgetManual } from "./FMWidgetManual"
+import { FMWidgetError } from "./FMWidgetError"
 
-const RADS_DEGS = 57.2958;
+const RADS_DEGS = 57.2958
 
 export const FMWidget = ({
   docId,
   updateRobot
 }: {
-  docId: JournalId;
+  docId: JournalId
   updateRobot: (childData: {id: string, toolState: string, state: string, position: number[], rotation: number[], jointAngles: number[]}) => void
 }) => {
-  const theme = useMantineContext();
-  const { robots } = useContext( RobotContext );
-  const { guiSelection } = useContext( guiSelectionContext );
-  const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)]);
+  const theme = useMantineContext()
+  const { robots } = useContext( RobotContext )
+  const { guiSelection } = useContext( guiSelectionContext )
+  const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)])
 
-  const { setMoveRobot } = useContext( moveRobotContext );
+  const { setMoveRobot } = useContext( moveRobotContext )
 
-  const [ state, setState ] = useState("");
-  const [ toolState, setToolState ] = useState("");
-  const [ , setPositionFields ] = useState( true );
-  const [ , setJointAngleFields ] = useState( true );
+  const [ state, setState ] = useState("")
+  const [ toolState, setToolState ] = useState("")
   
   useEffect(()=>{
-    const index = robots.findIndex((robot) => robot.id == guiSelection);
-    setSelectedRobot( robots[index] );
-    setPositionFields( true );
-    setJointAngleFields( true );
-  }, [guiSelection, robots]);
+    const index = robots.findIndex((robot) => robot.id == guiSelection)
+    setSelectedRobot( robots[index] )
+  }, [guiSelection, robots])
 
   useEffect(()=>{
     if ( selectedRobot ) {
-      setState( selectedRobot.state );
-      setToolState( selectedRobot.toolState );
+      setState( selectedRobot.state )
+      setToolState( selectedRobot.toolState )
     }
-  }, [selectedRobot]); 
+  }, [selectedRobot]) 
 
   const handleOff = () => {
-    selectedRobot.state = "Off";
+    selectedRobot.state = "Off"
     updateRobot({
       id: selectedRobot.id,
       state: "Off",
@@ -61,15 +56,15 @@ export const FMWidget = ({
       position: selectedRobot.position,
       rotation: selectedRobot.rotation,
       jointAngles: selectedRobot.jointAngles
-    });
-    setSelectedRobot( selectedRobot );
-    setState("Off");
-  };
+    })
+    setSelectedRobot( selectedRobot )
+    setState("Off")
+  }
   const handleOn = () => {
-    handleReset();
-  };
+    handleReset()
+  }
   const handleReset = () => {
-    selectedRobot.state = "Manual";
+    selectedRobot.state = "Manual"
     updateRobot({
       id: selectedRobot.id,
       state: "Manual",
@@ -77,13 +72,13 @@ export const FMWidget = ({
       position: selectedRobot.position,
       rotation: selectedRobot.rotation,
       jointAngles: selectedRobot.jointAngles
-    });
-    setSelectedRobot( selectedRobot );
-    setState("Manual");
-    setMoveRobot(false);
+    })
+    setSelectedRobot( selectedRobot )
+    setState("Manual")
+    setMoveRobot(false)
   }
   const handleManual = () => {
-    selectedRobot.state = "Manual";
+    selectedRobot.state = "Manual"
     updateRobot({
       id: selectedRobot.id,
       state: "Manual",
@@ -91,13 +86,13 @@ export const FMWidget = ({
       position: selectedRobot.position,
       rotation: selectedRobot.rotation,
       jointAngles: selectedRobot.jointAngles
-    });
-    setSelectedRobot( selectedRobot );
-    setState("Manual");
-    setMoveRobot(false);
-  };
+    })
+    setSelectedRobot( selectedRobot )
+    setState("Manual")
+    setMoveRobot(false)
+  }
   const handleAuto = () => {
-    selectedRobot.state = "Auto";
+    selectedRobot.state = "Auto"
     updateRobot({
       id: selectedRobot.id,
       state: "Auto",
@@ -105,11 +100,11 @@ export const FMWidget = ({
       position: selectedRobot.position,
       rotation: selectedRobot.rotation,
       jointAngles: selectedRobot.jointAngles
-    });
-    setSelectedRobot( selectedRobot );
-    setState("Auto");
-    setMoveRobot(false);
-  };
+    })
+    setSelectedRobot( selectedRobot )
+    setState("Auto")
+    setMoveRobot(false)
+  }
 
   return (
     <>
@@ -146,7 +141,7 @@ export const FMWidget = ({
             { selectedRobot ? <NumberFormatter value={selectedRobot.position[0]} decimalScale={1} /> : "-"}<br/>
             <Text span c="gray" inherit>z: </Text>
             { selectedRobot ? <NumberFormatter value={selectedRobot.position[2]} decimalScale={1} /> : "-"}<br/>
-            <Text span c="gray" inherit>&theta;: </Text>
+            <Text span c="gray" inherit>&theta: </Text>
             { selectedRobot ? <NumberFormatter value={selectedRobot.rotation[2]*RADS_DEGS} decimalScale={0} /> : "-"}
           </Text>
         </Stack>
@@ -205,5 +200,5 @@ export const FMWidget = ({
         <FMWidgetAuto docId={docId} />
       }
     </>
-  );
-};
+  )
+}

@@ -1,34 +1,34 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Text, Button, Divider, Group, Flex, Select, Center } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { JournalId } from "@orbitinghail/sqlsync-worker"
+import { Text, Button, Divider, Group, Flex, Select, Center } from "@mantine/core"
+import { useForm } from "@mantine/form"
 
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid"
 
-import { IRobot } from "../@types/robot";
-import { ITask } from "../@types/task";
+import { IRobot } from "../@types/robot"
+import { ITask } from "../@types/task"
 
-import { RobotContext } from "../context/robotContext";
-import { guiSelectionContext } from "../context/guiSelectionContext";
+import { RobotContext } from "../context/robotContext"
+import { guiSelectionContext } from "../context/guiSelectionContext"
 
-import { useMutate } from "../doctype";
+import { useMutate } from "../doctype"
 
 export const FMWidgetAuto = ({
   docId
 }: {
-  docId: JournalId;
+  docId: JournalId
 }) => {
-  const { robots, tasks } = useContext( RobotContext );
-  const { guiSelection } = useContext( guiSelectionContext );
-  const [ selectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)]);
-  const [ currentTask, setCurrentTask ] = useState<ITask>();
+  const { robots, tasks } = useContext( RobotContext )
+  const { guiSelection } = useContext( guiSelectionContext )
+  const [ selectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)])
+  const [ currentTask, setCurrentTask ] = useState<ITask>()
   useEffect(() => {
-    const activeTasks = tasks.filter(( task ) => ( task.robotid == guiSelection && task.state == "Active" ));
+    const activeTasks = tasks.filter(( task ) => ( task.robotid == guiSelection && task.state == "Active" ))
     if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
-      setCurrentTask( activeTasks[0] );
+      setCurrentTask( activeTasks[0] )
     }
-  }, [guiSelection, tasks]);
+  }, [guiSelection, tasks])
 
   const autoSelectForm = useForm({
     initialValues: {
@@ -37,23 +37,23 @@ export const FMWidgetAuto = ({
     validate: {
       description: (value) => (value.trim().length === 0 ? "Select Task" : null)
     }
-  });
+  })
 
-  const mutate = useMutate( docId );
+  const mutate = useMutate( docId )
 
   const handleAutoSelect = autoSelectForm.onSubmit(
     useCallback(
       ({ description }) => {
-        const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
+        const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
         mutate({ tag: "CreateTask", id, robotid: selectedRobot.id, description })
         .then(() => {
-          autoSelectForm.reset();
+          autoSelectForm.reset()
         })
         .catch((err) => {
-          autoSelectForm.setFieldError("description", String(err));
-          autoSelectForm.setErrors({ description: String(err) });
-          console.error("Failed to create task", err);
-        });
+          autoSelectForm.setFieldError("description", String(err))
+          autoSelectForm.setErrors({ description: String(err) })
+          console.error("Failed to create task", err)
+        })
       }, [autoSelectForm, mutate, selectedRobot]
     )
   )
@@ -92,5 +92,5 @@ export const FMWidgetAuto = ({
         </form>
       </Center>
     </>
-  );
-};
+  )
+}

@@ -1,83 +1,83 @@
 /* eslint-disable react/no-unknown-property */
-import { useRef, useContext, useState, useEffect } from "react";
+import { useRef, useContext, useState, useEffect } from "react"
 
-import { Euler, Vector3, useFrame } from "@react-three/fiber";
-import { useCursor, useGLTF } from "@react-three/drei";
-import { Select } from "@react-three/postprocessing";
-import { GLTF } from "three-stdlib";
-import { useSpring, animated, config } from "@react-spring/three";
+import { Euler, Vector3, useFrame } from "@react-three/fiber"
+import { useCursor, useGLTF } from "@react-three/drei"
+import { Select } from "@react-three/postprocessing"
+import { GLTF } from "three-stdlib"
+import { useSpring, animated, config } from "@react-spring/three"
 
-import { IRobot } from "../@types/robot";
+import { IRobot } from "../@types/robot"
 
-import { RobotContext } from "../context/robotContext";
-import { guiSelectionContext } from "../context/guiSelectionContext";
+import { RobotContext } from "../context/robotContext"
+import { guiSelectionContext } from "../context/guiSelectionContext"
 
-import { ITask } from "../@types/task";
+import { ITask } from "../@types/task"
 
-const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168");
-const localFilepath = "../../assets/gltf/";
-const filename = "abb_irb52_7_120.glb";
-const filepath = isLocalhost ? localFilepath + filename : filename;
+const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168")
+const localFilepath = "../../assets/gltf/"
+const filename = "abb_irb52_7_120.glb"
+const filepath = isLocalhost ? localFilepath + filename : filename
 
-export const JOINT_LIMITS = [[-180*0.0174533, 180*0.0174533], [-63*0.0174533, 110*0.0174533], [-235*0.0174533, 55*0.0174533], [-200*0.0174533, 200*0.0174533], [-115*0.0174533, 115*0.0174533], [-400*0.0174533, 400*0.0174533]];
+export const JOINT_LIMITS = [[-180*0.0174533, 180*0.0174533], [-63*0.0174533, 110*0.0174533], [-235*0.0174533, 55*0.0174533], [-200*0.0174533, 200*0.0174533], [-115*0.0174533, 115*0.0174533], [-400*0.0174533, 400*0.0174533]]
 
 type GLTFResult = GLTF & {
   nodes: {
-    abb_irb52_7_120: THREE.Mesh;
-    base_link: THREE.Mesh;
-    link_1: THREE.Mesh;
-    link_2: THREE.Mesh;
-    link_3: THREE.Mesh;
-    link_4: THREE.Mesh;
-    link_5: THREE.Mesh;
-    link_6: THREE.Mesh;
-  };
+    abb_irb52_7_120: THREE.Mesh
+    base_link: THREE.Mesh
+    link_1: THREE.Mesh
+    link_2: THREE.Mesh
+    link_3: THREE.Mesh
+    link_4: THREE.Mesh
+    link_5: THREE.Mesh
+    link_6: THREE.Mesh
+  }
   materials: {
-    ["default"]: THREE.MeshStandardMaterial;
-    gkmodel0_base_link_geom0: THREE.MeshStandardMaterial;
-    gkmodel0_link_1_geom0: THREE.MeshStandardMaterial;
-    gkmodel0_link_2_geom0: THREE.MeshStandardMaterial;
-    gkmodel0_link_3_geom0: THREE.MeshStandardMaterial;
-    gkmodel0_link_4_geom0: THREE.MeshStandardMaterial;
-    gkmodel0_link_5_geom0: THREE.MeshStandardMaterial;
-    gkmodel0_link_6_geom0: THREE.MeshStandardMaterial;
-  };
-};
+    ["default"]: THREE.MeshStandardMaterial
+    gkmodel0_base_link_geom0: THREE.MeshStandardMaterial
+    gkmodel0_link_1_geom0: THREE.MeshStandardMaterial
+    gkmodel0_link_2_geom0: THREE.MeshStandardMaterial
+    gkmodel0_link_3_geom0: THREE.MeshStandardMaterial
+    gkmodel0_link_4_geom0: THREE.MeshStandardMaterial
+    gkmodel0_link_5_geom0: THREE.MeshStandardMaterial
+    gkmodel0_link_6_geom0: THREE.MeshStandardMaterial
+  }
+}
 
 export const zeroJointAngles = () => {
-  return [Math.PI/4, -Math.PI/4, Math.PI/4, 0, 0, 0];
+  return [Math.PI/4, -Math.PI/4, Math.PI/4, 0, 0, 0]
 }
 const randomJointAngles = () => {
-  const angles = [0, 0, 0, 0, 0, 0];
+  const angles = [0, 0, 0, 0, 0, 0]
   for( let i = 0; i < JOINT_LIMITS.length; i++ ){
-    const big = JOINT_LIMITS[i][1];
-    const small = JOINT_LIMITS[i][0];
-    angles[ i ] = Math.random() * ( big - small ) + small;
+    const big = JOINT_LIMITS[i][1]
+    const small = JOINT_LIMITS[i][0]
+    angles[ i ] = Math.random() * ( big - small ) + small
   }
   return (
     angles
-  );
+  )
 }
 const home = () => {
-  return [0, 0, 0, 0, 0, 0];
+  return [0, 0, 0, 0, 0, 0]
 }
 const prepick = () => {
-  return [Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0];
+  return [Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0]
 }
 const pick = () => {
-  return [Math.PI/6, Math.PI/3, -Math.PI/6, 0, Math.PI/3, 0];
+  return [Math.PI/6, Math.PI/3, -Math.PI/6, 0, Math.PI/3, 0]
 }
 const postpick = () => {
-  return [Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0];
+  return [Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0]
 }
 const preplace = () => {
-  return [-Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0];
+  return [-Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0]
 }
 const place = () => {
-  return [-Math.PI/6, Math.PI/3, -Math.PI/6, 0, Math.PI/3, 0];
+  return [-Math.PI/6, Math.PI/3, -Math.PI/6, 0, Math.PI/3, 0]
 }
 const postplace = () => {
-  return [-Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0];
+  return [-Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0]
 }
 
 export const Mesh_abb_irb52_7_120 = ({
@@ -86,17 +86,17 @@ export const Mesh_abb_irb52_7_120 = ({
   robotCurrent,
   updateTask
 } : {
-  robot: IRobot;
-  selected: boolean;
-  robotCurrent: (childData: string) => void;
-  updateTask: (childData: {id: string, state: string}) => void;
+  robot: IRobot
+  selected: boolean
+  robotCurrent: (childData: string) => void
+  updateTask: (childData: {id: string, state: string}) => void
 }) => {
-  const ref = useRef<THREE.Mesh>(null!);
-  const { nodes, materials } = useGLTF( filepath ) as GLTFResult;
-  const { setGuiSelection } = useContext( guiSelectionContext );
-  const [ jointAngles, setJointAngles ] = useState( robot.jointAngles );
+  const ref = useRef<THREE.Mesh>(null!)
+  const { nodes, materials } = useGLTF( filepath ) as GLTFResult
+  const { setGuiSelection } = useContext( guiSelectionContext )
+  const [ jointAngles, setJointAngles ] = useState( robot.jointAngles )
 
-  const SHADOWS = false;
+  const SHADOWS = false
 
   const [springs, api] = useSpring(
     () => ({
@@ -106,17 +106,17 @@ export const Mesh_abb_irb52_7_120 = ({
     []
   )
 
-  const { tasks } = useContext( RobotContext );
-  const [ currentTask, setCurrentTask ] = useState<ITask>();
+  const { tasks } = useContext( RobotContext )
+  const [ currentTask, setCurrentTask ] = useState<ITask>()
   useEffect(() => {
     const activeTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" ))
     const queuedTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Queued" ))
     if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
-      setCurrentTask( activeTasks[0] );
+      setCurrentTask( activeTasks[0] )
     } else if ( Array.isArray( queuedTasks ) && queuedTasks.length > 0 ) {
       updateTask({id: queuedTasks[0].id, state: "Active"})
     }
-  }, [robot.id, tasks, updateTask]);
+  }, [robot.id, tasks, updateTask])
 
   useEffect(()=>{
     if( currentTask && currentTask.state == "Active" ) { 
@@ -169,37 +169,37 @@ export const Mesh_abb_irb52_7_120 = ({
     }
   }, [api, currentTask, springs.jointAngles.idle, updateTask])
 
-  const [ hovered, hover ] = useState( false );
-  useCursor( hovered );
+  const [ hovered, hover ] = useState( false )
+  useCursor( hovered )
 
   const handleStates = () => { // delta: number
     switch( robot.state ) {
       case "Manual": { 
-        springs.jointAngles.set( robot.jointAngles );
-        setJointAngles( robot.jointAngles );
-        break; 
+        springs.jointAngles.set( robot.jointAngles )
+        setJointAngles( robot.jointAngles )
+        break 
       } 
       case "Auto": {
         if ( currentTask ) {
-          robot.jointAngles = springs.jointAngles.get();
-          setJointAngles( springs.jointAngles.get() );
+          robot.jointAngles = springs.jointAngles.get()
+          setJointAngles( springs.jointAngles.get() )
         } else {
-          springs.jointAngles.set( robot.jointAngles );
-          setJointAngles( robot.jointAngles );
+          springs.jointAngles.set( robot.jointAngles )
+          setJointAngles( robot.jointAngles )
         }
-        break; 
+        break 
       } 
       default: { // Off, Error
-        springs.jointAngles.set( robot.jointAngles );
-        setJointAngles( robot.jointAngles );
-        break; 
+        springs.jointAngles.set( robot.jointAngles )
+        setJointAngles( robot.jointAngles )
+        break 
       } 
     }
-  };
+  }
 
   useFrame(() => ( // _state, delta
     handleStates() // delta
-  ));
+  ))
 
   return (
     <Select enabled={ selected || hovered }>
@@ -264,7 +264,7 @@ export const Mesh_abb_irb52_7_120 = ({
         </mesh>
       </animated.mesh>
     </Select>
-  );
+  )
 }
 
-useGLTF.preload( filepath );
+useGLTF.preload( filepath )

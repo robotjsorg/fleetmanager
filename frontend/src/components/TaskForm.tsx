@@ -1,24 +1,28 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Button, Group, Select } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { JournalId } from "@orbitinghail/sqlsync-worker"
+import { Button, Group, Select } from "@mantine/core"
+import { useForm } from "@mantine/form"
 
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid"
 
-import { useMutate } from "../doctype";
-import { IRobot } from "../@types/robot";
+import { useMutate } from "../doctype"
+import { IRobot } from "../@types/robot"
 
-import { RobotContext } from "../context/robotContext";
-import { locSelectionContext } from "../context/locSelectionContext";
+import { RobotContext } from "../context/robotContext"
+import { locSelectionContext } from "../context/locSelectionContext"
 
-export const TaskForm = ({ docId }: { docId: JournalId }) => {
-  const { robots } = useContext( RobotContext );
-  const { locSelection } = useContext( locSelectionContext );
-  const [filteredRobots, setFilteredRobots] = useState<IRobot[]>([]);
+export const TaskForm = ({
+  docId
+}: {
+  docId: JournalId
+}) => {
+  const { robots } = useContext( RobotContext )
+  const { locSelection } = useContext( locSelectionContext )
+  const [filteredRobots, setFilteredRobots] = useState<IRobot[]>([])
   useEffect(()=>{
-    setFilteredRobots(robots.filter(( robot ) => ( robot.locationid == locSelection )));
-  }, [locSelection, robots]);
+    setFilteredRobots(robots.filter(( robot ) => ( robot.locationid == locSelection )))
+  }, [locSelection, robots])
   
   const form = useForm({
     initialValues: {
@@ -29,24 +33,24 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
       robot: (value) => (value.trim().length === 0 ? "Select Robot" : null),
       description: (value) => (value.trim().length === 0 ? "Select Task" : null)
     }
-  });
-  const mutate = useMutate( docId );
+  })
+  const mutate = useMutate( docId )
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ robot, description }) => {
-        const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4();
+        const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
         mutate({ tag: "CreateTask", id, robotid: robot, description })
           .then(() => {
-            form.reset();
+            form.reset()
           })
           .catch((err) => {
-            form.setFieldError("description", String(err));
-            form.setErrors({ robot: String(err), description: String(err) });
-            console.error("Failed to create task", err);
-          });
+            form.setFieldError("description", String(err))
+            form.setErrors({ robot: String(err), description: String(err) })
+            console.error("Failed to create task", err)
+          })
       }, [mutate, form]
     )
-  );
+  )
 
   return (
     <form onSubmit={handleSubmit}>
@@ -77,5 +81,5 @@ export const TaskForm = ({ docId }: { docId: JournalId }) => {
         <Button variant="default" type="submit">Queue</Button>
       </Group>
     </form>
-  );
-};
+  )
+}

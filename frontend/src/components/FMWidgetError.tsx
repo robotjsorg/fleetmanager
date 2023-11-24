@@ -1,4 +1,4 @@
-import { Text, Divider, Group } from "@mantine/core";
+import { Text, Divider, Group } from "@mantine/core"
 
 export const FMWidgetError = () => {
   return (
@@ -11,5 +11,5 @@ export const FMWidgetError = () => {
         </Text>
       </Group>
     </>
-  );
-};
+  )
+}

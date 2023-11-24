@@ -1,40 +1,38 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react"
 
-import { Text, Button, Divider, NumberInput, Stack, Center } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { Text, Button, Divider, NumberInput, Stack, Center } from "@mantine/core"
+import { useForm } from "@mantine/form"
 
-import { IconLock, IconLockOpen } from "@tabler/icons-react";
+import { IconLock, IconLockOpen } from "@tabler/icons-react"
 
-import { IRobot } from "../@types/robot";
+import { IRobot } from "../@types/robot"
 
-import { RobotContext } from "../context/robotContext";
-import { guiSelectionContext } from "../context/guiSelectionContext";
-import { moveRobotContext } from "../context/moveRobotContext";
+import { RobotContext } from "../context/robotContext"
+import { guiSelectionContext } from "../context/guiSelectionContext"
+import { moveRobotContext } from "../context/moveRobotContext"
 
-import { GRID_BOUND } from "./Fleetmanager";
-import { JournalId } from "@orbitinghail/sqlsync-worker";
+import { GRID_BOUND } from "./Fleetmanager"
 
-const RADS_DEGS = 57.2958;
+const RADS_DEGS = 57.2958
 
 export const FMWidgetOff = ({
   updateRobot
 }: {
-  docId: JournalId;
   updateRobot: (childData: {id: string, toolState: string, state: string, position: number[], rotation: number[], jointAngles: number[]}) => void
 }) => {
-  const { robots } = useContext( RobotContext );
-  const { guiSelection } = useContext( guiSelectionContext );
-  const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)]);
+  const { robots } = useContext( RobotContext )
+  const { guiSelection } = useContext( guiSelectionContext )
+  const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)])
 
-  const { moveRobot, setMoveRobot } = useContext( moveRobotContext );
+  const { moveRobot, setMoveRobot } = useContext( moveRobotContext )
   
-  const [ positionFields, setPositionFields ] = useState( true );
+  const [ positionFields, setPositionFields ] = useState( true )
   
   useEffect(()=>{
-    const index = robots.findIndex((robot) => robot.id == guiSelection);
-    setSelectedRobot( robots[index] );
-    setPositionFields( true );
-  }, [guiSelection, robots]);
+    const index = robots.findIndex((robot) => robot.id == guiSelection)
+    setSelectedRobot( robots[index] )
+    setPositionFields( true )
+  }, [guiSelection, robots])
 
   const moveRobotForm = useForm({
     initialValues: {
@@ -47,7 +45,7 @@ export const FMWidgetOff = ({
       Z: (value) => (value < -GRID_BOUND || value > GRID_BOUND || value.toString() == "" || value.toString() == "-" && "Enter a number"),
       theta: (value) => (value < -Math.PI*RADS_DEGS || value > Math.PI*RADS_DEGS || value.toString() == "" || value.toString() == "-" && "Enter a number"),
     }
-  });
+  })
   const handleMoveRobot = moveRobotForm.onSubmit(
     useCallback(
       ({ X, Z, theta }) => {
@@ -58,21 +56,21 @@ export const FMWidgetOff = ({
           position: [X, selectedRobot.position[1], Z],
           rotation: [selectedRobot.rotation[0], selectedRobot.rotation[1], theta/RADS_DEGS],
           jointAngles: selectedRobot.jointAngles
-        });
+        })
       }
     , [selectedRobot, updateRobot])
-  );
+  )
   useEffect(()=>{
     if ( selectedRobot && positionFields ) {
-      const { X: X, Z: Z, theta: theta } = moveRobotForm.values;
+      const { X: X, Z: Z, theta: theta } = moveRobotForm.values
       if ( X != selectedRobot.position[0] || Z != selectedRobot.position[2] || theta != selectedRobot.rotation[2] ) {
-        moveRobotForm.setFieldValue('X', selectedRobot.position[0]);
-        moveRobotForm.setFieldValue('Z', selectedRobot.position[2]);
-        moveRobotForm.setFieldValue('theta', selectedRobot.rotation[2]*RADS_DEGS);
-        setPositionFields( false );
+        moveRobotForm.setFieldValue('X', selectedRobot.position[0])
+        moveRobotForm.setFieldValue('Z', selectedRobot.position[2])
+        moveRobotForm.setFieldValue('theta', selectedRobot.rotation[2]*RADS_DEGS)
+        setPositionFields( false )
       }
     }
-  }, [positionFields, moveRobotForm, selectedRobot]);
+  }, [positionFields, moveRobotForm, selectedRobot])
 
   return (
     <>
@@ -112,7 +110,7 @@ export const FMWidgetOff = ({
               {...moveRobotForm.getInputProps("Z")}
             />
             <NumberInput disabled={!moveRobot}
-              leftSection={<Text span size="xs">&theta;</Text>}
+              leftSection={<Text span size="xs">&theta</Text>}
               size="xs"
               clampBehavior="blur"
               step={15.0}
@@ -126,5 +124,5 @@ export const FMWidgetOff = ({
         </Center>
       </form>
     </>
-  );
-};
+  )
+}

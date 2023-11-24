@@ -1,125 +1,56 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { sql } from "@orbitinghail/sqlsync-react";
-import { useMantineColorScheme, MantineProvider, Box, Button, Divider, AppShell, Group, Burger, Stack } from "@mantine/core";
-import { useViewportSize, useDisclosure } from "@mantine/hooks";
+import { JournalId } from "@orbitinghail/sqlsync-worker"
+import { sql } from "@orbitinghail/sqlsync-react"
+import { useMantineColorScheme, MantineProvider, Box, Button, Divider, AppShell, Group, Burger, Stack } from "@mantine/core"
+import { useViewportSize, useDisclosure } from "@mantine/hooks"
 
-import { IconChecklist, IconHome, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react";
+import { IconChecklist, IconHome, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react"
 
-import { useMutate, useQuery } from "./doctype";
-import { ILocation } from "./@types/location";
-import { IRobotQuery, IRobot } from "./@types/robot";
-import { ITask } from "./@types/task";
+import { useMutate, useQuery } from "./doctype"
+import { ILocation } from "./@types/location"
+import { IRobotQuery, IRobot } from "./@types/robot"
+import { ITask } from "./@types/task"
 
-import { RobotProvider } from "./context/robotContext";
-import { guiSelectionContext } from "./context/guiSelectionContext";
-import { locSelectionContext } from "./context/locSelectionContext";
-import { moveRobotContext } from "./context/moveRobotContext";
+import { RobotProvider } from "./context/robotContext"
+import { guiSelectionContext } from "./context/guiSelectionContext"
+import { locSelectionContext } from "./context/locSelectionContext"
+import { moveRobotContext } from "./context/moveRobotContext"
 
-import { LocationsView } from "./views/LocationsView";
-import { RobotsView } from "./views/RobotsView";
-import { TasksView } from "./views/TasksView";
+import { LocationsView } from "./views/LocationsView"
+import { RobotsView } from "./views/RobotsView"
+import { TasksView } from "./views/TasksView"
 
-import { ConnectionStatus } from "./components/ConnectionStatus";
-import { Fleetmanager } from "./components/Fleetmanager";
-import { LocationList } from "./components/LocationList";
-import { RobotList } from "./components/RobotList";
-import { FMWidget } from "./components/FMWidget";
+import { ConnectionStatus } from "./components/ConnectionStatus"
+import { LocationList } from "./components/LocationList"
+import { Fleetmanager } from "./components/Fleetmanager"
+import { RobotList } from "./components/RobotList"
+import { FMWidget } from "./components/FMWidget"
 
-import { zeroJointAngles } from "./meshes/Mesh_abb_irb52_7_120";
+import { zeroJointAngles } from "./meshes/Mesh_abb_irb52_7_120"
 
-const NAVBAR_WIDTH   = 300; // nav width 300
-const HEADER_HEIGHT  = 60;  // topbar 60
-const NAVBAR_OFFSET  = 155; // topbar 60 + btns 36 + padding 40 + divider 19
-const CONTENT_OFFSET = 61;  // topbar 60 + divider 1
-const WIDGET_OFFSET  = 117; // topbar 60 + divider (19 * 3)
-const VIEW_OFFSET    = 222; // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
+const NAVBAR_WIDTH   = 300 // nav width 300
+const HEADER_HEIGHT  = 60  // topbar 60
+const NAVBAR_OFFSET  = 155 // topbar 60 + btns 36 + padding 40 + divider 19
+const CONTENT_OFFSET = 61  // topbar 60 + divider 1
+const WIDGET_OFFSET  = 117 // topbar 60 + divider (19 * 3)
+const VIEW_OFFSET    = 222 // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
 
 const randomPosition = () => {
-  const x = 4 * (Math.random() - 0.5);
-  const z = 2 * (Math.random() - 0.5) + 1;
-  return [x, -0.02, z];
-};
+  const x = 4 * (Math.random() - 0.5)
+  const z = 2 * (Math.random() - 0.5) + 1
+  return [x, -0.02, z]
+}
 const zeroRotation = () => {
-  return [-Math.PI/2, 0, -Math.PI/4];
-};
+  return [-Math.PI/2, 0, -Math.PI/4]
+}
 
-export const App = ({ docId }: { docId: JournalId; }) => {
-  const mutate = useMutate( docId );
-
-  // Query DB
-  const { rows: locations } = useQuery<ILocation>(
-    docId,
-    sql`SELECT * FROM locations`
-  );
-  const { rows: robotsQuery } = useQuery<IRobotQuery>(
-    docId,
-    sql`SELECT * FROM robots`
-  );
-  const { rows: tasksQuery } = useQuery<ITask>(
-    docId,
-    sql`SELECT * FROM tasks ORDER BY created_at`
-  );
-
-  const [ route, setPseudoRoute ] = useState("location");
-  const [ locSelection, setLocationSelection ] = useState("c0f67f5f-3414-4e50-9ea7-9ae053aa1f99");  // Select the "Warehouse" location
-  // if ( locSelection == "no selection" ) {
-  //   setLocationSelection("c0f67f5f-3414-4e50-9ea7-9ae053aa1f99");
-  // }
-  const [ guiSelection, setGuiSelection ] = useState("no selection");
-  const [ moveRobot, setMoveRobot ] = useState( false );
-  useEffect(()=>{
-    setMoveRobot( false );
-  }, [guiSelection])
-
-  // Single screen desktop app, no scrolling
-  const { width, height } = useViewportSize();
-  const [ fixHeight, setFixHeight ] = useState( height );
-  useEffect(() => {
-    let minFixHeight = height;
-    if ( width > 1440 ) {
-      minFixHeight = 620;
-    } else if ( width > 1280 ) {
-      minFixHeight = 480;
-    } else if ( width > 960 ) {
-      minFixHeight = 320;
-    } else if ( width > 640 ) {
-      minFixHeight = 240;
-    } else if ( width < 480 ) {
-      minFixHeight = 160;
-    }
-    if ( height > minFixHeight ) {
-      setFixHeight( height );
-    } else {
-      setFixHeight( minFixHeight );
-    }
-  }, [height, width]);
-
-  // Menu control
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure(false)
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false)
-  const subpageOpened = ( route == "locations" || route == "robots" || route == "tasks" )
-  const closeNav = () => {
-    if ( desktopOpened ) {
-      toggleDesktop()
-    }
-    if ( mobileOpened ) {
-      toggleMobile()
-    }
-  }
-
-  // MantineProvider child
-  const ToggleMantineTheme = () => {
-    const { colorScheme, setColorScheme } = useMantineColorScheme();
-    return (
-      <Button variant="default"
-        onClick={() => setColorScheme( colorScheme == "light" ? "dark" : "light" )}
-        leftSection={ colorScheme == "light" ? <IconMoon size={18} /> : <IconSun size={18} /> }>
-        Theme
-      </Button>
-    );
-  };
+export const App = ({
+  docId
+}: {
+  docId: JournalId
+}) => {
+  const mutate = useMutate( docId )
 
   // Initialize database
   const [ initDB, setInitDB ] = useState( true )
@@ -135,6 +66,20 @@ export const App = ({ docId }: { docId: JournalId; }) => {
       setInitDB( false )
     };
   }, [initDB, mutate])
+
+  // Query DB
+  const { rows: locations } = useQuery<ILocation>(
+    docId,
+    sql`SELECT * FROM locations`
+  );
+  const { rows: robotsQuery } = useQuery<IRobotQuery>(
+    docId,
+    sql`SELECT * FROM robots`
+  );
+  const { rows: tasksQuery } = useQuery<ITask>(
+    docId,
+    sql`SELECT * FROM tasks ORDER BY created_at`
+  );
 
   // Store robots query in state and add joint angles and tool state
   const [ robots, setRobots ] = useState<IRobot[]>([]);
@@ -159,7 +104,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   }, [robotsQuery])
 
   const [, forceUpdate] = useReducer(x => x + 1 as number, 0)
-
+  
   // Update robot properties on Fleetmanager and RobotSelection callback
   //   TODO: database mutation
   const updateRobot = (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => {
@@ -184,22 +129,79 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   // Update task state on Mesh callback
   //   TODO: database mutation
   const updateTask = (childData: {id: string, state: string}) => {
-    const index = tasks.findIndex((task) => task.id == childData.id);
-    tasks[index].state = childData.state;
-    setTasks(tasks);
-    forceUpdate();
+    const index = tasks.findIndex((task) => task.id == childData.id)
+    tasks[index].state = childData.state
+    setTasks(tasks)
+    forceUpdate()
+  }
+
+  // Single screen desktop app, no scrolling
+  const { width, height } = useViewportSize()
+  const [ fixHeight, setFixHeight ] = useState( height )
+  useEffect(() => {
+    let minFixHeight = height
+    if ( width > 1440 ) {
+      minFixHeight = 620
+    } else if ( width > 1280 ) {
+      minFixHeight = 480
+    } else if ( width > 960 ) {
+      minFixHeight = 320
+    } else if ( width > 640 ) {
+      minFixHeight = 240
+    } else if ( width < 480 ) {
+      minFixHeight = 160
+    }
+    if ( height > minFixHeight ) {
+      setFixHeight( height )
+    } else {
+      setFixHeight( minFixHeight )
+    }
+  }, [height, width])
+
+  
+  const [ guiSelection, setGuiSelection ] = useState( "no selection" );
+  const [ moveRobot, setMoveRobot ] = useState( false );
+  useEffect(()=>{
+    setMoveRobot( false );
+  }, [guiSelection])
+
+  // Menu control
+  const [ route, setPseudoRoute ] = useState( "location" );
+  const [ mobileOpened, { toggle: toggleMobile } ] = useDisclosure( false )
+  const [ desktopOpened, { toggle: toggleDesktop } ] = useDisclosure( false )
+  const subpageOpened = ( route == "locations" || route == "robots" || route == "tasks" )
+  const closeNav = () => {
+    if ( desktopOpened ) {
+      toggleDesktop()
+    }
+    if ( mobileOpened ) {
+      toggleMobile()
+    }
+  }
+
+  // MantineProvider child
+  const ToggleMantineTheme = () => {
+    const { colorScheme, setColorScheme } = useMantineColorScheme();
+    return (
+      <Button variant="default"
+        onClick={() => setColorScheme( colorScheme == "light" ? "dark" : "light" )}
+        leftSection={ colorScheme == "light" ? <IconMoon size={18} /> : <IconSun size={18} /> }>
+        Theme
+      </Button>
+    )
   }
 
   // Selected location description
-  const [ selectedLocationDescription, setSelectedLocationDescription ] = useState("");
+  const [ locSelection, setLocationSelection ] = useState( "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ) // Warehouse
+  const [ selectedLocationDescription, setSelectedLocationDescription ] = useState("")
   useEffect(()=>{
     if ( Array.isArray( locations ) && locations.length > 0 ) {
-      const selectedLocation = locations.filter(( location ) => ( location.id == locSelection ));
+      const selectedLocation = locations.filter(( location ) => ( location.id == locSelection ))
       if ( Array.isArray( selectedLocation ) && selectedLocation.length > 0 ) {
-        setSelectedLocationDescription( selectedLocation[0].description );
+        setSelectedLocationDescription( selectedLocation[0].description )
       }
     }
-  }, [locSelection, locations]);
+  }, [locSelection, locations])
 
   return (
     <MantineProvider defaultColorScheme="dark">
@@ -324,5 +326,5 @@ export const App = ({ docId }: { docId: JournalId; }) => {
         </locSelectionContext.Provider>
       </RobotProvider>
     </MantineProvider>
-  );
-};
+  )
+}

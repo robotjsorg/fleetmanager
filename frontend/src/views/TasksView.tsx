@@ -5,7 +5,13 @@ import { TaskList } from "../components/TaskList";
 // import { TaskTable } from "../components/TaskTable";
 import { TaskForm } from "../components/TaskForm";
 
-export const TasksView = ({ docId, h }: { docId: JournalId; h: number; }) => {  
+export const TasksView = ({
+  docId,
+  h
+}: {
+  docId: JournalId
+  h: number
+}) => {  
   return (
     <>
       <Divider />

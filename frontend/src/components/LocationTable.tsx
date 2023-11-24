@@ -1,11 +1,11 @@
-import { useContext } from "react";
+import { useContext } from "react"
 
-import { Table } from "@mantine/core";
+import { Table } from "@mantine/core"
 
-import { RobotContext } from "../context/robotContext";
+import { RobotContext } from "../context/robotContext"
 
 export const LocationTable = () => {
-  const { locations } = useContext( RobotContext );
+  const { locations } = useContext( RobotContext )
   
   return (
     <Table>
@@ -22,5 +22,5 @@ export const LocationTable = () => {
       ))}
       </Table.Tbody>
     </Table>
-  );
-};
+  )
+}

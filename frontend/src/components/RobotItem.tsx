@@ -1,42 +1,42 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Text, ActionIcon, Group, useMantineContext } from "@mantine/core";
-import { useHover } from "@mantine/hooks";
+import { JournalId } from "@orbitinghail/sqlsync-worker"
+import { Text, ActionIcon, Group, useMantineContext } from "@mantine/core"
+import { useHover } from "@mantine/hooks"
 
-import { IconX } from "@tabler/icons-react";
+import { IconX } from "@tabler/icons-react"
 
-import { useMutate } from "../doctype";
-import { IRobot } from "../@types/robot";
+import { useMutate } from "../doctype"
+import { IRobot } from "../@types/robot"
 
-import { guiSelectionContext } from "../context/guiSelectionContext";
+import { guiSelectionContext } from "../context/guiSelectionContext"
 
 export const RobotItem = ({
   docId,
   robot,
   fbDisabled
 }: {
-  docId: JournalId;
-  robot: IRobot;
-  fbDisabled: boolean;
+  docId: JournalId
+  robot: IRobot
+  fbDisabled: boolean
 }) => {
-  const theme = useMantineContext();
-  const mutate = useMutate( docId );
+  const theme = useMantineContext()
+  const mutate = useMutate( docId )
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteRobot", id: robot.id })
       .catch((err) => {
-        console.error("Failed to delete", err);
-      });
-  }, [robot.id, mutate]);
+        console.error("Failed to delete", err)
+      })
+  }, [robot.id, mutate])
 
-  const { guiSelection, setGuiSelection } = useContext(guiSelectionContext);
+  const { guiSelection, setGuiSelection } = useContext(guiSelectionContext)
   const handleSelect = () => {
     if ( fbDisabled ) { // Counter-intuitive
-      setGuiSelection(robot.id);
+      setGuiSelection(robot.id)
     }
-  };
+  }
 
-  const { hovered, ref } = useHover();
+  const { hovered, ref } = useHover()
   
   return (
     // <Button onClick={ handleSelect }
@@ -60,5 +60,5 @@ export const RobotItem = ({
         </ActionIcon>
       }
     </Group>
-  );
-};
+  )
+}

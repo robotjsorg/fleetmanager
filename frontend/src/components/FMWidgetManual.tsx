@@ -1,38 +1,38 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react"
 
-import { Text, Button, Divider, NumberInput, Group, Stack } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { Text, Button, Divider, NumberInput, Group, Stack } from "@mantine/core"
+import { useForm } from "@mantine/form"
 
-import { IconAngle, IconArrowBadgeLeft, IconArrowBadgeRight, IconTool } from "@tabler/icons-react";
+import { IconAngle, IconArrowBadgeLeft, IconArrowBadgeRight, IconTool } from "@tabler/icons-react"
 
-import { IRobot } from "../@types/robot";
+import { IRobot } from "../@types/robot"
 
-import { RobotContext } from "../context/robotContext";
-import { guiSelectionContext } from "../context/guiSelectionContext";
+import { RobotContext } from "../context/robotContext"
+import { guiSelectionContext } from "../context/guiSelectionContext"
 
-import { JOINT_LIMITS } from "../meshes/Mesh_abb_irb52_7_120";
+import { JOINT_LIMITS } from "../meshes/Mesh_abb_irb52_7_120"
 
-const RADS_DEGS = 57.2958;
+const RADS_DEGS = 57.2958
 
 export const FMWidgetManual = ({
   updateRobot
 }: {
   updateRobot: (childData: {id: string, toolState: string, state: string, position: number[], rotation: number[], jointAngles: number[]}) => void
 }) => {
-  const { robots } = useContext( RobotContext );
-  const { guiSelection } = useContext( guiSelectionContext );
-  const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)]);
+  const { robots } = useContext( RobotContext )
+  const { guiSelection } = useContext( guiSelectionContext )
+  const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)])
 
-  const [ toggleManual, setToggleManual ] = useState( true );
+  const [ toggleManual, setToggleManual ] = useState( true )
 
-  const [ , setToolState ] = useState("");
-  const [ jointAngleFields, setJointAngleFields ] = useState( true );
+  // const [ , setToolState ] = useState("")
+  const [ jointAngleFields, setJointAngleFields ] = useState( true )
   
   useEffect(()=>{
-    const index = robots.findIndex((robot) => robot.id == guiSelection);
-    setSelectedRobot( robots[index] );
-    setJointAngleFields( true );
-  }, [guiSelection, robots]);
+    const index = robots.findIndex((robot) => robot.id == guiSelection)
+    setSelectedRobot( robots[index] )
+    setJointAngleFields( true )
+  }, [guiSelection, robots])
 
   const jointsForm = useForm({
     initialValues: {
@@ -51,7 +51,7 @@ export const FMWidgetManual = ({
       J5: (value) => (value/RADS_DEGS < JOINT_LIMITS[4][0] || value/RADS_DEGS > JOINT_LIMITS[4][1] || value.toString() == "" || value.toString() == "-" && "Enter a number"),
       J6: (value) => (value/RADS_DEGS < JOINT_LIMITS[5][0] || value/RADS_DEGS > JOINT_LIMITS[5][1] || value.toString() == "" || value.toString() == "-" && "Enter a number")
     }
-  });
+  })
   const handleManualJoints = jointsForm.onSubmit(
     useCallback(
       ({ J1, J2, J3, J4, J5, J6 }) => {
@@ -66,26 +66,28 @@ export const FMWidgetManual = ({
         })
       }
     , [selectedRobot, updateRobot])
-  );
+  )
   useEffect(()=>{
     if ( selectedRobot && jointAngleFields ) {
-      const { J1: J1, J2: J2, J3: J3, J4: J4, J5: J5, J6: J6 } = jointsForm.values;
+      const { J1: J1, J2: J2, J3: J3, J4: J4, J5: J5, J6: J6 } = jointsForm.values
       if ( J1 != selectedRobot.jointAngles[0] || J2 != selectedRobot.jointAngles[1] || J3 != selectedRobot.jointAngles[2] || 
            J4 != selectedRobot.jointAngles[3] || J5 != selectedRobot.jointAngles[4] || J6 != selectedRobot.jointAngles[5]
       ) {
-        jointsForm.setFieldValue('J1', selectedRobot.jointAngles[0]*RADS_DEGS);
-        jointsForm.setFieldValue('J2', selectedRobot.jointAngles[1]*RADS_DEGS);
-        jointsForm.setFieldValue('J3', selectedRobot.jointAngles[2]*RADS_DEGS);
-        jointsForm.setFieldValue('J4', selectedRobot.jointAngles[3]*RADS_DEGS);
-        jointsForm.setFieldValue('J5', selectedRobot.jointAngles[4]*RADS_DEGS);
-        jointsForm.setFieldValue('J6', selectedRobot.jointAngles[5]*RADS_DEGS);
-        setJointAngleFields( false );
+        jointsForm.setFieldValue('J1', selectedRobot.jointAngles[0]*RADS_DEGS)
+        jointsForm.setFieldValue('J2', selectedRobot.jointAngles[1]*RADS_DEGS)
+        jointsForm.setFieldValue('J3', selectedRobot.jointAngles[2]*RADS_DEGS)
+        jointsForm.setFieldValue('J4', selectedRobot.jointAngles[3]*RADS_DEGS)
+        jointsForm.setFieldValue('J5', selectedRobot.jointAngles[4]*RADS_DEGS)
+        jointsForm.setFieldValue('J6', selectedRobot.jointAngles[5]*RADS_DEGS)
+        setJointAngleFields( false )
       }
     }
-  }, [jointAngleFields, jointsForm, selectedRobot]);
+  }, [jointAngleFields, jointsForm, selectedRobot])
 
   const handleActuate = () => {
-    selectedRobot.toolState = "Actuated";
+    // selectedRobot.toolState = "Actuated"
+    // setSelectedRobot( selectedRobot )
+    // setToolState("Actuated")
     updateRobot({
       id: selectedRobot.id,
       state: selectedRobot.state,
@@ -93,12 +95,12 @@ export const FMWidgetManual = ({
       position: selectedRobot.position,
       rotation: selectedRobot.rotation,
       jointAngles: selectedRobot.jointAngles
-    });
-    setSelectedRobot( selectedRobot );
-    setToolState("Actuated");
-  };
+    })
+  }
   const handleUnactuate = () => {
-    selectedRobot.toolState = "Unactuated";
+    // selectedRobot.toolState = "Unactuated"
+    // setSelectedRobot( selectedRobot )
+    // setToolState("Unactuated")
     updateRobot({
       id: selectedRobot.id,
       state: selectedRobot.state,
@@ -106,10 +108,8 @@ export const FMWidgetManual = ({
       position: selectedRobot.position,
       rotation: selectedRobot.rotation,
       jointAngles: selectedRobot.jointAngles
-    });
-    setSelectedRobot( selectedRobot );
-    setToolState("Unactuated");
-  };
+    })
+  }
 
   return (
     <>
@@ -208,5 +208,5 @@ export const FMWidgetManual = ({
         </form> 
       }
     </>
-  );
-};
+  )
+}

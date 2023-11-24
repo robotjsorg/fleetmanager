@@ -1,11 +1,17 @@
-import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Box, Stack, Divider } from "@mantine/core";
+import { JournalId } from "@orbitinghail/sqlsync-worker"
+import { Box, Stack, Divider } from "@mantine/core"
 
-import { LocationList } from "../components/LocationList";
-// import { LocationTable } from "../components/LocationTable";
-import { LocationForm } from "../components/LocationForm";
+import { LocationList } from "../components/LocationList"
+// import { LocationTable } from "../components/LocationTable"
+import { LocationForm } from "../components/LocationForm"
 
-export const LocationsView = ({ docId, h }: { docId: JournalId; h: number; }) => {
+export const LocationsView = ({
+  docId,
+  h
+}: {
+  docId: JournalId
+  h: number
+}) => {
   return (
     <>
       <Divider />
@@ -18,5 +24,5 @@ export const LocationsView = ({ docId, h }: { docId: JournalId; h: number; }) =>
         <LocationForm docId={docId} />
       </Box>
     </>
-  );
-};
+  )
+}
