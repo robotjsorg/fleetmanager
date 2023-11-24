@@ -27,18 +27,9 @@ export const FMWidget = ({
   updateRobot: (childData: {id: string, toolState: string, state: string, position: number[], rotation: number[], jointAngles: number[]}) => void
 }) => {
   const theme = useMantineContext();
-  const { robots, tasks } = useContext( RobotContext );
+  const { robots } = useContext( RobotContext );
   const { guiSelection } = useContext( guiSelectionContext );
   const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)]);
-  const [ , setCurrentTask ] = useState<ITask>();
-  useEffect(() => {
-    const activeTasks = tasks.filter(( task ) => ( task.robotid == guiSelection && task.state == "Active" )).toSorted();
-    if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
-      setCurrentTask( activeTasks[0] );
-    } else {
-      setCurrentTask( undefined );
-    }
-  }, [guiSelection, tasks]);
 
   const { setMoveRobot } = useContext( moveRobotContext );
 

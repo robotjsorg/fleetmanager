@@ -115,7 +115,6 @@ export const Mesh_abb_irb52_7_120 = ({
       setCurrentTask( activeTasks[0] );
     } else if ( Array.isArray( queuedTasks ) && queuedTasks.length > 0 ) {
       updateTask({id: queuedTasks[0].id, state: "Active"})
-      setCurrentTask(undefined) // force re-render
     }
   }, [robot.id, tasks, updateTask]);
 

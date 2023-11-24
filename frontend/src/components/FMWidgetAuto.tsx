@@ -24,11 +24,9 @@ export const FMWidgetAuto = ({
   const [ selectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)]);
   const [ currentTask, setCurrentTask ] = useState<ITask>();
   useEffect(() => {
-    const activeTasks = tasks.filter(( task ) => ( task.robotid == guiSelection && task.state == "Active" )).toSorted();
+    const activeTasks = tasks.filter(( task ) => ( task.robotid == guiSelection && task.state == "Active" ));
     if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
       setCurrentTask( activeTasks[0] );
-    } else {
-      setCurrentTask( undefined );
     }
   }, [guiSelection, tasks]);
 
