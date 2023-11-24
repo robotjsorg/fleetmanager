@@ -22,9 +22,11 @@ export const GRID_BOUND = 4;
 const state = proxy({ current: "" });
 
 export const Fleetmanager = ({
-  updateRobot
+  updateRobot,
+  updateTask
 }: {
-  updateRobot: (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => void
+  updateRobot: (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => void;
+  updateTask: (childData: {id: string, state: string}) => void;
 }) => {
   const theme = useMantineContext();
   const { robots } = useContext( RobotContext );
@@ -97,7 +99,7 @@ export const Fleetmanager = ({
           <Outline visibleEdgeColor={theme.colorScheme == "dark" ? "white" : "blue"} blur edgeStrength={100} width={1000} />
         </EffectComposer>
         {locationsRobots.map((robot) => (
-          <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent}/>
+          <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent} updateTask={updateTask}/>
         ))}
       </Selection>
 

@@ -76,18 +76,6 @@ export const FMWidget = ({
   };
   const handleOn = () => {
     handleReset();
-    // selectedRobot.state = "Error";
-    // updateRobot({
-    //   id: selectedRobot.id,
-    //   state: "Error",
-    //   toolState: selectedRobot.toolState,
-    //   position: selectedRobot.position,
-    //   rotation: selectedRobot.rotation,
-    //   jointAngles: selectedRobot.jointAngles
-    // });
-    // setSelectedRobot( selectedRobot );
-    // setState("Error");
-    // setMoveRobot(false);
   };
   const handleReset = () => {
     selectedRobot.state = "Manual";

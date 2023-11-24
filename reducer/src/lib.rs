@@ -22,7 +22,7 @@ enum Mutation {
 
     DeleteTask { id: String },
 
-    UpdateTaskState { id: String, state: String }
+    UpdateTask { id: String, state: String }
 }
 
 init_reducer!(reducer);
@@ -77,7 +77,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 "48228b08-1b8a-4d54-9b90-16f1f73fb1cc",
                 "24db4c5b-1e3a-4853-8316-1d6ad07beed1",
                 "Random positions (continuous)",
-                "Active"
+                "Queued"
             ).await;
             execute!(
                 "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
@@ -90,7 +90,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 "ea131ae6-13a8-4a23-9436-5f46f3dcffd1",
                 "402e7545-512b-4b7d-b570-e94311b38ab6",
                 "Move pre-pick",
-                "Active"
+                "Queued"
             ).await;
             execute!(
                 "INSERT OR IGNORE INTO robots (id, locationid, description, created_at) VALUES (?, ?, ?, datetime('now'))",
@@ -173,7 +173,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
             execute!("DELETE FROM tasks WHERE id = ?", id).await;
         }
 
-        Mutation::UpdateTaskState { id, state } => {
+        Mutation::UpdateTask { id, state } => {
             execute!(
                 "UPDATE tasks SET state = ? WHERE id = ?",
                 state,

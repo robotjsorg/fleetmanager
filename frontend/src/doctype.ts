@@ -42,7 +42,7 @@ export type Mutation =
       id: string;
     }
   | {
-      tag: "UpdateTaskState";
+      tag: "UpdateTask";
       id: string;
       state: string;
   };

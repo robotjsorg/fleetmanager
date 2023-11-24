@@ -35,10 +35,7 @@ export const FMWidgetAuto = ({
   const autoSelectForm = useForm({
     initialValues: {
       description: ""
-    },
-    // validate: {
-    //   description: (value) => (value.trim().length === 0 ? "Select Task" : null)
-    // }
+    }
   });
 
   const mutate = useMutate( docId );
@@ -78,16 +75,6 @@ export const FMWidgetAuto = ({
             {currentTask ? currentTask.state : "-"}
           </Text>
         </Flex>
-        {/* <Flex w="50%" gap="xs" px="xs" direction="column">
-          <Group justify="center">
-            <Button variant="default" size="xs" onClick={()=>{ currentTask ? currentTask.state = "Failed" : null }} disabled={ currentTask?.state != "Active" }>
-              <IconPlayerStop size={18} />
-            </Button>
-            <Button variant="default" size="xs" onClick={()=>{ currentTask ? currentTask.state = "Paused" : null }} disabled={ currentTask?.state != "Active" }>
-              <IconPlayerPause size={18} />
-            </Button>
-          </Group>
-        </Flex> */}
       </Group>
       <Center>
         <form onSubmit={handleAutoSelect}>

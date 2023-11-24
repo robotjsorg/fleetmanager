@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { sql } from "@orbitinghail/sqlsync-react";
@@ -57,7 +57,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
     docId,
     sql`SELECT * FROM robots`
   );
-  const { rows: tasks } = useQuery<ITask>(
+  const { rows: tasksQuery } = useQuery<ITask>(
     docId,
     sql`SELECT * FROM tasks ORDER BY created_at`
   );
@@ -97,19 +97,19 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   }, [height, width]);
 
   // Menu control
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure(false);
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false);
-  const subpageOpened = ( route == "locations" || route == "robots" || route == "tasks" );
+  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure(false)
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false)
+  const subpageOpened = ( route == "locations" || route == "robots" || route == "tasks" )
   const closeNav = () => {
     if ( desktopOpened ) {
-      toggleDesktop();
+      toggleDesktop()
     }
     if ( mobileOpened ) {
-      toggleMobile();
+      toggleMobile()
     }
   }
 
-  // Has to be a child of MantineProvider
+  // MantineProvider child
   const ToggleMantineTheme = () => {
     const { colorScheme, setColorScheme } = useMantineColorScheme();
     return (
@@ -122,24 +122,24 @@ export const App = ({ docId }: { docId: JournalId; }) => {
   };
 
   // Initialize database
-  const [ initDB, setInitDB ] = useState( true );
+  const [ initDB, setInitDB ] = useState( true )
   useEffect(() => {
     if ( initDB ){
       console.log("[INFO] Init DB")
       mutate({ tag: "InitSchema" })
-        .catch(( err ) => {console.error( "Failed to init schema", err )});
+        .catch(( err ) => {console.error( "Failed to init schema", err )})
       mutate({ tag: "PopulateDB" })
-        .catch(( err ) => {console.error( "Failed to populate database", err )});
+        .catch(( err ) => {console.error( "Failed to populate database", err )})
     }
     return () => {
-      setInitDB( false );
+      setInitDB( false )
     };
-  }, [initDB, mutate]);
+  }, [initDB, mutate])
 
-  // Add data to robots
+  // Store robots query in state and add joint angles and tool state
   const [ robots, setRobots ] = useState<IRobot[]>([]);
   useEffect(()=>{
-    const newRobots: IRobot[] = [];
+    const newRobots: IRobot[] = []
 
     if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
       robotsQuery.map(( robot ) => ( 
@@ -150,28 +150,45 @@ export const App = ({ docId }: { docId: JournalId; }) => {
         robot.id == "402e7545-512b-4b7d-b570-e94311b38ab6" ? robot.state = "Auto" :
         robot.state = "Off"
       ));
-      newRobots.filter((robot) => (robot.position = randomPosition()));
-      newRobots.filter((robot) => (robot.rotation = zeroRotation()));
-      newRobots.filter((robot) => (robot.jointAngles = zeroJointAngles()));
-      newRobots.filter((robot) => (robot.toolState = "Unactuated"));
-      setRobots(newRobots);
+      newRobots.filter((robot) => (robot.position = randomPosition()))
+      newRobots.filter((robot) => (robot.rotation = zeroRotation()))
+      newRobots.filter((robot) => (robot.jointAngles = zeroJointAngles()))
+      newRobots.filter((robot) => (robot.toolState = "Unactuated"))
+      setRobots(newRobots)
     }
-  }, [robotsQuery]);
+  }, [robotsQuery])
 
-  const [, forceUpdate] = useReducer(x => x + 1 as number, 0);
-  // Update robot position on Fleetmanager and RobotSelection callback TODO: database mutation
+  const [, forceUpdate] = useReducer(x => x + 1 as number, 0)
+
+  // Update robot properties on Fleetmanager and RobotSelection callback
+  //   TODO: database mutation
   const updateRobot = (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => {
-    const index = robots.findIndex((robot) => robot.id == childData.id);
-    robots[index].state = childData.state;
-    robots[index].toolState = childData.toolState;
-    robots[index].position = childData.position;
-    robots[index].rotation = childData.rotation;
-    robots[index].jointAngles = childData.jointAngles;
-    setRobots(robots);
-    forceUpdate();
+    const index = robots.findIndex((robot) => robot.id == childData.id)
+    robots[index].state = childData.state
+    robots[index].toolState = childData.toolState
+    robots[index].position = childData.position
+    robots[index].rotation = childData.rotation
+    robots[index].jointAngles = childData.jointAngles
+    setRobots(robots)
+    forceUpdate()
   }
 
-  // TODO: Set most recent Queued task to Active is robot has not task and is in Auto
+  // Store tasks query in state
+  const [ tasks, setTasks ] = useState<ITask[]>([]);
+  useEffect(()=>{
+    if ( Array.isArray( tasksQuery ) && tasksQuery.length > 0 ) {
+      setTasks(tasksQuery)
+    }
+  }, [tasksQuery])
+
+  // Update task state on Mesh callback
+  //   TODO: database mutation
+  const updateTask = (childData: {id: string, state: string}) => {
+    const index = tasks.findIndex((task) => task.id == childData.id);
+    tasks[index].state = childData.state;
+    setTasks(tasks);
+    forceUpdate();
+  }
 
   // Selected location description
   const [ selectedLocationDescription, setSelectedLocationDescription ] = useState("");
@@ -274,7 +291,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                 : route == "location" && // Fleetmanager
                   <Box h={ fixHeight - CONTENT_OFFSET }>
                     <Divider />
-                    <Fleetmanager updateRobot={updateRobot} />
+                    <Fleetmanager updateRobot={updateRobot} updateTask={updateTask} />
                   </Box>
                 }
               </AppShell.Main>

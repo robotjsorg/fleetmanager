@@ -83,11 +83,13 @@ const postplace = () => {
 export const Mesh_abb_irb52_7_120 = ({
   robot,
   selected,
-  robotCurrent
+  robotCurrent,
+  updateTask
 } : {
   robot: IRobot;
   selected: boolean;
   robotCurrent: (childData: string) => void;
+  updateTask: (childData: {id: string, state: string}) => void;
 }) => {
   const ref = useRef<THREE.Mesh>(null!);
   const { nodes, materials } = useGLTF( filepath ) as GLTFResult;
@@ -107,63 +109,66 @@ export const Mesh_abb_irb52_7_120 = ({
   const { tasks } = useContext( RobotContext );
   const [ currentTask, setCurrentTask ] = useState<ITask>();
   useEffect(() => {
-    const activeTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" )).toSorted();
-    const queuedTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Queued" )).toSorted();
+    const activeTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" ))
+    const queuedTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Queued" ))
     if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
       setCurrentTask( activeTasks[0] );
-    } else if ( !Array.isArray( activeTasks ) || activeTasks.length == 0 ) {
-      if ( Array.isArray( queuedTasks ) && queuedTasks.length > 0 && robot.state == "Auto" ) {
-        queuedTasks[0].state = "Active" // TODO: THIS SHOULD BE A CALLBACK
-        setCurrentTask( queuedTasks[0] );
-      }
+    } else if ( Array.isArray( queuedTasks ) && queuedTasks.length > 0 ) {
+      updateTask({id: queuedTasks[0].id, state: "Active"})
+      setCurrentTask(undefined) // force re-render
     }
-  }, [robot.id, robot.state, tasks]);
+  }, [robot.id, tasks, updateTask]);
 
   useEffect(()=>{
-    if( currentTask ) { 
-      if ( currentTask.state == "Active" ) {
-        if ( currentTask.description == "Random positions (continuous)" ) {
-          if ( springs.jointAngles.idle ) {
-            api.start({
-              jointAngles: randomJointAngles()
-            })
-          }
-        } else if ( currentTask.description == "Home" ) {
+    if( currentTask && currentTask.state == "Active" ) { 
+      if ( currentTask.description == "Random positions (continuous)" ) {
+        if ( springs.jointAngles.idle ) {
+          api.stop()
           api.start({
-            jointAngles: home()
-          })
-        } else if ( currentTask.description == "Move pre-pick" ) {
-          api.start({
-            jointAngles: prepick()
-          })
-        } else if ( currentTask.description == "Move pick" ) {
-          api.start({
-            jointAngles: pick()
-          })
-        } else if ( currentTask.description == "Move post-pick" ) {
-          api.start({
-            jointAngles: postpick()
-          })
-        } else if ( currentTask.description == "Move pre-place" ) {
-          api.start({
-            jointAngles: preplace()
-          })
-        } else if ( currentTask.description == "Move place" ) {
-          api.start({
-            jointAngles: place()
-          })
-        } else if ( currentTask.description == "Move post-place" ) {
-          api.start({
-            jointAngles: postplace()
+            jointAngles: randomJointAngles()
           })
         }
-        // TODO: THIS SHOULD BE A CALLBACK
-        if ( springs.jointAngles.idle && currentTask.description != "Random positions (continuous)" && currentTask.description != "Pick and Place (continuous)" ) {
-          currentTask.state = "Completed"
-        }
+      } else if ( currentTask.description == "Home" ) {
+        api.stop()
+        api.start({
+          jointAngles: home()
+        })
+      } else if ( currentTask.description == "Move pre-pick" ) {
+        api.stop()
+        api.start({
+          jointAngles: prepick()
+        })
+      } else if ( currentTask.description == "Move pick" ) {
+        api.stop()
+        api.start({
+          jointAngles: pick()
+        })
+      } else if ( currentTask.description == "Move post-pick" ) {
+        api.stop()
+        api.start({
+          jointAngles: postpick()
+        })
+      } else if ( currentTask.description == "Move pre-place" ) {
+        api.stop()
+        api.start({
+          jointAngles: preplace()
+        })
+      } else if ( currentTask.description == "Move place" ) {
+        api.stop()
+        api.start({
+          jointAngles: place()
+        })
+      } else if ( currentTask.description == "Move post-place" ) {
+        api.stop()
+        api.start({
+          jointAngles: postplace()
+        })
+      }
+      if ( springs.jointAngles.idle && currentTask.description != "Random positions (continuous)" ) {
+        updateTask({id: currentTask.id, state: "Completed"})
       }
     }
-  }, [api, currentTask, springs.jointAngles.idle])
+  }, [api, currentTask, springs.jointAngles.idle, updateTask])
 
   const [ hovered, hover ] = useState( false );
   useCursor( hovered );
