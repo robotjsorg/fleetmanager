@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { sql } from "@orbitinghail/sqlsync-react";
@@ -297,11 +297,22 @@ export const App = ({ docId }: { docId: JournalId; }) => {
               </AppShell.Main>
               <AppShell.Aside withBorder={true}>
                 <Stack>
-                  <Stack px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 } visibleFrom="md"> 
+                  { guiSelection == "no selection" ?
+                    <Stack hiddenFrom="md" px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
+                      <Divider label="Robots" labelPosition="center" />
+                      <RobotList docId={docId} fbDisabled={true} />
+                    </Stack>
+                  : 
+                    <Box hiddenFrom="md" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
+                      <Divider />
+                      <FMWidget docId={docId} updateRobot={updateRobot} />
+                    </Box>
+                  }
+                  <Stack visibleFrom="md" px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
                     <Divider label="Robots" labelPosition="center" />
                     <RobotList docId={docId} fbDisabled={true} />
                   </Stack>
-                  <Box h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
+                  <Box visibleFrom="md"  h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
                     <Divider />
                     <FMWidget docId={docId} updateRobot={updateRobot} />
                   </Box>
