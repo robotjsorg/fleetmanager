@@ -25,7 +25,7 @@ import { ConnectionStatus } from "./components/ConnectionStatus";
 import { Fleetmanager } from "./components/Fleetmanager";
 import { LocationList } from "./components/LocationList";
 import { RobotList } from "./components/RobotList";
-import { FleetmanagerWidget } from "./components/FleetmanagerWidget";
+import { FMWidget } from "./components/FMWidget";
 
 import { zeroJointAngles } from "./meshes/Mesh_abb_irb52_7_120";
 
@@ -286,7 +286,7 @@ export const App = ({ docId }: { docId: JournalId; }) => {
                   </Stack>
                   <Box h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
                     <Divider />
-                    <FleetmanagerWidget docId={docId} updateRobot={updateRobot} />
+                    <FMWidget docId={docId} updateRobot={updateRobot} />
                   </Box>
                 </Stack>
               </AppShell.Aside>
