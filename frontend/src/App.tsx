@@ -157,7 +157,6 @@ export const App = ({
       setFixHeight( minFixHeight )
     }
   }, [height, width])
-
   
   const [ guiSelection, setGuiSelection ] = useState( "no selection" );
   const [ moveRobot, setMoveRobot ] = useState( false );
@@ -192,8 +191,8 @@ export const App = ({
   }
 
   // Selected location description
-  const [ locSelection, setLocationSelection ] = useState( "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ) // Warehouse
-  const [ selectedLocationDescription, setSelectedLocationDescription ] = useState("")
+  const [ locSelection, setLocationSelection ] = useState( "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" )
+  const [ selectedLocationDescription, setSelectedLocationDescription ] = useState("Warehouse")
   useEffect(()=>{
     if ( Array.isArray( locations ) && locations.length > 0 ) {
       const selectedLocation = locations.filter(( location ) => ( location.id == locSelection ))

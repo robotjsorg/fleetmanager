@@ -21,9 +21,11 @@ export const TaskItem = ({
   fbDisabled: boolean
 }) => {
   const { robots } = useContext( RobotContext )
-  const [ robot, setRobot ] = useState<IRobot>(robots[0])
+  const [ robot, setRobot ] = useState<IRobot>()
   useEffect(()=>{
-    setRobot( robots.filter(( robot ) => ( robot.id == task.robotid ))[0] )
+    if ( Array.isArray( robots) && robots.length > 0 ) {
+      setRobot( robots.filter(( robot ) => ( robot.id == task.robotid ))[0] )
+    }
   }, [robots, task.robotid])
   const mutate = useMutate( docId )
   const handleDelete = useCallback(() => {
@@ -36,7 +38,7 @@ export const TaskItem = ({
     <Group wrap="nowrap" justify="space-between" gap="sm" px={12} py={4}>
       <Group wrap="nowrap">
         <Text>
-          { robot.description }: { task.description }
+          { robot?.description }: { task.description }
         </Text>
         <Text>
           { task.state }

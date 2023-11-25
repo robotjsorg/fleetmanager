@@ -28,15 +28,15 @@ export const FMWidget = ({
   const theme = useMantineContext()
   const { robots } = useContext( RobotContext )
   const { guiSelection } = useContext( guiSelectionContext )
-  const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)])
+  const [ selectedRobot, setSelectedRobot ] = useState<IRobot>( robots[robots.findIndex((robot) => robot.id == guiSelection)] )
 
   const { setMoveRobot } = useContext( moveRobotContext )
 
-  const [ state, setState ] = useState("")
-  const [ toolState, setToolState ] = useState("")
+  const [ state, setState ] = useState( selectedRobot?.state )
+  const [ toolState, setToolState ] = useState( selectedRobot?.toolState )
   
   useEffect(()=>{
-    const index = robots.findIndex((robot) => robot.id == guiSelection)
+    const index = robots.findIndex( (robot) => robot.id == guiSelection )
     setSelectedRobot( robots[index] )
   }, [guiSelection, robots])
 
@@ -191,7 +191,7 @@ export const FMWidget = ({
         </Group>
       </Center>
       { selectedRobot && state == "Off" ?
-        <FMWidgetOff docId={docId} updateRobot={updateRobot} />
+        <FMWidgetOff updateRobot={updateRobot} />
       : selectedRobot && state == "Error" ?
         <FMWidgetError />
       : selectedRobot && state == "Manual" ?

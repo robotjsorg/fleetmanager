@@ -22,18 +22,15 @@ export const FMWidgetManual = ({
   const { robots } = useContext( RobotContext )
   const { guiSelection } = useContext( guiSelectionContext )
   const [ selectedRobot, setSelectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)])
-
-  const [ toggleManual, setToggleManual ] = useState( true )
-
-  // const [ , setToolState ] = useState("")
   const [ jointAngleFields, setJointAngleFields ] = useState( true )
-  
   useEffect(()=>{
     const index = robots.findIndex((robot) => robot.id == guiSelection)
     setSelectedRobot( robots[index] )
     setJointAngleFields( true )
   }, [guiSelection, robots])
-
+  
+  const [ toggleManual, setToggleManual ] = useState( true )
+  
   const jointsForm = useForm({
     initialValues: {
       J1: 0,

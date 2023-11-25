@@ -34,7 +34,7 @@ export const Fleetmanager = ({
   const { guiSelection, setGuiSelection } = useContext( guiSelectionContext )
   const { moveRobot } = useContext( moveRobotContext )
 
-  const [ locationsRobots, setLocationRobots ] = useState<IRobot[]>([])
+  const [ locationsRobots, setLocationRobots ] = useState<IRobot[]>(robots.filter(( robot )=>( robot.locationid == locSelection )))
   useEffect(() => {
     setLocationRobots( robots.filter(( robot )=>( robot.locationid == locSelection )) )
   }, [locSelection, robots])
