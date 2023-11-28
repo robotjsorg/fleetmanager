@@ -58,6 +58,7 @@ const randomJointAngles = () => {
     angles
   )
 }
+
 const home = () => {
   return [0, 0, 0, 0, 0, 0]
 }
@@ -114,57 +115,47 @@ export const Mesh_abb_irb52_7_120 = ({
     if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
       setCurrentTask( activeTasks[0] )
     } else if ( Array.isArray( queuedTasks ) && queuedTasks.length > 0 ) {
-      updateTask({id: queuedTasks[0].id, state: "Active"})
+      updateTask( {id: queuedTasks[0].id, state: "Active"} )
     }
   }, [robot.id, tasks, updateTask])
 
   useEffect(()=>{
-    if( currentTask && currentTask.state == "Active" ) { 
+    if ( currentTask && currentTask.state == "Active" ) {
       if ( currentTask.description == "Random positions (continuous)" ) {
-        if ( springs.jointAngles.idle ) {
-          api.stop()
-          api.start({
-            jointAngles: randomJointAngles()
-          })
-        }
+        api.start({
+          jointAngles: randomJointAngles()
+        })
       } else if ( currentTask.description == "Home" ) {
-        api.stop()
         api.start({
           jointAngles: home()
         })
       } else if ( currentTask.description == "Move pre-pick" ) {
-        api.stop()
         api.start({
           jointAngles: prepick()
         })
       } else if ( currentTask.description == "Move pick" ) {
-        api.stop()
         api.start({
           jointAngles: pick()
         })
       } else if ( currentTask.description == "Move post-pick" ) {
-        api.stop()
         api.start({
           jointAngles: postpick()
         })
       } else if ( currentTask.description == "Move pre-place" ) {
-        api.stop()
         api.start({
           jointAngles: preplace()
         })
       } else if ( currentTask.description == "Move place" ) {
-        api.stop()
         api.start({
           jointAngles: place()
         })
       } else if ( currentTask.description == "Move post-place" ) {
-        api.stop()
         api.start({
           jointAngles: postplace()
         })
       }
       if ( springs.jointAngles.idle && currentTask.description != "Random positions (continuous)" ) {
-        updateTask({id: currentTask.id, state: "Completed"})
+        updateTask( {id: currentTask.id, state: "Completed"} )
       }
     }
   }, [api, currentTask, springs.jointAngles.idle, updateTask])
@@ -172,7 +163,7 @@ export const Mesh_abb_irb52_7_120 = ({
   const [ hovered, hover ] = useState( false )
   useCursor( hovered )
 
-  const handleStates = () => { // delta: number
+  const handleStates = () => {
     switch( robot.state ) {
       case "Manual": { 
         springs.jointAngles.set( robot.jointAngles )
@@ -198,7 +189,7 @@ export const Mesh_abb_irb52_7_120 = ({
   }
 
   useFrame(() => ( // _state, delta
-    handleStates() // delta
+    handleStates()
   ))
 
   return (
