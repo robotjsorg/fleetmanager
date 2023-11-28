@@ -122,9 +122,11 @@ export const Mesh_abb_irb52_7_120 = ({
   useEffect(()=>{
     if ( currentTask && currentTask.state == "Active" ) {
       if ( currentTask.description == "Random positions (continuous)" ) {
-        api.start({
-          jointAngles: randomJointAngles()
-        })
+        if ( springs.jointAngles.idle ) {
+          api.start({
+            jointAngles: randomJointAngles()
+          })
+        }
       } else if ( currentTask.description == "Home" ) {
         api.start({
           jointAngles: home()
