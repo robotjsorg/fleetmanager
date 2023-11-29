@@ -104,7 +104,7 @@ export const App = ({
     }
   }, [robotsQuery])
 
-  const [, forceUpdate] = useReducer(x => x + 1 as number, 0)
+  const [, forceUpdate] = useReducer(x => x + 1 as number, 0) // try to remove
   
   // Update robot properties on Fleetmanager and RobotSelection callback
   //   TODO: UPDATE ROBOT database mutation
@@ -116,7 +116,7 @@ export const App = ({
     robots[index].rotation = childData.rotation
     robots[index].jointAngles = childData.jointAngles
     setRobots(robots)
-    forceUpdate()
+    forceUpdate() // try to remove
   }
 
   // Store tasks query in state
@@ -133,7 +133,7 @@ export const App = ({
     const index = tasks.findIndex((task) => task.id == childData.id)
     tasks[index].state = childData.state
     setTasks(tasks)
-    forceUpdate()
+    forceUpdate() // try to remove
   }
 
   // Single screen desktop app, no scrolling
@@ -303,12 +303,12 @@ export const App = ({
                   <AppShell.Aside withBorder={true}>
                     <Stack>
                       { guiSelection == "no selection" ?
-                        <Stack hiddenFrom="md" px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
+                        <Stack hiddenFrom="md" px="lg">
                           <Divider label="Robots" labelPosition="center" />
                           <RobotList docId={docId} fbDisabled={true} />
                         </Stack>
                       : 
-                        <Box hiddenFrom="md" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
+                        <Box hiddenFrom="md">
                           <Divider />
                           <FMWidget docId={docId} updateRobot={updateRobot} />
                         </Box>
