@@ -30,6 +30,8 @@ import { FMWidget } from "./components/FMWidget"
 
 import { zeroJointAngles } from "./meshes/Mesh_abb_irb52_7_120"
 
+const POPULATEDB = true
+
 const NAVBAR_WIDTH   = 300 // nav width 300
 const HEADER_HEIGHT  = 60  // topbar 60
 const NAVBAR_OFFSET  = 155 // topbar 60 + btns 36 + padding 40 + divider 19
@@ -60,15 +62,17 @@ export const App = ({
       console.log("[INFO] Init DB")
       mutate({ tag: "InitSchema" })
         .catch(( err ) => {console.error( "Failed to init schema", err )})
-      // mutate({ tag: "PopulateDB" })
-      //   .catch(( err ) => {console.error( "Failed to populate database", err )})
+      if ( POPULATEDB ) {
+        mutate({ tag: "PopulateDB" })
+          .catch(( err ) => {console.error( "Failed to populate database", err )})
+      }
     }
     return () => {
       setInitDB( false )
     };
   }, [initDB, mutate])
 
-  // Query DB
+  // Query DB // TODO: Is this running every single render? It should not be.
   const { rows: locations } = useQuery<ILocation>(
     docId,
     sql`SELECT * FROM locations`
@@ -96,30 +100,40 @@ export const App = ({
       // newRobots.filter((robot) => (robot.position = randomPosition()))
       // newRobots.filter((robot) => (robot.rotation = zeroRotation()))
 
-      // TODO: Joint angles and tool state should not reset on every mutation
+      // TODO: How to load these from local client data instead of overwriting every mutation?
       newRobots.filter((robot) => (robot.jointAngles = zeroJointAngles()))
       newRobots.filter((robot) => (robot.toolState = "Unactuated"))
+
       setRobots(newRobots)
     }
   }, [robotsQuery])
 
-  // const [, forceUpdate] = useReducer(x => x + 1 as number, 0)
+  const [, forceUpdate] = useReducer(x => x + 1 as number, 0)
   
   // Update robot properties on Fleetmanager and RobotSelection callback
-  const updateRobot = (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => {
-    const index = robots.findIndex((robot) => robot.id == childData.id)
-    // robots[index].state = childData.state
-    // robots[index].position = childData.position
-    // robots[index].rotation = childData.rotation
-    robots[index].toolState = childData.toolState
-    robots[index].jointAngles = childData.jointAngles
-    setRobots(robots)
-    // forceUpdate()
-
-    mutate({ tag: "UpdateRobot", id: childData.id, state: childData.state, x: childData.position[0], z: childData.position[2], theta: childData.rotation[2] })
+  const updateRobotState = (childData: { id: string, state: string }) => {
+    mutate({ tag: "UpdateRobotState", id: childData.id, state: childData.state })
       .catch((err) => {
         console.error("Failed to update robot", err)
       })
+    forceUpdate()
+  }
+  const updateRobotPosition = (childData: { id: string, position: number[], rotation: number[] }) => {
+    mutate({ tag: "UpdateRobotPosition", id: childData.id, x: childData.position[0], z: childData.position[2], theta: childData.rotation[2] })
+      .catch((err) => {
+        console.error("Failed to update robot", err)
+      })
+  }
+  const updateRobotToolState = (childData: { id: string, toolState: string }) => {
+    const index = robots.findIndex((robot) => robot.id == childData.id)
+    robots[index].toolState = childData.toolState
+    setRobots(robots)
+    forceUpdate()
+  }
+  const updateRobotJointAngles = (childData: { id: string, jointAngles: number[] }) => {
+    const index = robots.findIndex((robot) => robot.id == childData.id)
+    robots[index].jointAngles = childData.jointAngles
+    setRobots(robots)
   }
 
   // Store tasks query in state
@@ -201,8 +215,14 @@ export const App = ({
   }
 
   // Selected location description
-  const [ locSelection, setLocationSelection ] = useState( "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" )
-  const [ selectedLocationDescription, setSelectedLocationDescription ] = useState("Warehouse")
+  let initLocSelection = "no selection"
+  let initSelectionLocationDescription = ""
+  if ( POPULATEDB ) {
+    initLocSelection = "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99"
+    initSelectionLocationDescription = "Warehouse"
+  }
+  const [ locSelection, setLocationSelection ] = useState( initLocSelection )
+  const [ selectedLocationDescription, setSelectedLocationDescription ] = useState( initSelectionLocationDescription )
   useEffect(()=>{
     if ( Array.isArray( locations ) && locations.length > 0 ) {
       const selectedLocation = locations.filter(( location ) => ( location.id == locSelection ))
@@ -303,7 +323,7 @@ export const App = ({
                     : route == "location" && // Fleetmanager
                       <Box h={ fixHeight - CONTENT_OFFSET }>
                         <Divider />
-                        <Fleetmanager updateRobot={updateRobot} updateTask={updateTask} />
+                        <Fleetmanager updateRobotPosition={updateRobotPosition} updateTask={updateTask} />
                       </Box>
                     }
                   </AppShell.Main>
@@ -317,7 +337,11 @@ export const App = ({
                       : 
                         <Box hiddenFrom="md">
                           <Divider />
-                          <FMWidget docId={docId} updateRobot={updateRobot} />
+                          <FMWidget docId={docId}
+                            updateRobotState={updateRobotState}
+                            updateRobotPosition={updateRobotPosition}
+                            updateRobotToolState={updateRobotToolState}
+                            updateRobotJointAngles={updateRobotJointAngles} />
                         </Box>
                       }
                       <Stack visibleFrom="md" px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
@@ -326,7 +350,11 @@ export const App = ({
                       </Stack>
                       <Box visibleFrom="md"  h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
                         <Divider />
-                        <FMWidget docId={docId} updateRobot={updateRobot} />
+                          <FMWidget docId={docId}
+                            updateRobotState={updateRobotState}
+                            updateRobotPosition={updateRobotPosition}
+                            updateRobotToolState={updateRobotToolState}
+                            updateRobotJointAngles={updateRobotJointAngles} />
                       </Box>
                     </Stack>
                   </AppShell.Aside>

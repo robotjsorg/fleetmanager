@@ -25,17 +25,35 @@ export const FMWidgetAuto = ({
 
   useEffect(() => {
     if ( Array.isArray( tasks ) && tasks.length > 0 && currentTask != "no selection" ) {
-      const currentTaskRobot = tasks.filter(( task ) => ( task.id == currentTask && task.state == "Active" ))
+      const currentTaskRobot = tasks.filter(( task ) => ( task.id == currentTask && ( task.state == "Active" || task.state == "Completed" )))
       if ( Array.isArray( currentTaskRobot ) && currentTaskRobot.length > 0 ) {
         const currentTaskRobotId = currentTaskRobot[0].robotid
         if ( guiSelection == currentTaskRobotId ) {
           setTask( tasks[ tasks.findIndex((task) => (task.id == currentTask)) ] )
         } else {
-          setTask(undefined)
+          setTask( undefined )
           setCurrentTask( "no selection" )
         }
+      } else {
+        setTask( undefined )
+        setCurrentTask( "no selection" )
       }
+    } else {
+      setTask( undefined )
+      setCurrentTask( "no selection" )
     }
+    // if ( Array.isArray( tasks ) && tasks.length > 0 && currentTask != "no selection" ) {
+    //   const currentTaskRobot = tasks.filter(( task ) => ( task.id == currentTask && ( task.state == "Active" || task.state == "Completed" )))
+    //   if ( Array.isArray( currentTaskRobot ) && currentTaskRobot.length > 0 ) {
+    //     const currentTaskRobotId = currentTaskRobot[0].robotid
+    //     if ( guiSelection == currentTaskRobotId ) {
+    //       setTask( tasks[ tasks.findIndex((task) => (task.id == currentTask)) ] )
+    //       return
+    //     }
+    //   }
+    // }
+    // setTask( undefined )
+    // setCurrentTask( "no selection" )
   }, [currentTask, guiSelection, setCurrentTask, tasks])
 
   const autoSelectForm = useForm({

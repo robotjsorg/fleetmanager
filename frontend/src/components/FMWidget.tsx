@@ -20,10 +20,16 @@ const RADS_DEGS = 57.2958
 
 export const FMWidget = ({
   docId,
-  updateRobot
+  updateRobotState,
+  updateRobotPosition,
+  updateRobotToolState,
+  updateRobotJointAngles
 }: {
   docId: JournalId
-  updateRobot: (childData: {id: string, toolState: string, state: string, position: number[], rotation: number[], jointAngles: number[]}) => void
+  updateRobotState: (childData: {id: string, state: string }) => void
+  updateRobotPosition: (childData: {id: string, position: number[], rotation: number[] }) => void
+  updateRobotToolState: (childData: {id: string, toolState: string }) => void
+  updateRobotJointAngles: (childData: {id: string, jointAngles: number[] }) => void
 }) => {
   const theme = useMantineContext()
   const { robots } = useContext( RobotContext )
@@ -49,13 +55,9 @@ export const FMWidget = ({
 
   const handleOff = () => {
     selectedRobot.state = "Off"
-    updateRobot({
+    updateRobotState({
       id: selectedRobot.id,
-      state: "Off",
-      toolState: selectedRobot.toolState,
-      position: selectedRobot.position,
-      rotation: selectedRobot.rotation,
-      jointAngles: selectedRobot.jointAngles
+      state: "Off"
     })
     setSelectedRobot( selectedRobot )
     setState("Off")
@@ -65,13 +67,9 @@ export const FMWidget = ({
   }
   const handleReset = () => {
     selectedRobot.state = "Manual"
-    updateRobot({
+    updateRobotState({
       id: selectedRobot.id,
-      state: "Manual",
-      toolState: selectedRobot.toolState,
-      position: selectedRobot.position,
-      rotation: selectedRobot.rotation,
-      jointAngles: selectedRobot.jointAngles
+      state: "Manual"
     })
     setSelectedRobot( selectedRobot )
     setState("Manual")
@@ -79,13 +77,9 @@ export const FMWidget = ({
   }
   const handleManual = () => {
     selectedRobot.state = "Manual"
-    updateRobot({
+    updateRobotState({
       id: selectedRobot.id,
-      state: "Manual",
-      toolState: selectedRobot.toolState,
-      position: selectedRobot.position,
-      rotation: selectedRobot.rotation,
-      jointAngles: selectedRobot.jointAngles
+      state: "Manual"
     })
     setSelectedRobot( selectedRobot )
     setState("Manual")
@@ -93,13 +87,9 @@ export const FMWidget = ({
   }
   const handleAuto = () => {
     selectedRobot.state = "Auto"
-    updateRobot({
+    updateRobotState({
       id: selectedRobot.id,
-      state: "Auto",
-      toolState: selectedRobot.toolState,
-      position: selectedRobot.position,
-      rotation: selectedRobot.rotation,
-      jointAngles: selectedRobot.jointAngles
+      state: "Auto"
     })
     setSelectedRobot( selectedRobot )
     setState("Auto")
@@ -191,11 +181,11 @@ export const FMWidget = ({
         </Group>
       </Center>
       { selectedRobot && state == "Off" ?
-        <FMWidgetOff updateRobot={updateRobot} />
+        <FMWidgetOff updateRobotPosition={updateRobotPosition} />
       : selectedRobot && state == "Error" ?
         <FMWidgetError />
       : selectedRobot && state == "Manual" ?
-        <FMWidgetManual updateRobot={updateRobot} />
+        <FMWidgetManual updateRobotToolState={updateRobotToolState} updateRobotJointAngles={updateRobotJointAngles} />
       : selectedRobot && state == "Auto" &&
         <FMWidgetAuto docId={docId} />
       }

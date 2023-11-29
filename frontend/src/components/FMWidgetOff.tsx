@@ -16,9 +16,9 @@ import { GRID_BOUND } from "./Fleetmanager"
 const RADS_DEGS = 57.2958
 
 export const FMWidgetOff = ({
-  updateRobot
+  updateRobotPosition
 }: {
-  updateRobot: (childData: {id: string, toolState: string, state: string, position: number[], rotation: number[], jointAngles: number[]}) => void
+  updateRobotPosition: (childData: {id: string, position: number[], rotation: number[]}) => void
 }) => {
   const { robots } = useContext( RobotContext )
   const { guiSelection } = useContext( guiSelectionContext )
@@ -49,16 +49,13 @@ export const FMWidgetOff = ({
   const handleMoveRobot = moveRobotForm.onSubmit(
     useCallback(
       ({ X, Z, theta }) => {
-        selectedRobot && updateRobot({
+        selectedRobot && updateRobotPosition({
           id: selectedRobot.id,
-          state: "Off",
-          toolState: selectedRobot.toolState,
           position: [X, selectedRobot.position[1], Z],
-          rotation: [selectedRobot.rotation[0], selectedRobot.rotation[1], theta/RADS_DEGS],
-          jointAngles: selectedRobot.jointAngles
+          rotation: [selectedRobot.rotation[0], selectedRobot.rotation[1], theta/RADS_DEGS]
         })
       }
-    , [selectedRobot, updateRobot])
+    , [selectedRobot, updateRobotPosition])
   )
   useEffect(()=>{
     if ( selectedRobot && positionFields ) {

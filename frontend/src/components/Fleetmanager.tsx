@@ -22,10 +22,10 @@ export const GRID_BOUND = 4
 const state = proxy({ current: "" })
 
 export const Fleetmanager = ({
-  updateRobot,
+  updateRobotPosition,
   updateTask
 }: {
-  updateRobot: (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => void
+  updateRobotPosition: (childData: {id: string, position: number[], rotation: number[] }) => void
   updateTask: (childData: {id: string, state: string}) => void
 }) => {
   const theme = useMantineContext()
@@ -59,13 +59,10 @@ export const Fleetmanager = ({
           translationSnap={0.1}
           onMouseUp={()=>{
             object &&
-            updateRobot({
+            updateRobotPosition({
               id: object.name,
-              state: "Off",
-              toolState: robots[robots.findIndex((robot) => robot.id == guiSelection)].toolState,
               position: [Bound(object.position.x, GRID_BOUND), object.position.y, Bound(object.position.z, GRID_BOUND)],
               rotation: [object.rotation.x, object.rotation.y, Bound(object.rotation.z, Math.PI)],
-              jointAngles: robots[robots.findIndex((robot) => robot.id == guiSelection)].jointAngles
             })
           }}
           />}
@@ -73,13 +70,10 @@ export const Fleetmanager = ({
           rotationSnap={15*0.0174533}
           onMouseUp={()=>{
             object &&
-            updateRobot({
+            updateRobotPosition({
               id: object.name,
-              state: "Off",
-              toolState: robots[robots.findIndex((robot) => robot.id == guiSelection)].toolState,
               position: [Bound(object.position.x, GRID_BOUND), object.position.y, Bound(object.position.z, GRID_BOUND)],
               rotation: [object.rotation.x, object.rotation.y, Bound(object.rotation.z, Math.PI)],
-              jointAngles: robots[robots.findIndex((robot) => robot.id == guiSelection)].jointAngles
             })
           }}
           />}

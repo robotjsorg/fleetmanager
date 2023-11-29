@@ -35,9 +35,13 @@ export type Mutation =
       id: string
     }
   | {
-      tag: "UpdateRobot"
+      tag: "UpdateRobotState"
       id: string
       state: string
+    }
+    | {
+      tag: "UpdateRobotPosition"
+      id: string
       x: number
       z: number
       theta: number

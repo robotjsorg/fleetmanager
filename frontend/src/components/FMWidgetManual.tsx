@@ -15,9 +15,11 @@ import { JOINT_LIMITS } from "../meshes/Mesh_abb_irb52_7_120"
 const RADS_DEGS = 57.2958
 
 export const FMWidgetManual = ({
-  updateRobot
+  updateRobotToolState,
+  updateRobotJointAngles
 }: {
-  updateRobot: (childData: {id: string, toolState: string, state: string, position: number[], rotation: number[], jointAngles: number[]}) => void
+  updateRobotToolState: (childData: {id: string, toolState: string}) => void
+  updateRobotJointAngles: (childData: {id: string, jointAngles: number[]}) => void
 }) => {
   const { robots } = useContext( RobotContext )
   const { guiSelection } = useContext( guiSelectionContext )
@@ -53,16 +55,12 @@ export const FMWidgetManual = ({
     useCallback(
       ({ J1, J2, J3, J4, J5, J6 }) => {
         selectedRobot &&
-        updateRobot({
+        updateRobotJointAngles({
           id: selectedRobot.id,
-          state: "Manual",
-          toolState: selectedRobot.toolState,
-          position: selectedRobot.position,
-          rotation: selectedRobot.rotation,
           jointAngles: [J1/RADS_DEGS, J2/RADS_DEGS, J3/RADS_DEGS, J4/RADS_DEGS, J5/RADS_DEGS, J6/RADS_DEGS]
         })
       }
-    , [selectedRobot, updateRobot])
+    , [selectedRobot, updateRobotJointAngles])
   )
   useEffect(()=>{
     if ( selectedRobot && jointAngleFields ) {
@@ -82,29 +80,15 @@ export const FMWidgetManual = ({
   }, [jointAngleFields, jointsForm, selectedRobot])
 
   const handleActuate = () => {
-    // selectedRobot.toolState = "Actuated"
-    // setSelectedRobot( selectedRobot )
-    // setToolState("Actuated")
-    updateRobot({
+    updateRobotToolState({
       id: selectedRobot.id,
-      state: selectedRobot.state,
-      toolState: "Actuated",
-      position: selectedRobot.position,
-      rotation: selectedRobot.rotation,
-      jointAngles: selectedRobot.jointAngles
+      toolState: "Actuated"
     })
   }
   const handleUnactuate = () => {
-    // selectedRobot.toolState = "Unactuated"
-    // setSelectedRobot( selectedRobot )
-    // setToolState("Unactuated")
-    updateRobot({
+    updateRobotToolState({
       id: selectedRobot.id,
-      state: selectedRobot.state,
-      toolState: "Unactuated",
-      position: selectedRobot.position,
-      rotation: selectedRobot.rotation,
-      jointAngles: selectedRobot.jointAngles
+      toolState: "Unactuated"
     })
   }
 
