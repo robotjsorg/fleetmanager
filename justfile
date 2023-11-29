@@ -23,3 +23,5 @@ upload-reducer target='local':
 prep-frontend:
     cp -r ./frontend/assets/gltf/ ./frontend/dist/
     cp -r ./frontend/assets/favicon/ ./frontend/dist/
+    cp -f ./frontend/assets/index.html ./frontend/dist/
+    # remember to copy and paste lines 15 & 16 from ./frontend/assets/dist/index.html
