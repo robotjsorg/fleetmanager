@@ -8,11 +8,11 @@ import { GLTF } from "three-stdlib"
 import { useSpring, animated, config } from "@react-spring/three"
 
 import { IRobot } from "../@types/robot"
+import { ITask } from "../@types/task"
 
 import { RobotContext } from "../context/robotContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
-
-import { ITask } from "../@types/task"
+import { currentTaskContext } from "../context/currentTaskContext"
 
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168")
 const localFilepath = "../../assets/gltf/"
@@ -108,59 +108,68 @@ export const Mesh_abb_irb52_7_120 = ({
   )
 
   const { tasks } = useContext( RobotContext )
-  const [ currentTask, setCurrentTask ] = useState<ITask>()
+  const [ task, setTask ] = useState<ITask>()
+  const { setCurrentTask } = useContext( currentTaskContext )
+
   useEffect(() => {
-    const activeTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" ))
-    const queuedTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Queued" ))
-    if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
-      setCurrentTask( activeTasks[0] )
-    } else if ( Array.isArray( queuedTasks ) && queuedTasks.length > 0 ) {
-      updateTask( {id: queuedTasks[0].id, state: "Active"} )
+    if ( Array.isArray( tasks ) && tasks.length > 0 ) {
+      const activeTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" ))
+      if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
+        setTask( activeTasks[0] )
+        if ( selected ) {
+          setCurrentTask( activeTasks[0].id )
+        }
+      } else {
+        const queuedTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Queued" ))
+        if ( Array.isArray( queuedTasks ) && queuedTasks.length > 0 ) {
+          updateTask( {id: queuedTasks[0].id, state: "Active"} )
+        }
+      }
     }
-  }, [robot.id, tasks, updateTask])
+  }, [robot.id, selected, setCurrentTask, tasks, updateTask])
 
   useEffect(()=>{
-    if ( currentTask && currentTask.state == "Active" ) {
-      if ( currentTask.description == "Random positions (continuous)" ) {
+    if ( task && task.state == "Active" ) {
+      if ( task.description == "Random positions (continuous)" ) {
         if ( springs.jointAngles.idle ) {
           api.start({
             jointAngles: randomJointAngles()
           })
         }
-      } else if ( currentTask.description == "Home" ) {
+      } else if ( task.description == "Home" ) {
         api.start({
           jointAngles: home()
         })
-      } else if ( currentTask.description == "Move pre-pick" ) {
+      } else if ( task.description == "Move pre-pick" ) {
         api.start({
           jointAngles: prepick()
         })
-      } else if ( currentTask.description == "Move pick" ) {
+      } else if ( task.description == "Move pick" ) {
         api.start({
           jointAngles: pick()
         })
-      } else if ( currentTask.description == "Move post-pick" ) {
+      } else if ( task.description == "Move post-pick" ) {
         api.start({
           jointAngles: postpick()
         })
-      } else if ( currentTask.description == "Move pre-place" ) {
+      } else if ( task.description == "Move pre-place" ) {
         api.start({
           jointAngles: preplace()
         })
-      } else if ( currentTask.description == "Move place" ) {
+      } else if ( task.description == "Move place" ) {
         api.start({
           jointAngles: place()
         })
-      } else if ( currentTask.description == "Move post-place" ) {
+      } else if ( task.description == "Move post-place" ) {
         api.start({
           jointAngles: postplace()
         })
       }
-      if ( springs.jointAngles.idle && currentTask.description != "Random positions (continuous)" ) {
-        updateTask( {id: currentTask.id, state: "Completed"} )
+      if ( springs.jointAngles.idle && task.description != "Random positions (continuous)" ) {
+        updateTask( {id: task.id, state: "Completed"} )
       }
     }
-  }, [api, currentTask, springs.jointAngles.idle, updateTask])
+  }, [api, task, springs.jointAngles.idle, updateTask])
 
   const [ hovered, hover ] = useState( false )
   useCursor( hovered )
@@ -173,7 +182,7 @@ export const Mesh_abb_irb52_7_120 = ({
         break 
       } 
       case "Auto": {
-        if ( currentTask ) {
+        if ( task ) {
           robot.jointAngles = springs.jointAngles.get()
           setJointAngles( springs.jointAngles.get() )
         } else {

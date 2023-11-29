@@ -6,13 +6,12 @@ import { useForm } from "@mantine/form"
 
 import { v4 as uuidv4 } from "uuid"
 
-import { IRobot } from "../@types/robot"
+import { useMutate } from "../doctype"
 import { ITask } from "../@types/task"
 
 import { RobotContext } from "../context/robotContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
-
-import { useMutate } from "../doctype"
+import { currentTaskContext } from "../context/currentTaskContext"
 
 export const FMWidgetAuto = ({
   docId
@@ -21,14 +20,23 @@ export const FMWidgetAuto = ({
 }) => {
   const { robots, tasks } = useContext( RobotContext )
   const { guiSelection } = useContext( guiSelectionContext )
-  const [ selectedRobot ] = useState<IRobot>(robots[robots.findIndex((robot) => robot.id == guiSelection)])
-  const [ currentTask, setCurrentTask ] = useState<ITask>()
+  const [ task, setTask ] = useState<ITask>()
+  const { currentTask, setCurrentTask } = useContext( currentTaskContext )
+
   useEffect(() => {
-    const activeTasks = tasks.filter(( task ) => ( task.robotid == guiSelection && task.state == "Active" ))
-    if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
-      setCurrentTask( activeTasks[0] )
+    if ( Array.isArray( tasks ) && tasks.length > 0 && currentTask != "no selection" ) {
+      const currentTaskRobot = tasks.filter(( task ) => ( task.id == currentTask && task.state == "Active" ))
+      if ( Array.isArray( currentTaskRobot ) && currentTaskRobot.length > 0 ) {
+        const currentTaskRobotId = currentTaskRobot[0].robotid
+        if ( guiSelection == currentTaskRobotId ) {
+          setTask( tasks[ tasks.findIndex((task) => (task.id == currentTask)) ] )
+        } else {
+          setTask(undefined)
+          setCurrentTask( "no selection" )
+        }
+      }
     }
-  }, [guiSelection, tasks])
+  }, [currentTask, guiSelection, setCurrentTask, tasks])
 
   const autoSelectForm = useForm({
     initialValues: {
@@ -45,7 +53,8 @@ export const FMWidgetAuto = ({
     useCallback(
       ({ description }) => {
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
-        mutate({ tag: "CreateTask", id, robotid: selectedRobot.id, description })
+        const robotid = robots[robots.findIndex((robot) => robot.id == guiSelection)].id
+        mutate({ tag: "CreateTask", id, robotid: robotid, description })
         .then(() => {
           autoSelectForm.reset()
         })
@@ -54,7 +63,7 @@ export const FMWidgetAuto = ({
           autoSelectForm.setErrors({ description: String(err) })
           console.error("Failed to create task", err)
         })
-      }, [autoSelectForm, mutate, selectedRobot]
+      }, [autoSelectForm, guiSelection, mutate, robots]
     )
   )
 
@@ -65,15 +74,15 @@ export const FMWidgetAuto = ({
         <Flex w="50%" gap="xs" px="xs" direction="column">
           <Text size="xs" truncate="end">
             <Text span c="gray" inherit>task: </Text>
-            {currentTask ? currentTask.description : "-"}
+            {task ? task.description : "-"}
           </Text>
           <Text size="xs" truncate="end">
             <Text span c="gray" inherit>type: </Text>
-            {currentTask ? currentTask.description == "Random positions (continuous)" || currentTask.description == "Pick and Place (continuous)" ? "Continuous" : "One-Shot" : "-"}
+            {task ? task.description == "Random positions (continuous)" || task.description == "Pick and Place (continuous)" ? "Continuous" : "One-Shot" : "-"}
           </Text>
           <Text size="xs" truncate="end">
             <Text span c="gray" inherit>state: </Text>
-            {currentTask ? currentTask.state : "-"}
+            {task ? task.state : "-"}
           </Text>
         </Flex>
       </Group>

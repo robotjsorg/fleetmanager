@@ -16,6 +16,7 @@ import { RobotProvider } from "./context/robotContext"
 import { guiSelectionContext } from "./context/guiSelectionContext"
 import { locSelectionContext } from "./context/locSelectionContext"
 import { moveRobotContext } from "./context/moveRobotContext"
+import { currentTaskContext } from "./context/currentTaskContext"
 
 import { LocationsView } from "./views/LocationsView"
 import { RobotsView } from "./views/RobotsView"
@@ -82,7 +83,7 @@ export const App = ({
   );
 
   // Store robots query in state and add joint angles and tool state
-  const [ robots, setRobots ] = useState<IRobot[]>([]);
+  const [ robots, setRobots ] = useState<IRobot[]>([])
   useEffect(()=>{
     const newRobots: IRobot[] = []
 
@@ -106,7 +107,7 @@ export const App = ({
   const [, forceUpdate] = useReducer(x => x + 1 as number, 0)
   
   // Update robot properties on Fleetmanager and RobotSelection callback
-  //   TODO: database mutation
+  //   TODO: UPDATE ROBOT database mutation
   const updateRobot = (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => {
     const index = robots.findIndex((robot) => robot.id == childData.id)
     robots[index].state = childData.state
@@ -127,7 +128,7 @@ export const App = ({
   }, [tasksQuery])
 
   // Update task state on Mesh callback
-  //   TODO: database mutation
+  //   TODO: UPDATE TASK database mutation
   const updateTask = (childData: {id: string, state: string}) => {
     const index = tasks.findIndex((task) => task.id == childData.id)
     tasks[index].state = childData.state
@@ -163,6 +164,8 @@ export const App = ({
   useEffect(()=>{
     setMoveRobot( false );
   }, [guiSelection])
+
+  const [ currentTask, setCurrentTask ] = useState("");
 
   // Menu control
   const [ route, setPseudoRoute ] = useState( "location" );
@@ -207,120 +210,122 @@ export const App = ({
       <RobotProvider locations={locations ?? []} robots={robots ?? []} tasks={tasks ?? []}>
         <locSelectionContext.Provider value={{ locSelection, setLocationSelection }}>
           <guiSelectionContext.Provider value={{ guiSelection, setGuiSelection }}>
-          <moveRobotContext.Provider value={{ moveRobot, setMoveRobot }}>
-            <AppShell
-              withBorder={false}
-              header={{
-                height: HEADER_HEIGHT
-              }}
-              navbar={{
-                width: NAVBAR_WIDTH,
-                breakpoint: "sm",
-                collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
-              }}
-              aside={{
-                width: NAVBAR_WIDTH,
-                breakpoint: "sm",
-                collapsed: { mobile: true, desktop: subpageOpened || desktopOpened }
-              }}>
-              <AppShell.Header>
-                <Group h="100%" px="md" justify="space-between" wrap="nowrap">
-                  <Box>
-                    <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
-                    <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
-                  </Box>
-                  <Group wrap="nowrap" gap="xs">
-                    <Box hidden={locSelection == "no selection"}>
-                      <Button visibleFrom="xs" color="gray"
-                        onClick={() => (setPseudoRoute("location"))}
-                        variant={ subpageOpened ? "subtle" : "light" }>
-                        { selectedLocationDescription }
-                      </Button>
-                      <Button hiddenFrom="xs" color="gray"
-                        onClick={() => (setPseudoRoute("location"))}
-                        variant={ subpageOpened ? "subtle" : "light" }>
-                        <IconHome size={18} />
-                      </Button>
-                    </Box>
-                    <Button visibleFrom="xs" color="gray"
-                      onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
-                      variant={ route != "robots" ? "subtle" : "light" }>
-                      Robots
-                    </Button>
-                    <Button hiddenFrom="xs" color="gray"
-                      onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
-                      variant={ route != "robots" ? "subtle" : "light" }>
-                      <IconRobot size={18} />
-                    </Button>
-                    <Button visibleFrom="xs" color="gray" 
-                      onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
-                      variant={ route != "tasks" ? "subtle" : "light" }>
-                      Tasks
-                    </Button>
-                    <Button hiddenFrom="xs" color="gray"
-                      onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
-                      variant={ route != "tasks" ? "subtle" : "light" }>
-                      <IconChecklist size={18} />
-                    </Button>
-                  </Group>
-                  <ConnectionStatus docId={docId} />
-                </Group>
-              </AppShell.Header>
-              <AppShell.Navbar zIndex={300} withBorder={true} px="lg" pb="lg">
-                <Stack h={ fixHeight - NAVBAR_OFFSET }>
-                  <Divider label="Locations" labelPosition="center" />
-                  <Box onClick={ closeNav }>
-                    <LocationList docId={docId} fbDisabled={true} />
-                  </Box>
-                </Stack>
-                <Group justify="center" p="lg">
-                  <Button variant="default"
-                    onClick={() => {closeNav(), setPseudoRoute("locations"), setMoveRobot( false )}}
-                    leftSection={<IconSettings size={18} />}>
-                    Edit
-                  </Button>
-                  <ToggleMantineTheme />
-                </Group>
-              </AppShell.Navbar>
-              <AppShell.Main onClick={ closeNav }>
-                { route == "locations" ?
-                  <LocationsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
-                : route == "robots" ?
-                  <RobotsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
-                : route == "tasks" ?
-                  <TasksView docId={docId} h={ fixHeight - VIEW_OFFSET } />
-                : route == "location" && // Fleetmanager
-                  <Box h={ fixHeight - CONTENT_OFFSET }>
-                    <Divider />
-                    <Fleetmanager updateRobot={updateRobot} updateTask={updateTask} />
-                  </Box>
-                }
-              </AppShell.Main>
-              <AppShell.Aside withBorder={true}>
-                <Stack>
-                  { guiSelection == "no selection" ?
-                    <Stack hiddenFrom="md" px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
-                      <Divider label="Robots" labelPosition="center" />
-                      <RobotList docId={docId} fbDisabled={true} />
+            <currentTaskContext.Provider value={{ currentTask, setCurrentTask }}>
+              <moveRobotContext.Provider value={{ moveRobot, setMoveRobot }}>
+                <AppShell
+                  withBorder={false}
+                  header={{
+                    height: HEADER_HEIGHT
+                  }}
+                  navbar={{
+                    width: NAVBAR_WIDTH,
+                    breakpoint: "sm",
+                    collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
+                  }}
+                  aside={{
+                    width: NAVBAR_WIDTH,
+                    breakpoint: "sm",
+                    collapsed: { mobile: true, desktop: subpageOpened || desktopOpened }
+                  }}>
+                  <AppShell.Header>
+                    <Group h="100%" px="md" justify="space-between" wrap="nowrap">
+                      <Box>
+                        <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
+                        <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
+                      </Box>
+                      <Group wrap="nowrap" gap="xs">
+                        <Box hidden={locSelection == "no selection"}>
+                          <Button visibleFrom="xs" color="gray"
+                            onClick={() => (setPseudoRoute("location"))}
+                            variant={ subpageOpened ? "subtle" : "light" }>
+                            { selectedLocationDescription }
+                          </Button>
+                          <Button hiddenFrom="xs" color="gray"
+                            onClick={() => (setPseudoRoute("location"))}
+                            variant={ subpageOpened ? "subtle" : "light" }>
+                            <IconHome size={18} />
+                          </Button>
+                        </Box>
+                        <Button visibleFrom="xs" color="gray"
+                          onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
+                          variant={ route != "robots" ? "subtle" : "light" }>
+                          Robots
+                        </Button>
+                        <Button hiddenFrom="xs" color="gray"
+                          onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
+                          variant={ route != "robots" ? "subtle" : "light" }>
+                          <IconRobot size={18} />
+                        </Button>
+                        <Button visibleFrom="xs" color="gray" 
+                          onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
+                          variant={ route != "tasks" ? "subtle" : "light" }>
+                          Tasks
+                        </Button>
+                        <Button hiddenFrom="xs" color="gray"
+                          onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
+                          variant={ route != "tasks" ? "subtle" : "light" }>
+                          <IconChecklist size={18} />
+                        </Button>
+                      </Group>
+                      <ConnectionStatus docId={docId} />
+                    </Group>
+                  </AppShell.Header>
+                  <AppShell.Navbar zIndex={300} withBorder={true} px="lg" pb="lg">
+                    <Stack h={ fixHeight - NAVBAR_OFFSET }>
+                      <Divider label="Locations" labelPosition="center" />
+                      <Box onClick={ closeNav }>
+                        <LocationList docId={docId} fbDisabled={true} />
+                      </Box>
                     </Stack>
-                  : 
-                    <Box hiddenFrom="md" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
-                      <Divider />
-                      <FMWidget docId={docId} updateRobot={updateRobot} />
-                    </Box>
-                  }
-                  <Stack visibleFrom="md" px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
-                    <Divider label="Robots" labelPosition="center" />
-                    <RobotList docId={docId} fbDisabled={true} />
-                  </Stack>
-                  <Box visibleFrom="md"  h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
-                    <Divider />
-                    <FMWidget docId={docId} updateRobot={updateRobot} />
-                  </Box>
-                </Stack>
-              </AppShell.Aside>
-            </AppShell>
-          </moveRobotContext.Provider>
+                    <Group justify="center" p="lg">
+                      <Button variant="default"
+                        onClick={() => {closeNav(), setPseudoRoute("locations"), setMoveRobot( false )}}
+                        leftSection={<IconSettings size={18} />}>
+                        Edit
+                      </Button>
+                      <ToggleMantineTheme />
+                    </Group>
+                  </AppShell.Navbar>
+                  <AppShell.Main onClick={ closeNav }>
+                    { route == "locations" ?
+                      <LocationsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+                    : route == "robots" ?
+                      <RobotsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+                    : route == "tasks" ?
+                      <TasksView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+                    : route == "location" && // Fleetmanager
+                      <Box h={ fixHeight - CONTENT_OFFSET }>
+                        <Divider />
+                        <Fleetmanager updateRobot={updateRobot} updateTask={updateTask} />
+                      </Box>
+                    }
+                  </AppShell.Main>
+                  <AppShell.Aside withBorder={true}>
+                    <Stack>
+                      { guiSelection == "no selection" ?
+                        <Stack hiddenFrom="md" px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
+                          <Divider label="Robots" labelPosition="center" />
+                          <RobotList docId={docId} fbDisabled={true} />
+                        </Stack>
+                      : 
+                        <Box hiddenFrom="md" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
+                          <Divider />
+                          <FMWidget docId={docId} updateRobot={updateRobot} />
+                        </Box>
+                      }
+                      <Stack visibleFrom="md" px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
+                        <Divider label="Robots" labelPosition="center" />
+                        <RobotList docId={docId} fbDisabled={true} />
+                      </Stack>
+                      <Box visibleFrom="md"  h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
+                        <Divider />
+                        <FMWidget docId={docId} updateRobot={updateRobot} />
+                      </Box>
+                    </Stack>
+                  </AppShell.Aside>
+                </AppShell>
+              </moveRobotContext.Provider>
+            </currentTaskContext.Provider>
           </guiSelectionContext.Provider>
         </locSelectionContext.Provider>
       </RobotProvider>
