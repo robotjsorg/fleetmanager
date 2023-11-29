@@ -14,11 +14,11 @@ enum Mutation {
 
     DeleteLocation { id: String },
  
-    CreateRobot { id: String, locationid: String, description: String },
+    CreateRobot { id: String, locationid: String, description: String, x: f32, z: f32, theta: f32 },
 
     DeleteRobot { id: String },
 
-    UpdateRobot { id: String, state: String },
+    UpdateRobot { id: String, state: String, x: f32, z: f32, theta: f32 },
 
     CreateTask { id: String, robotid: String, description: String },
 
@@ -48,7 +48,10 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                     description TEXT NOT NULL,
                     state TEXT NOT NULL,
                     created_at TEXT NOT NULL,
-                    updated_at TEXT NOT NULL
+                    updated_at TEXT NOT NULL,
+                    x FLOAT NOT NULL,
+                    z FLOAT NOT NULL,
+                    theta FLOAT NOT NULL
                 )"
             )
             .await;
@@ -71,11 +74,14 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 "Warehouse"
             ).await;
                 execute!(
-                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
+                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at, x, z, theta) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'), ?, ?, ?",
                     "24db4c5b-1e3a-4853-8316-1d6ad07beed1",
                     "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
                     "Rusty",
-                    "Auto"
+                    "Auto",
+                    2,
+                    2,
+                    0
                 ).await;
                     execute!(
                         "INSERT OR IGNORE INTO tasks (id, robotid, description, state, created_at) VALUES (?, ?, ?, ?, datetime('now'))",
@@ -85,11 +91,14 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                         "Queued"
                     ).await;
                 execute!(
-                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
+                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at, x, z, theta) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'), ?, ?, ?",
                     "402e7545-512b-4b7d-b570-e94311b38ab6",
                     "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
                     "D.A.R.Y.L.",
-                    "Auto"
+                    "Auto",
+                    2,
+                    -2,
+                    0
                 ).await;
                     execute!(
                         "INSERT OR IGNORE INTO tasks (id, robotid, description, state, created_at) VALUES (?, ?, ?, ?, datetime('now'))",
@@ -99,18 +108,24 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                         "Queued"
                     ).await;
                 execute!(
-                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
+                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at, x, z, theta) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'), ?, ?, ?",
                     "f7a3408d-6329-47fd-ada9-72e6f249c3e2",
                     "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
                     "Nozzle",
-                    "Off"
+                    "Off",
+                    -2,
+                    -2,
+                    0
                 ).await;
                 execute!(
-                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
+                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at, x, z, theta) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'), ?, ?, ?",
                     "c583ab7f-fd7d-4100-9c3e-aa343ea1c232",
                     "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
                     "Sprocket",
-                    "Off"
+                    "Off",
+                    2,
+                    -2,
+                    0
                 ).await;
             execute!(
                 "INSERT OR IGNORE INTO locations (id, description, created_at) VALUES (?, ?, datetime('now'))",
@@ -118,18 +133,20 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 "Apartment"
             ).await;
                 execute!(
-                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
+                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at, x, z, theta) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'), 6*(RAND()-0.5), 4*(RAND()-0.5), 3.14*RAND())",
                     "d544e656-0e8c-4c3d-91fc-02e38b326c47",
                     "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d",
                     "House Bot 1",
-                    "Off"
+                    "Off",
+                    0, 0, 0
                 ).await;
                 execute!(
-                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
+                    "INSERT OR IGNORE INTO robots (id, locationid, description, state, created_at, updated_at, x, z, theta) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'), 6*(RAND()-0.5), 4*(RAND()-0.5), 3.14*RAND())",
                     "6d83797f-32ba-4884-bd55-5c116f6d74e7",
                     "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d",
                     "House Bot 2",
-                    "Off"
+                    "Off",
+                    0, 0, 0
                 ).await;
         }
 
@@ -149,15 +166,18 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
             ).await;
         }
 
-        Mutation::CreateRobot { id, locationid, description } => {
+        Mutation::CreateRobot { id, locationid, description , x, z, theta } => {
             log::debug!("appending robot({}): {}", id, description);
             execute!(
-                "INSERT INTO robots (id, locationid, description, state, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
+                "INSERT INTO robots (id, locationid, description, state, created_at, updated_at, x, z, theta)
+                    VALUES (?, ?, ?, ?, datetime('now'), datetime('now'), ?, ?, ?)",
                 id,
                 locationid,
                 description,
-                "Off"
+                "Off",
+                x,
+                z,
+                theta
             ).await;
         }
 
@@ -167,10 +187,13 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
             ).await;
         }
 
-        Mutation::UpdateRobot { id, state } => {
+        Mutation::UpdateRobot { id, state , x, z, theta } => {
             execute!(
-                "UPDATE robots SET state = ?, updated_at = datetime('now') WHERE id = ?",
+                "UPDATE robots SET state = ?, updated_at = datetime('now'), x = ?, z = ?, theta = ? WHERE id = ?",
                 state,
+                x,
+                z,
+                theta,
                 id
             )
             .await;

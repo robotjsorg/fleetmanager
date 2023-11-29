@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react" // useReducer
+import { useEffect, useState, useReducer } from "react"
 
 import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { sql } from "@orbitinghail/sqlsync-react"
@@ -37,12 +37,12 @@ const CONTENT_OFFSET = 61  // topbar 60 + divider 1
 const WIDGET_OFFSET  = 117 // topbar 60 + divider (19 * 3)
 const VIEW_OFFSET    = 222 // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
 
-const randomPosition = () => {
+export const randomPosition = () => {
   const x = 4 * (Math.random() - 0.5)
   const z = 2 * (Math.random() - 0.5) + 1
   return [x, -0.02, z]
 }
-const zeroRotation = () => {
+export const zeroRotation = () => {
   return [-Math.PI/2, 0, -Math.PI/4]
 }
 
@@ -60,8 +60,8 @@ export const App = ({
       console.log("[INFO] Init DB")
       mutate({ tag: "InitSchema" })
         .catch(( err ) => {console.error( "Failed to init schema", err )})
-      mutate({ tag: "PopulateDB" })
-        .catch(( err ) => {console.error( "Failed to populate database", err )})
+      // mutate({ tag: "PopulateDB" })
+      //   .catch(( err ) => {console.error( "Failed to populate database", err )})
     }
     return () => {
       setInitDB( false )
@@ -91,34 +91,32 @@ export const App = ({
       robotsQuery.map(( robot ) => ( 
         newRobots.push( robot as IRobot ))
       );
-      newRobots.filter((robot) => (
-        robot.id == "24db4c5b-1e3a-4853-8316-1d6ad07beed1" ? robot.state = "Auto" :
-        robot.id == "402e7545-512b-4b7d-b570-e94311b38ab6" ? robot.state = "Auto" :
-        robot.state = "Off"
-      ));
-      newRobots.filter((robot) => (robot.position = randomPosition()))
-      newRobots.filter((robot) => (robot.rotation = zeroRotation()))
+      newRobots.filter((robot) => (robot.position = [robot.x, -0.02, robot.z]))
+      newRobots.filter((robot) => (robot.rotation = [-Math.PI/2, 0, robot.theta]))
+      // newRobots.filter((robot) => (robot.position = randomPosition()))
+      // newRobots.filter((robot) => (robot.rotation = zeroRotation()))
+
+      // TODO: Joint angles and tool state should not reset on every mutation
       newRobots.filter((robot) => (robot.jointAngles = zeroJointAngles()))
       newRobots.filter((robot) => (robot.toolState = "Unactuated"))
       setRobots(newRobots)
     }
   }, [robotsQuery])
 
-  // const [, forceUpdate] = useReducer(x => x + 1 as number, 0) // try to remove
+  // const [, forceUpdate] = useReducer(x => x + 1 as number, 0)
   
   // Update robot properties on Fleetmanager and RobotSelection callback
-  //   TODO: UPDATE ROBOT database mutation
   const updateRobot = (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => {
-    // const index = robots.findIndex((robot) => robot.id == childData.id)
+    const index = robots.findIndex((robot) => robot.id == childData.id)
     // robots[index].state = childData.state
-    // robots[index].toolState = childData.toolState
     // robots[index].position = childData.position
     // robots[index].rotation = childData.rotation
-    // robots[index].jointAngles = childData.jointAngles
-    // setRobots(robots)
-    // forceUpdate() // try to remove
+    robots[index].toolState = childData.toolState
+    robots[index].jointAngles = childData.jointAngles
+    setRobots(robots)
+    // forceUpdate()
 
-    mutate({ tag: "UpdateRobot", id: childData.id, state: childData.state })
+    mutate({ tag: "UpdateRobot", id: childData.id, state: childData.state, x: childData.position[0], z: childData.position[2], theta: childData.rotation[2] })
       .catch((err) => {
         console.error("Failed to update robot", err)
       })
@@ -133,12 +131,11 @@ export const App = ({
   }, [tasksQuery])
 
   // Update task state on Mesh callback
-  //   TODO: UPDATE TASK database mutation
   const updateTask = (childData: {id: string, state: string}) => {
-    // const index = tasks.findIndex((task) => task.id == childData.id)
-    // tasks[index].state = childData.state
-    // setTasks(tasks)
-    // forceUpdate() // try to remove
+    const index = tasks.findIndex((task) => task.id == childData.id)
+    tasks[index].state = childData.state
+    setTasks(tasks)
+    // forceUpdate()
 
     mutate({ tag: "UpdateTask", id: childData.id, state: childData.state })
       .catch((err) => {

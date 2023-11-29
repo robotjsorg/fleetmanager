@@ -12,6 +12,8 @@ import { RobotContext } from "../context/robotContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
 import { locSelectionContext } from "../context/locSelectionContext"
 
+import { randomPosition, zeroRotation } from "../App"
+
 export const RobotForm = ({
   docId
 }: {
@@ -42,7 +44,9 @@ export const RobotForm = ({
             form.setFieldError("description", "Duplicate robot description")
           } else {
             const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
-            mutate({ tag: "CreateRobot", id, locationid: locSelection, description })
+            const position = randomPosition()
+            const rotation = zeroRotation()
+            mutate({ tag: "CreateRobot", id, locationid: locSelection, description, x: position[0], z: position[2], theta: rotation[2] })
               .then(() => {
                 setGuiSelection(id)
                 form.reset()
