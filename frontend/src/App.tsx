@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react"
+import { useEffect, useState } from "react" // useReducer
 
 import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { sql } from "@orbitinghail/sqlsync-react"
@@ -104,19 +104,24 @@ export const App = ({
     }
   }, [robotsQuery])
 
-  const [, forceUpdate] = useReducer(x => x + 1 as number, 0) // try to remove
+  // const [, forceUpdate] = useReducer(x => x + 1 as number, 0) // try to remove
   
   // Update robot properties on Fleetmanager and RobotSelection callback
   //   TODO: UPDATE ROBOT database mutation
   const updateRobot = (childData: {id: string, state: string, toolState: string, position: number[], rotation: number[], jointAngles: number[]}) => {
-    const index = robots.findIndex((robot) => robot.id == childData.id)
-    robots[index].state = childData.state
-    robots[index].toolState = childData.toolState
-    robots[index].position = childData.position
-    robots[index].rotation = childData.rotation
-    robots[index].jointAngles = childData.jointAngles
-    setRobots(robots)
-    forceUpdate() // try to remove
+    // const index = robots.findIndex((robot) => robot.id == childData.id)
+    // robots[index].state = childData.state
+    // robots[index].toolState = childData.toolState
+    // robots[index].position = childData.position
+    // robots[index].rotation = childData.rotation
+    // robots[index].jointAngles = childData.jointAngles
+    // setRobots(robots)
+    // forceUpdate() // try to remove
+
+    mutate({ tag: "UpdateRobot", id: childData.id, state: childData.state })
+      .catch((err) => {
+        console.error("Failed to update robot", err)
+      })
   }
 
   // Store tasks query in state
@@ -130,10 +135,15 @@ export const App = ({
   // Update task state on Mesh callback
   //   TODO: UPDATE TASK database mutation
   const updateTask = (childData: {id: string, state: string}) => {
-    const index = tasks.findIndex((task) => task.id == childData.id)
-    tasks[index].state = childData.state
-    setTasks(tasks)
-    forceUpdate() // try to remove
+    // const index = tasks.findIndex((task) => task.id == childData.id)
+    // tasks[index].state = childData.state
+    // setTasks(tasks)
+    // forceUpdate() // try to remove
+
+    mutate({ tag: "UpdateTask", id: childData.id, state: childData.state })
+      .catch((err) => {
+        console.error("Failed to update task", err)
+      })
   }
 
   // Single screen desktop app, no scrolling

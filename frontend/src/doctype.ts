@@ -32,6 +32,11 @@ export type Mutation =
       id: string
     }
   | {
+    tag: "UpdateRobot"
+    id: string
+    state: string;
+    }
+  | {
       tag: "CreateTask"
       id: string
       robotid: string
