@@ -85,12 +85,14 @@ export const Mesh_abb_irb52_7_120 = ({
   robot,
   selected,
   robotCurrent,
-  updateTask
+  updateTask,
+  updateRobotJointAngles
 } : {
   robot: IRobot
   selected: boolean
   robotCurrent: (childData: string) => void
   updateTask: (childData: {id: string, state: string}) => void
+  updateRobotJointAngles: (childData: {id: string, jointAngles: number[]}) => void
 }) => {
   const ref = useRef<THREE.Mesh>(null!)
   const { nodes, materials } = useGLTF( filepath ) as GLTFResult
@@ -101,7 +103,8 @@ export const Mesh_abb_irb52_7_120 = ({
 
   const [springs, api] = useSpring(
     () => ({
-      jointAngles: zeroJointAngles(),
+      jointAngles: jointAngles,
+      // jointAngles: zeroJointAngles(), // changing this did not work
       config: config.molasses
     }),
     []
@@ -176,26 +179,45 @@ export const Mesh_abb_irb52_7_120 = ({
 
   const handleStates = () => {
     switch( robot.state ) {
-      case "Manual": { 
-        springs.jointAngles.set( robot.jointAngles )
-        setJointAngles( robot.jointAngles )
+      case "Manual": {
+        if ( springs.jointAngles.get() != robot.jointAngles ) {
+          springs.jointAngles.set( robot.jointAngles )
+        }
+        if ( jointAngles != robot.jointAngles ) {
+          setJointAngles( robot.jointAngles )
+          updateRobotJointAngles({ id: robot.id, jointAngles: robot.jointAngles })
+        }
         break 
-      } 
+      }
       case "Auto": {
         if ( task ) {
-          robot.jointAngles = springs.jointAngles.get()
-          setJointAngles( springs.jointAngles.get() )
+          if ( robot.jointAngles != springs.jointAngles.get() ) {
+            robot.jointAngles = springs.jointAngles.get()
+          }
+          if ( jointAngles != springs.jointAngles.get() ) {
+            setJointAngles( springs.jointAngles.get() )
+            updateRobotJointAngles({ id: robot.id, jointAngles: springs.jointAngles.get() })
+          }
         } else {
+          if ( springs.jointAngles.get() != robot.jointAngles ) {
+            springs.jointAngles.set( robot.jointAngles )
+          }
+          if ( jointAngles != robot.jointAngles ) {
+            setJointAngles( robot.jointAngles )
+            updateRobotJointAngles({ id: robot.id, jointAngles: robot.jointAngles })
+          }
+        }
+        break 
+      }
+      default: { // Off, Error
+        if ( springs.jointAngles.get() != robot.jointAngles ) {
           springs.jointAngles.set( robot.jointAngles )
+        }
+        if ( jointAngles != robot.jointAngles ) {
           setJointAngles( robot.jointAngles )
         }
         break 
-      } 
-      default: { // Off, Error
-        springs.jointAngles.set( robot.jointAngles )
-        setJointAngles( robot.jointAngles )
-        break 
-      } 
+      }
     }
   }
 

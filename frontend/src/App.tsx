@@ -1,4 +1,4 @@
-import { useEffect, useState, useReducer } from "react"
+import { useEffect, useState } from "react"
 
 import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { sql } from "@orbitinghail/sqlsync-react"
@@ -72,12 +72,12 @@ export const App = ({
     };
   }, [initDB, mutate])
 
-  // Query DB // TODO: Is this running every single render? It should not be.
+  // Query DB
   const { rows: locations } = useQuery<ILocation>(
     docId,
     sql`SELECT * FROM locations`
   );
-  const { rows: robotsQuery } = useQuery<IRobotQuery>(
+  const { rows: queryRobots } = useQuery<IRobotQuery>(
     docId,
     sql`SELECT * FROM robots`
   );
@@ -86,37 +86,49 @@ export const App = ({
     sql`SELECT * FROM tasks ORDER BY created_at`
   );
 
-  // Store robots query in state and add joint angles and tool state
+  function getRobots (
+    queryRobots: IRobotQuery[],
+    localRobots: IRobot[]
+  ): IRobot[] {
+    const newRobots: IRobot[] = []
+    if ( Array.isArray( queryRobots ) && queryRobots.length > 0 ) {
+      queryRobots.map((queryRobot) => {
+        const localRobot = localRobots.find((r) => r.id == queryRobot.id)
+        if ( localRobot ) {
+          newRobots.push({
+            ...queryRobot,
+            position: [queryRobot.x, -0.02, queryRobot.z],
+            rotation: [-Math.PI / 2, 0, queryRobot.theta],
+            toolState: localRobot.toolState,
+            jointAngles: localRobot.jointAngles
+          })
+        } else {
+          newRobots.push({
+            ...queryRobot,
+            position: [queryRobot.x, -0.02, queryRobot.z],
+            rotation: [-Math.PI / 2, 0, queryRobot.theta],
+            toolState: "Unactuated",
+            jointAngles: zeroJointAngles()
+          })
+        }
+      })
+    }
+    return newRobots
+  }
+
   const [ robots, setRobots ] = useState<IRobot[]>([])
   useEffect(()=>{
-    const newRobots: IRobot[] = []
-
-    if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
-      robotsQuery.map(( robot ) => ( 
-        newRobots.push( robot as IRobot ))
-      );
-      newRobots.filter((robot) => (robot.position = [robot.x, -0.02, robot.z]))
-      newRobots.filter((robot) => (robot.rotation = [-Math.PI/2, 0, robot.theta]))
-      // newRobots.filter((robot) => (robot.position = randomPosition()))
-      // newRobots.filter((robot) => (robot.rotation = zeroRotation()))
-
-      // TODO: How to load these from local client data instead of overwriting every mutation?
-      newRobots.filter((robot) => (robot.jointAngles = zeroJointAngles()))
-      newRobots.filter((robot) => (robot.toolState = "Unactuated"))
-
-      setRobots(newRobots)
+    if ( Array.isArray( queryRobots ) && queryRobots.length > 0 ) {
+      setRobots(getRobots(queryRobots, robots))
     }
-  }, [robotsQuery])
+  }, [robots, queryRobots])
 
-  const [, forceUpdate] = useReducer(x => x + 1 as number, 0)
-  
-  // Update robot properties on Fleetmanager and RobotSelection callback
+  // Update db robot data
   const updateRobotState = (childData: { id: string, state: string }) => {
     mutate({ tag: "UpdateRobotState", id: childData.id, state: childData.state })
       .catch((err) => {
         console.error("Failed to update robot", err)
       })
-    forceUpdate()
   }
   const updateRobotPosition = (childData: { id: string, position: number[], rotation: number[] }) => {
     mutate({ tag: "UpdateRobotPosition", id: childData.id, x: childData.position[0], z: childData.position[2], theta: childData.rotation[2] })
@@ -124,11 +136,12 @@ export const App = ({
         console.error("Failed to update robot", err)
       })
   }
+
+  // Update local robot data
   const updateRobotToolState = (childData: { id: string, toolState: string }) => {
     const index = robots.findIndex((robot) => robot.id == childData.id)
     robots[index].toolState = childData.toolState
     setRobots(robots)
-    forceUpdate()
   }
   const updateRobotJointAngles = (childData: { id: string, jointAngles: number[] }) => {
     const index = robots.findIndex((robot) => robot.id == childData.id)
@@ -323,7 +336,10 @@ export const App = ({
                     : route == "location" && // Fleetmanager
                       <Box h={ fixHeight - CONTENT_OFFSET }>
                         <Divider />
-                        <Fleetmanager updateRobotPosition={updateRobotPosition} updateTask={updateTask} />
+                        <Fleetmanager
+                          updateRobotPosition={updateRobotPosition}
+                          updateTask={updateTask}
+                          updateRobotJointAngles={updateRobotJointAngles} />
                       </Box>
                     }
                   </AppShell.Main>

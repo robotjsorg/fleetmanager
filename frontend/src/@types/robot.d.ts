@@ -10,18 +10,12 @@ export interface IRobotQuery {
   theta: number
 }
 
-export interface IRobot {
+export interface IRobotLocal {
   id: string
-  locationid: string
-  description: string
-  state: string
-  created_at: string
-  updated_at: string 
-  x: number
-  z: number
-  theta: number
-  toolState: string
   position: number[]
   rotation: number[]
+  toolState: string
   jointAngles: number[]
 }
+
+export type IRobot = IRobotQuery & IRobotLocal

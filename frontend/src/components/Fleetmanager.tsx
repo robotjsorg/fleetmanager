@@ -23,10 +23,12 @@ const state = proxy({ current: "" })
 
 export const Fleetmanager = ({
   updateRobotPosition,
-  updateTask
+  updateTask,
+  updateRobotJointAngles
 }: {
   updateRobotPosition: (childData: {id: string, position: number[], rotation: number[] }) => void
   updateTask: (childData: {id: string, state: string}) => void
+  updateRobotJointAngles: (childData: {id: string, jointAngles: number[]}) => void
 }) => {
   const theme = useMantineContext()
   const { robots } = useContext( RobotContext )
@@ -93,7 +95,7 @@ export const Fleetmanager = ({
           <Outline visibleEdgeColor={theme.colorScheme == "dark" ? "white" : "blue"} blur edgeStrength={100} width={1000} />
         </EffectComposer>
         {locationsRobots.map((robot) => (
-          <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent} updateTask={updateTask}/>
+          <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent} updateTask={updateTask} updateRobotJointAngles={updateRobotJointAngles}/>
         ))}
       </Selection>
 
