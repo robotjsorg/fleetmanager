@@ -39,19 +39,16 @@ export const RobotItem = ({
   const { hovered, ref } = useHover()
   
   return (
-    // <Button onClick={ handleSelect }
-    // variant={ ((fbDisabled&&hovered)||(guiSelection==robot.id)) ?
-    //   "default" : "transparent" }
-    // >
-    <Group wrap="nowrap" ref={ref}
-      bg={ ((fbDisabled&&hovered)||(guiSelection==robot.id)) ?
-        ((theme.colorScheme == "dark") ? "#2a2c30" : "#f3f3f4") : "none" }
-      onClick={ handleSelect }
-      justify="space-between" gap="sm" px={12} py={4}
+    <Group ref={ref} onClick={ handleSelect }
+      wrap="nowrap"
+      justify="space-between"
+      gap="sm" px={12} py={4}
+      bg={ ( fbDisabled && hovered ) || guiSelection==robot.id ?
+        ( theme.colorScheme == "dark" ? "#2a2c30" : "#f3f3f4") : "none" }
       styles={{
         root: fbDisabled ? { cursor: "pointer" } : {}
       }}>
-      <Text>
+      <Text size="sm">
         { robot.description }
       </Text>
       { !fbDisabled &&

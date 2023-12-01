@@ -26,13 +26,11 @@ export const RobotList = ({
 
   return (
     <ScrollArea type="auto">
-      <Stack gap="xs">
       {filteredRobots.length == 0 ? <Text>No Robots</Text> :
         filteredRobots.map((robot) => (
           <RobotItem docId={docId} key={robot.id} robot={robot} fbDisabled={fbDisabled} />
         ))
       }
-      </Stack>
     </ScrollArea>
   )
 }

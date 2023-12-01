@@ -37,10 +37,10 @@ export const TaskItem = ({
   return (
     <Group wrap="nowrap" justify="space-between" gap="sm" px={12} py={4}>
       <Group wrap="nowrap">
-        <Text>
+        <Text size="sm">
           { robot?.description }: { task.description }
         </Text>
-        <Text>
+        <Text size="sm">
           { task.state }
         </Text>
       </Group>

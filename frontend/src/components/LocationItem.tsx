@@ -65,7 +65,7 @@ export const LocationItem = ({
       styles={{
         root: { cursor: "pointer" }
       }}>
-      <Text>
+      <Text size="sm">
         { location.description }
       </Text>
       { !fbDisabled &&

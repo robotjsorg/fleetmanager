@@ -12,7 +12,14 @@ import { RobotContext } from "../context/robotContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
 import { locSelectionContext } from "../context/locSelectionContext"
 
-import { randomPosition, zeroRotation } from "../App"
+const randomPosition = () => {
+  const x = 4 * (Math.random() - 0.5)
+  const z = 2 * (Math.random() - 0.5) + 1
+  return [x, -0.02, z]
+}
+const zeroRotation = () => {
+  return [-Math.PI/2, 0, -Math.PI/4]
+}
 
 export const RobotForm = ({
   docId

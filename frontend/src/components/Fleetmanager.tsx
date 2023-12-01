@@ -23,12 +23,12 @@ const state = proxy({ current: "" })
 
 export const Fleetmanager = ({
   updateRobotPosition,
-  updateTask,
-  updateRobotJointAngles
+  updateRobotJointAngles,
+  updateTask
 }: {
   updateRobotPosition: (childData: {id: string, position: number[], rotation: number[] }) => void
-  updateTask: (childData: {id: string, state: string}) => void
   updateRobotJointAngles: (childData: {id: string, jointAngles: number[]}) => void
+  updateTask: (childData: {id: string, state: string}) => void
 }) => {
   const theme = useMantineContext()
   const { robots } = useContext( RobotContext )
