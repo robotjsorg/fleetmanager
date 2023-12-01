@@ -45,6 +45,8 @@ export const FMAppShell = ({
   updateRobotJointAngles: (childData: {id: string, jointAngles: number[] }) => void
   updateTask: (childData: {id: string, state: string}) => void
 }) => {
+  const theme = useMantineContext()
+
   // Single screen desktop app, no scrolling
   const { width, height } = useViewportSize()
   const [ fixHeight, setFixHeight ] = useState( height )
@@ -99,7 +101,6 @@ export const FMAppShell = ({
   if ( POPULATEDB ) {
     initSelectionLocationDescription = "Warehouse"
   }
-
   const { locations } = useContext(RobotContext)
   const { locSelection } = useContext(locSelectionContext)
   const [ selectedLocationDescription, setSelectedLocationDescription ] = useState( initSelectionLocationDescription )
@@ -112,9 +113,8 @@ export const FMAppShell = ({
     }
   }, [locSelection, locations])
 
-  const theme = useMantineContext()
-  const { setMoveRobot } = useContext(moveRobotContext)
   const { guiSelection } = useContext(guiSelectionContext)
+  const { setMoveRobot } = useContext(moveRobotContext)
 
   return (
     <AppShell
@@ -198,13 +198,13 @@ export const FMAppShell = ({
           <RobotsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
         : route == "tasks" ?
           <TasksView docId={docId} h={ fixHeight - VIEW_OFFSET } />
-        : route == "location" && // Fleetmanager
+        : route == "location" &&
           <Box h={ fixHeight - CONTENT_OFFSET }>
             <Divider />
             <Fleetmanager
               updateRobotPosition={updateRobotPosition}
-              updateTask={updateTask}
-              updateRobotJointAngles={updateRobotJointAngles} />
+              updateRobotJointAngles={updateRobotJointAngles}
+              updateTask={updateTask} />
           </Box>
         }
       </AppShell.Main>
