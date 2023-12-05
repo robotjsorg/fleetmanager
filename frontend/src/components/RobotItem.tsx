@@ -44,7 +44,7 @@ export const RobotItem = ({
       justify="space-between"
       gap="sm" px={12} py={4}
       bg={ ( fbDisabled && hovered ) || guiSelection==robot.id ?
-        ( theme.colorScheme == "dark" ? "#2a2c30" : "#f3f3f4") : "none" }
+        ( theme.colorScheme == "dark" ? "#2a2c30" : "#f3f3f4" ) : "none" }
       styles={{
         root: fbDisabled ? { cursor: "pointer" } : {}
       }}>

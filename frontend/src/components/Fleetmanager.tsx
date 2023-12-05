@@ -16,6 +16,7 @@ import { locSelectionContext } from "../context/locSelectionContext"
 import { moveRobotContext } from "../context/moveRobotContext"
 
 import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120"
+import { Urdf_T12 } from "../meshes/Urdf_T12"
 
 export const GRID_BOUND = 4
 
@@ -112,6 +113,8 @@ export const Fleetmanager = ({
       <Controls />
       <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0.25, 0, 1] } />
       {/* autoRotate={ true } */}
+
+      <Urdf_T12 />
 
       {/* <Mesh_cardboard_box_01 /> */}
       {/* <Mesh_cardboard_box_01 /> */}
