@@ -114,7 +114,7 @@ export const Fleetmanager = ({
       <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0.25, 0, 1] } />
       {/* autoRotate={ true } */}
 
-      <Urdf_T12 />
+      {/* <Urdf_T12 /> */}
 
       {/* <Mesh_cardboard_box_01 /> */}
       {/* <Mesh_cardboard_box_01 /> */}
