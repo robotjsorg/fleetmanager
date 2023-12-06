@@ -5,7 +5,7 @@ import { Euler, Vector3, useFrame } from "@react-three/fiber"
 import { useCursor, useGLTF } from "@react-three/drei"
 import { Select } from "@react-three/postprocessing"
 import { GLTF } from "three-stdlib"
-import { useSpring, animated, config } from "@react-spring/three"
+import { useSpring, animated, easings } from "@react-spring/three"
 
 import { IRobot } from "../@types/robot"
 import { ITask } from "../@types/task"
@@ -104,11 +104,23 @@ export const Mesh_abb_irb52_7_120 = ({
   const [springs, api] = useSpring(
     () => ({
       jointAngles: jointAngles,
-      // jointAngles: zeroJointAngles(), // changing this did not work
-      config: config.molasses
+      config: {
+        easing: easings.easeInOutQuad
+      }
     }),
     []
   )
+
+  // const [springs, api] = useSprings(
+  //   2,
+  //   () => ({
+  //     jointAngles: jointAngles,
+  //     config: {
+  //       easing: easings.easeInOutQuad
+  //     }
+  //   }),
+  //   []
+  // )
 
   const { tasks } = useContext( RobotContext )
   const [ task, setTask ] = useState<ITask>()
@@ -139,6 +151,7 @@ export const Mesh_abb_irb52_7_120 = ({
             jointAngles: randomJointAngles()
           })
         }
+      // } else if ( task.description == "Pick and Place" ) {
       } else if ( task.description == "Home" ) {
         api.start({
           jointAngles: home()
