@@ -29,6 +29,7 @@ export const FMWidget = ({
   updateRobotState: (childData: {id: string, state: string }) => void
   updateRobotPosition: (childData: {id: string, position: number[], rotation: number[] }) => void
   updateRobotToolState: (childData: {id: string, toolState: string }) => void
+  updateRobotToolStateWrapper: (childData: {id: string, toolState: string }) => void
   updateRobotJointAngles: (childData: {id: string, jointAngles: number[] }) => void
 }) => {
   const theme = useMantineContext()
@@ -40,6 +41,12 @@ export const FMWidget = ({
 
   const [ state, setState ] = useState( selectedRobot?.state )
   const [ toolState, setToolState ] = useState( selectedRobot?.toolState )
+
+  // This callback should come top-down, not bottom-up
+  const updateRobotToolStateWrapper = (childData: { id: string, toolState: string }) => {
+    updateRobotToolState({id: childData.id, toolState: childData.toolState})
+    setToolState( childData.toolState )
+  }
   
   useEffect(()=>{
     const index = robots.findIndex( (robot) => robot.id == guiSelection )
@@ -185,7 +192,7 @@ export const FMWidget = ({
       : selectedRobot && state == "Error" ?
         <FMWidgetError />
       : selectedRobot && state == "Manual" ?
-        <FMWidgetManual updateRobotToolState={updateRobotToolState} updateRobotJointAngles={updateRobotJointAngles} />
+        <FMWidgetManual updateRobotToolStateWrapper={updateRobotToolStateWrapper} updateRobotJointAngles={updateRobotJointAngles} />
       : selectedRobot && state == "Auto" &&
         <FMWidgetAuto docId={docId} />
       }

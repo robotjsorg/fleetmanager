@@ -15,10 +15,10 @@ import { JOINT_LIMITS } from "../meshes/Mesh_abb_irb52_7_120"
 const RADS_DEGS = 57.2958
 
 export const FMWidgetManual = ({
-  updateRobotToolState,
+  updateRobotToolStateWrapper,
   updateRobotJointAngles
 }: {
-  updateRobotToolState: (childData: {id: string, toolState: string}) => void
+  updateRobotToolStateWrapper: (childData: {id: string, toolState: string}) => void
   updateRobotJointAngles: (childData: {id: string, jointAngles: number[]}) => void
 }) => {
   const { robots } = useContext( RobotContext )
@@ -80,13 +80,13 @@ export const FMWidgetManual = ({
   }, [jointAngleFields, jointsForm, selectedRobot])
 
   const handleActuate = () => {
-    updateRobotToolState({
+    updateRobotToolStateWrapper({
       id: selectedRobot.id,
       toolState: "Actuated"
     })
   }
   const handleUnactuate = () => {
-    updateRobotToolState({
+    updateRobotToolStateWrapper({
       id: selectedRobot.id,
       toolState: "Unactuated"
     })
