@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react"
 
 import { JournalId } from "@orbitinghail/sqlsync-worker"
-import { Container, ScrollArea, Table, useMantineContext } from "@mantine/core"
+import { Table } from "@mantine/core"
 
 import { ITask } from "../@types/task"
 
 import { RobotContext } from "../context/robotContext"
 import { locSelectionContext } from "../context/locSelectionContext"
+
 import { TaskTableItem } from "./TaskTableItem"
 
 export const TaskTable = ({
@@ -14,7 +15,6 @@ export const TaskTable = ({
 }: {
   docId: JournalId
 }) => {
-  const theme = useMantineContext()
   const { robots, tasks } = useContext( RobotContext )
   const { locSelection } = useContext( locSelectionContext )
   const [ filteredTasks, setFilteredTasks ] = useState<ITask[]>([])
@@ -25,31 +25,20 @@ export const TaskTable = ({
   }, [locSelection, robots, tasks])
 
   return (
-    <ScrollArea>
-        <Container size="sm">
-        <Table stickyHeader>
-          <Table.Thead
-            style={theme.colorScheme == 'light' ? {
-              // filter: "drop-shadow(#eee 0px -2px 4px)",
-              zIndex: "1"
-            } : {
-              // filter: "drop-shadow(#111 0px -2px 4px)",
-              zIndex: "1"
-            }}>
-            <Table.Tr style={{ zIndex: "1" }}>
-              <Table.Th>Robot</Table.Th>
-              <Table.Th>Description</Table.Th>
-              <Table.Th>State</Table.Th>
-              <Table.Th></Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-          {filteredTasks.map((task) => (
-            <TaskTableItem key={task.id} docId={docId} task={task} />
-          ))}
-          </Table.Tbody>
-        </Table>
-    </Container>
-      </ScrollArea>
+    <Table stickyHeader>
+      <Table.Thead style={{zIndex: "1"}}>
+        <Table.Tr>
+          <Table.Th>Task</Table.Th>
+          <Table.Th>Robot</Table.Th>
+          <Table.Th>Status</Table.Th>
+          <Table.Th></Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>
+        {filteredTasks.map((task) => (
+          <TaskTableItem key={task.id} docId={docId} task={task} />
+        ))}
+      </Table.Tbody>
+    </Table>
   )
 }

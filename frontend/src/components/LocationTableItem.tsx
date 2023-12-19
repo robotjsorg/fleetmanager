@@ -1,7 +1,7 @@
 import { useCallback, useContext } from "react"
 
 import { JournalId } from "@orbitinghail/sqlsync-worker"
-import { Text, ActionIcon, Group, useMantineContext } from "@mantine/core"
+import { ActionIcon, Center, Flex, Table } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
 
 import { IconX } from "@tabler/icons-react"
@@ -13,17 +13,14 @@ import { RobotContext } from "../context/robotContext"
 import { locSelectionContext } from "../context/locSelectionContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
 
-export const LocationItem = ({
+export const LocationTableItem = ({
   docId,
-  location,
-  fbDisabled
+  location
 }: {
   docId: JournalId
   location: ILocation
-  fbDisabled: boolean
 }) => {
-  const theme = useMantineContext()
-  const { locations } = useContext( RobotContext )
+  const { locations, robots } = useContext( RobotContext )
   const { locSelection, setLocationSelection } = useContext( locSelectionContext )
   const { setGuiSelection } = useContext( guiSelectionContext )
 
@@ -58,21 +55,27 @@ export const LocationItem = ({
     return locSelection == location.id
   }
 
+  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == location.id ))
+  const numRobots = filteredRobots.length
+
   return (
-    <Group wrap="nowrap" ref={ref} bg={ hovered || selected() ? theme.colorScheme == "dark" ? "#2a2c30" : "#f3f3f4" : "none" }
+    <Table.Tr
       onClick={ handleLocationSelect }
-      justify="space-between" gap="sm" px={12} py={4}
-      styles={{
-        root: { cursor: "pointer" }
-      }}>
-      <Text size="sm">
-        { location.description }
-      </Text>
-      { !fbDisabled &&
-        <ActionIcon onClick={ handleDelete } color="gray" variant="subtle" size={20}>
-          <IconX />
-        </ActionIcon>
-      }
-    </Group>
+      ref={ref as React.RefObject<HTMLTableRowElement>}
+      bg={ hovered || selected() ? "var(--mantine-color-gray-light)" : "none" }
+      style={{ cursor: "pointer" }}>
+      <Table.Td>{ location.description }</Table.Td>
+      <Table.Td>{ numRobots }</Table.Td>
+      <Table.Td>
+        <Flex justify="right">
+          <Center>
+            {/* onClick={ (e) => { e.stopPropagation(), handleDelete } } */}
+            <ActionIcon onClick={ handleDelete } color="gray" variant="subtle" size={20}>
+              <IconX />
+            </ActionIcon>
+          </Center>
+        </Flex>
+      </Table.Td>
+    </Table.Tr>
   )
 }

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { ScrollArea, Text } from "@mantine/core"
 
 import { ITask } from "../@types/task"
@@ -10,11 +9,7 @@ import { locSelectionContext } from "../context/locSelectionContext"
 
 import { TaskListItem } from "./TaskListItem"
 
-export const TaskList = ({
-  docId
-}: {
-  docId: JournalId
-}) => {
+export const TaskList = () => {
   const { robots, tasks } = useContext( RobotContext )
   const { locSelection } = useContext( locSelectionContext )
   const [ filteredTasks, setFilteredTasks ] = useState<ITask[]>([])
@@ -28,7 +23,7 @@ export const TaskList = ({
     <ScrollArea type="auto">
       {filteredTasks.length == 0 ? <Text>Location has No Tasks</Text> :
         filteredTasks.map((task) => (
-          <TaskListItem key={task.id} docId={docId} task={task} />
+          <TaskListItem key={task.id} task={task} />
         ))
       }
     </ScrollArea>

@@ -5,7 +5,7 @@ import { ScrollArea, Text } from "@mantine/core"
 
 import { RobotContext } from "../context/robotContext"
 
-import { LocationItem } from "./LocationItem"
+import { LocationListItem } from "./LocationListItem"
 
 export const LocationList = ({
   docId,
@@ -20,7 +20,7 @@ export const LocationList = ({
     <ScrollArea type="auto">
       {locations.length == 0 ? <Text>No Locations</Text> :
         locations.map((location) => (
-          <LocationItem docId={docId} key={location.id} location={location} fbDisabled={fbDisabled} />
+          <LocationListItem docId={docId} key={location.id} location={location} fbDisabled={fbDisabled} />
         ))
       }
     </ScrollArea>

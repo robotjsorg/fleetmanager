@@ -22,9 +22,9 @@ export const TaskTableItem = ({
   }, [task.id, mutate])
 
   return (
-    <Table.Tr key={ task.id } bg={ task.state == "Active" ? 'var(--mantine-color-gray-light)' : undefined }>
-      <Table.Td>{ task.robot_desc }</Table.Td>
+    <Table.Tr bg={ task.state == "Active" ? "var(--mantine-color-gray-light)" : undefined }>
       <Table.Td>{ task.description }</Table.Td>
+      <Table.Td>{ task.robot_desc }</Table.Td>
       <Table.Td>{ task.state }</Table.Td>
       <Table.Td>
         <Flex justify="right">

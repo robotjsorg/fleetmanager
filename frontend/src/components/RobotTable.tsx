@@ -1,30 +1,37 @@
 import { useContext } from "react"
 
+import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Table } from "@mantine/core"
 
 import { RobotContext } from "../context/robotContext"
 import { locSelectionContext } from "../context/locSelectionContext"
 
-export const RobotTable = () => {
+import { RobotTableItem } from "./RobotTableItem"
+
+export const RobotTable = ({
+  docId
+}: {
+  docId: JournalId
+}) => {
   const { robots } = useContext( RobotContext )
   const { locSelection } = useContext( locSelectionContext )
   const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ))
 
   return (
-    <Table>
-      <Table.Thead>
+    <Table stickyHeader>
+      <Table.Thead style={{zIndex: "1"}}>
         <Table.Tr>
-          <Table.Th>Description</Table.Th>
-          <Table.Th>Location</Table.Th>
+          <Table.Th>Robot</Table.Th>
+          <Table.Th>Mode</Table.Th>
+          <Table.Th>Active Task</Table.Th>
+          <Table.Th>Completed Tasks</Table.Th>
+          <Table.Th>Queued Tasks</Table.Th>
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
-      {filteredRobots.map((robot) => (
-        <Table.Tr key={robot.id}>
-          <Table.Td>{robot.description}</Table.Td>
-          <Table.Td>{robot.locationid}</Table.Td>
-        </Table.Tr>
-      ))}
+        {filteredRobots.map((robot) => (
+          <RobotTableItem key={robot.id} docId={docId} robot={robot} />
+        ))}
       </Table.Tbody>
     </Table>
   )

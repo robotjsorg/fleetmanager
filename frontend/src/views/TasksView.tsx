@@ -1,5 +1,5 @@
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Box, Stack, Divider } from "@mantine/core";
+import { Stack, Divider, Container, ScrollArea } from "@mantine/core";
 
 import { TaskTable } from "../components/TaskTable";
 import { TaskForm } from "../components/TaskForm";
@@ -15,12 +15,16 @@ export const TasksView = ({
     <>
       <Divider />
       <Stack h={h}>
-        <TaskTable docId={docId} />
+        <ScrollArea>
+          <Container size="sm">
+            <TaskTable docId={docId} />
+          </Container>
+        </ScrollArea>
       </Stack>
-      <Divider mb="xl" />
-      <Box maw={400} mx="auto">
+      <Divider />
+      <Container size="xs" p="xl">
         <TaskForm docId={docId} />
-      </Box>
+      </Container>
     </>
   );
 };
