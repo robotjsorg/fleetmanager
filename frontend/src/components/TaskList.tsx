@@ -16,7 +16,7 @@ export const TaskList = () => {
   useEffect(()=>{
     const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ))
     const filteredRobotIds = filteredRobots.map(( robot ) => ( robot.id ))
-    setFilteredTasks( tasks.filter(( task ) => ( filteredRobotIds.includes( task.robotid ) )) )
+    setFilteredTasks( tasks.filter(( task ) => ( filteredRobotIds.includes( task.robotid ))))
   }, [locSelection, robots, tasks])
 
   return (

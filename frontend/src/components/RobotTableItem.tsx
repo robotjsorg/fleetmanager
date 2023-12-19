@@ -19,19 +19,6 @@ export const RobotTableItem = ({
 }) => {
   const theme = useMantineColorScheme()
   const { guiSelection, setGuiSelection } = useContext(guiSelectionContext)
-  const mutate = useMutate( docId )
-  const handleDelete = useCallback(() => {
-    mutate({ tag: "DeleteRobot", id: robot.id }).catch((err) => {
-      console.error("Failed to delete", err)
-    })
-  }, [robot.id, mutate])
-
-  const handleSelect = () => {
-    if ( guiSelection != robot.id ) {
-      setGuiSelection( robot.id )
-    }
-  }
-
   const { tasks } = useContext( RobotContext )
   const activeTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" ))
   let activeTask = "-"
@@ -42,11 +29,21 @@ export const RobotTableItem = ({
   const numCompletedTasks = completedTasks.length
   const queuedTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Queued" ))
   const numQueuedTasks = queuedTasks.length
-
   const { hovered, ref } = useHover()
   const selected = () => { 
     return guiSelection == robot.id
   }
+  const handleSelect = () => {
+    if ( guiSelection != robot.id ) {
+      setGuiSelection( robot.id )
+    }
+  }
+  const mutate = useMutate( docId )
+  const handleDelete = useCallback(() => {
+    mutate({ tag: "DeleteRobot", id: robot.id }).catch((err) => {
+      console.error("Failed to delete", err)
+    })
+  }, [robot.id, mutate])
 
   return (
     <Table.Tr onClick={ handleSelect }

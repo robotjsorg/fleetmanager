@@ -24,7 +24,18 @@ export const LocationTableItem = ({
   const { locations, robots } = useContext( RobotContext )
   const { locSelection, setLocationSelection } = useContext( locSelectionContext )
   const { setGuiSelection } = useContext( guiSelectionContext )
-
+  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == location.id ))
+  const numRobots = filteredRobots.length
+  const { hovered, ref } = useHover()
+  const selected = () => { 
+    return locSelection == location.id
+  }
+  const handleLocationSelect = () => {
+    if ( locSelection != location.id ) {
+      setLocationSelection( location.id )
+      setGuiSelection("no selection")
+    }
+  }
   const mutate = useMutate( docId )
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteLocation", id: location.id })
@@ -43,21 +54,6 @@ export const LocationTableItem = ({
         console.error("Failed to delete", err)
       })
   }, [mutate, location.id, locSelection, locations, setLocationSelection])
-
-  const handleLocationSelect = () => {
-    if ( locSelection != location.id ) {
-      setLocationSelection( location.id )
-      setGuiSelection("no selection")
-    }
-  }
-
-  const { hovered, ref } = useHover()
-  const selected = () => { 
-    return locSelection == location.id
-  }
-
-  const filteredRobots = robots.filter(( robot ) => ( robot.locationid == location.id ))
-  const numRobots = filteredRobots.length
 
   return (
     <Table.Tr onClick={ handleLocationSelect }
