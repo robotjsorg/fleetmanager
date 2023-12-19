@@ -11,11 +11,9 @@ import { locSelectionContext } from "../context/locSelectionContext"
 import { TaskListItem } from "./TaskListItem"
 
 export const TaskList = ({
-  docId,
-  fbDisabled
+  docId
 }: {
   docId: JournalId
-  fbDisabled: boolean
 }) => {
   const { robots, tasks } = useContext( RobotContext )
   const { locSelection } = useContext( locSelectionContext )
@@ -30,7 +28,7 @@ export const TaskList = ({
     <ScrollArea type="auto">
       {filteredTasks.length == 0 ? <Text>Location has No Tasks</Text> :
         filteredTasks.map((task) => (
-          <TaskListItem key={task.id} docId={docId} task={task} fbDisabled={fbDisabled} />
+          <TaskListItem key={task.id} docId={docId} task={task} />
         ))
       }
     </ScrollArea>

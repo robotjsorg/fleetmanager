@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 
 import { JournalId } from "@orbitinghail/sqlsync-worker"
-import { ActionIcon, Center, Table } from "@mantine/core"
+import { ActionIcon, Center, Flex, Table } from "@mantine/core"
 
 import { useMutate } from "../doctype"
 import { ITask } from "../@types/task"
@@ -27,11 +27,13 @@ export const TaskTableItem = ({
       <Table.Td>{ task.description }</Table.Td>
       <Table.Td>{ task.state }</Table.Td>
       <Table.Td>
-        <Center>
-          <ActionIcon onClick={ handleDelete } color="gray" variant="subtle" size={20}>
-            <IconX />
-          </ActionIcon>
-        </Center>
+        <Flex justify="right">
+          <Center>
+            <ActionIcon onClick={ handleDelete } color="gray" variant="subtle" size={20}>
+              <IconX />
+            </ActionIcon>
+          </Center>
+        </Flex>
       </Table.Td>
     </Table.Tr>
   )
