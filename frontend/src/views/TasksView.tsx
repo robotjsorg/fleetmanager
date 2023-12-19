@@ -1,8 +1,7 @@
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { Box, Stack, Divider } from "@mantine/core";
 
-import { TaskList } from "../components/TaskList";
-// import { TaskTable } from "../components/TaskTable";
+import { TaskTable } from "../components/TaskTable";
 import { TaskForm } from "../components/TaskForm";
 
 export const TasksView = ({
@@ -11,15 +10,14 @@ export const TasksView = ({
 }: {
   docId: JournalId
   h: number
-}) => {  
+}) => {
   return (
     <>
       <Divider />
-      <Stack h={h} p="lg" maw={800} mx="auto">
-        <TaskList docId={docId} fbDisabled={false} />
-        {/* <TaskTable /> */}
+      <Stack h={h}>
+        <TaskTable docId={docId} />
       </Stack>
-      <Divider my="lg" />
+      <Divider mb="xl" />
       <Box maw={400} mx="auto">
         <TaskForm docId={docId} />
       </Box>

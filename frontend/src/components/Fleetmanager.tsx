@@ -16,7 +16,7 @@ import { locSelectionContext } from "../context/locSelectionContext"
 import { moveRobotContext } from "../context/moveRobotContext"
 
 import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120"
-import { Urdf_T12 } from "../meshes/Urdf_T12"
+// import { Urdf_T12 } from "../meshes/Urdf_T12"
 
 export const GRID_BOUND = 4
 

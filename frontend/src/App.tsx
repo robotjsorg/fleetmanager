@@ -7,7 +7,7 @@ import { MantineProvider } from "@mantine/core"
 import { useMutate, useQuery } from "./doctype"
 import { ILocation } from "./@types/location"
 import { IRobotQuery, IRobot } from "./@types/robot"
-import { ITask } from "./@types/task"
+import { ITask, ITaskQuery } from "./@types/task"
 
 import { RobotProvider } from "./context/robotContext"
 import { guiSelectionContext } from "./context/guiSelectionContext"
@@ -41,14 +41,14 @@ export const App = ({
     }
     return () => {
       setInitDB( false )
-    };
+    }
   }, [initDB, mutate])
 
   // Locations
   const { rows: locations } = useQuery<ILocation>(
     docId,
     sql`SELECT * FROM locations`
-  );
+  )
 
   // Selected location id
   let initLocSelection = "no selection"
@@ -58,17 +58,17 @@ export const App = ({
   const [ locSelection, setLocationSelection ] = useState( initLocSelection )
 
   // Robots
-  const { rows: queryRobots } = useQuery<IRobotQuery>(
+  const { rows: robotsQuery } = useQuery<IRobotQuery>(
     docId,
     sql`SELECT * FROM robots`
-  );
+  )
   function getRobots (
-    queryRobots: IRobotQuery[],
+    robotsQuery: IRobotQuery[],
     localRobots: IRobot[]
   ): IRobot[] {
     const newRobots: IRobot[] = []
-    if ( Array.isArray( queryRobots ) && queryRobots.length > 0 ) {
-      queryRobots.map((queryRobot) => {
+    if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
+      robotsQuery.map((queryRobot) => {
         const localRobot = localRobots.find((r) => r.id == queryRobot.id)
         if ( localRobot ) {
           newRobots.push({
@@ -93,34 +93,61 @@ export const App = ({
   }
   const [ robots, setRobots ] = useState<IRobot[]>([])
   useEffect(()=>{
-    if ( Array.isArray( queryRobots ) && queryRobots.length > 0 ) {
-      setRobots(getRobots(queryRobots, robots))
+    if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
+      setRobots(getRobots(robotsQuery, robots))
     }
-  }, [robots, queryRobots])
+  }, [robots, robotsQuery])
 
   // Selected robot id
-  const [ guiSelection, setGuiSelection ] = useState( "no selection" );
+  const [ guiSelection, setGuiSelection ] = useState( "no selection" )
 
   // If robot is being moved on GUI
-  const [ moveRobot, setMoveRobot ] = useState( false );
+  const [ moveRobot, setMoveRobot ] = useState( false )
   useEffect(()=>{
-    setMoveRobot( false );
+    setMoveRobot( false )
   }, [guiSelection])
 
   // Tasks
   const { rows: tasksQuery } = useQuery<ITask>(
     docId,
     sql`SELECT * FROM tasks ORDER BY created_at`
-  );
-  const [ tasks, setTasks ] = useState<ITask[]>([]);
+  )
+  function getTasks (
+    queryTasks: ITaskQuery[],
+    localTasks: ITask[],
+    robots: IRobot[]
+  ): ITask[] {
+    const newTasks: ITask[] = []
+    if ( Array.isArray( queryTasks ) && queryTasks.length > 0 ) {
+      queryTasks.map((queryTask) => {
+        const localTask = localTasks.find((r) => r.id == queryTask.id)
+        if ( localTask ) {
+          newTasks.push({
+            ...queryTask,
+            robot_desc: localTask.robot_desc
+          })
+        } else {
+          const localRobot = robots.find((r) => r.id == queryTask.robotid)
+          if ( localRobot ) {
+            newTasks.push({
+              ...queryTask,
+              robot_desc: localRobot.description
+            })
+          }
+        }
+      })
+    }
+    return newTasks
+  }
+  const [ tasks, setTasks ] = useState<ITask[]>([])
   useEffect(()=>{
     if ( Array.isArray( tasksQuery ) && tasksQuery.length > 0 ) {
-      setTasks(tasksQuery)
+      setTasks(getTasks(tasksQuery, tasks, robots))
     }
-  }, [tasksQuery])
+  }, [robots, tasks, tasksQuery])
 
   // Current task being displayed on GUI
-  const [ currentTask, setCurrentTask ] = useState("");
+  const [ currentTask, setCurrentTask ] = useState("")
 
   // Callback updates
   // robot db

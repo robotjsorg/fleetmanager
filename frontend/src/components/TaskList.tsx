@@ -8,7 +8,7 @@ import { ITask } from "../@types/task"
 import { RobotContext } from "../context/robotContext"
 import { locSelectionContext } from "../context/locSelectionContext"
 
-import { TaskItem } from "./TaskItem"
+import { TaskListItem } from "./TaskListItem"
 
 export const TaskList = ({
   docId,
@@ -30,7 +30,7 @@ export const TaskList = ({
     <ScrollArea type="auto">
       {filteredTasks.length == 0 ? <Text>Location has No Tasks</Text> :
         filteredTasks.map((task) => (
-          <TaskItem docId={docId} key={task.id} task={task} fbDisabled={fbDisabled} />
+          <TaskListItem key={task.id} docId={docId} task={task} fbDisabled={fbDisabled} />
         ))
       }
     </ScrollArea>

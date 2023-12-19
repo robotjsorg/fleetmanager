@@ -11,7 +11,7 @@ import { ITask } from "../@types/task"
 
 import { RobotContext } from "../context/robotContext"
 
-export const TaskItem = ({
+export const TaskListItem = ({
   docId,
   task,
   fbDisabled
