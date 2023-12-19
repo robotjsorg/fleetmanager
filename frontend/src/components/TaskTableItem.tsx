@@ -22,7 +22,7 @@ export const TaskTableItem = ({
   }, [task.id, mutate])
 
   return (
-    <Table.Tr bg={ task.state == "Active" ? "var(--mantine-color-gray-light)" : undefined }>
+    <Table.Tr>
       <Table.Td>{ task.description }</Table.Td>
       <Table.Td>{ task.robot_desc }</Table.Td>
       <Table.Td>{ task.state }</Table.Td>

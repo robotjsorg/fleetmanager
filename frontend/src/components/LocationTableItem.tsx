@@ -1,7 +1,7 @@
 import { useCallback, useContext } from "react"
 
 import { JournalId } from "@orbitinghail/sqlsync-worker"
-import { ActionIcon, Center, Flex, Table } from "@mantine/core"
+import { ActionIcon, Center, Flex, Table, useMantineColorScheme } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
 
 import { IconX } from "@tabler/icons-react"
@@ -20,6 +20,7 @@ export const LocationTableItem = ({
   docId: JournalId
   location: ILocation
 }) => {
+  const theme = useMantineColorScheme()
   const { locations, robots } = useContext( RobotContext )
   const { locSelection, setLocationSelection } = useContext( locSelectionContext )
   const { setGuiSelection } = useContext( guiSelectionContext )
@@ -59,10 +60,9 @@ export const LocationTableItem = ({
   const numRobots = filteredRobots.length
 
   return (
-    <Table.Tr
-      onClick={ handleLocationSelect }
+    <Table.Tr onClick={ handleLocationSelect }
       ref={ref as React.RefObject<HTMLTableRowElement>}
-      bg={ hovered || selected() ? "var(--mantine-color-gray-light)" : "none" }
+      bg={ selected() ? "var(--mantine-color-gray-light)" : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered ? "var(--mantine-color-gray-0)" : "none" }
       style={{ cursor: "pointer" }}>
       <Table.Td>{ location.description }</Table.Td>
       <Table.Td>{ numRobots }</Table.Td>

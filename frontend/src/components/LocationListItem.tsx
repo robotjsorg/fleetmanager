@@ -1,7 +1,7 @@
 import { useCallback, useContext } from "react"
 
 import { JournalId } from "@orbitinghail/sqlsync-worker"
-import { Text, ActionIcon, Group } from "@mantine/core"
+import { Text, ActionIcon, Group, useMantineColorScheme } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
 
 import { IconX } from "@tabler/icons-react"
@@ -22,6 +22,7 @@ export const LocationListItem = ({
   location: ILocation
   fbDisabled: boolean
 }) => {
+  const theme = useMantineColorScheme()
   const { locations } = useContext( RobotContext )
   const { locSelection, setLocationSelection } = useContext( locSelectionContext )
   const { setGuiSelection } = useContext( guiSelectionContext )
@@ -58,7 +59,8 @@ export const LocationListItem = ({
   }
 
   return (
-    <Group wrap="nowrap" ref={ref} bg={ hovered || selected() ? "var(--mantine-color-gray-light)" : "none" }
+    <Group wrap="nowrap" ref={ref} 
+      bg={ selected() ? "var(--mantine-color-gray-light)" : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered ? "var(--mantine-color-gray-0)" : "none" }
       onClick={ handleLocationSelect }
       justify="space-between" gap="sm" px={12} py={4}
       styles={{ root: { cursor: "pointer" }}}>

@@ -1,6 +1,6 @@
 import { useContext } from "react"
 
-import { Text, Group } from "@mantine/core"
+import { Text, Group, useMantineColorScheme } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
 
 import { IRobot } from "../@types/robot"
@@ -12,10 +12,14 @@ export const RobotListItem = ({
 }: {
   robot: IRobot
 }) => {
+  const theme = useMantineColorScheme()
   const { guiSelection, setGuiSelection } = useContext(guiSelectionContext)
   const { hovered, ref } = useHover()
   const handleSelect = () => {
     setGuiSelection(robot.id)
+  }
+  const selected = () => { 
+    return guiSelection == robot.id
   }
 
   return (
@@ -23,7 +27,7 @@ export const RobotListItem = ({
       wrap="nowrap"
       justify="space-between"
       gap="sm" px={12} py={4}
-      bg={ hovered || guiSelection == robot.id ? "var(--mantine-color-gray-light)" : "none" }
+      bg={ selected() ? "var(--mantine-color-gray-light)" : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered ? "var(--mantine-color-gray-0)" : "none" }
       styles={{ root: { cursor: "pointer" }}}>
       <Text size="sm">
         { robot.description }

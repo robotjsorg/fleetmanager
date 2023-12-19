@@ -1,13 +1,14 @@
 import { useCallback, useContext } from "react"
 
 import { JournalId } from "@orbitinghail/sqlsync-worker"
-import { ActionIcon, Center, Flex, Table } from "@mantine/core"
+import { ActionIcon, Center, Flex, Table, useMantineColorScheme } from "@mantine/core"
 
 import { useMutate } from "../doctype"
 import { IRobot } from "../@types/robot"
 import { IconX } from "@tabler/icons-react"
 import { guiSelectionContext } from "../context/guiSelectionContext"
 import { RobotContext } from "../context/robotContext"
+import { useHover } from "@mantine/hooks"
 
 export const RobotTableItem = ({
   docId,
@@ -16,13 +17,20 @@ export const RobotTableItem = ({
   docId: JournalId
   robot: IRobot
 }) => {
-  const { guiSelection } = useContext(guiSelectionContext)
+  const theme = useMantineColorScheme()
+  const { guiSelection, setGuiSelection } = useContext(guiSelectionContext)
   const mutate = useMutate( docId )
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteRobot", id: robot.id }).catch((err) => {
       console.error("Failed to delete", err)
     })
   }, [robot.id, mutate])
+
+  const handleSelect = () => {
+    if ( guiSelection != robot.id ) {
+      setGuiSelection( robot.id )
+    }
+  }
 
   const { tasks } = useContext( RobotContext )
   const activeTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" ))
@@ -35,8 +43,16 @@ export const RobotTableItem = ({
   const queuedTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Queued" ))
   const numQueuedTasks = queuedTasks.length
 
+  const { hovered, ref } = useHover()
+  const selected = () => { 
+    return guiSelection == robot.id
+  }
+
   return (
-    <Table.Tr bg={ guiSelection==robot.id ? "var(--mantine-color-gray-light)" : "none" }>
+    <Table.Tr onClick={ handleSelect }
+      ref={ref as React.RefObject<HTMLTableRowElement>}
+      bg={ selected() ? "var(--mantine-color-gray-light)" : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered ? "var(--mantine-color-gray-0)" : "none" }
+      style={{ cursor: "pointer" }}>
       <Table.Td>{ robot.description }</Table.Td>
       <Table.Td>{ robot.state }</Table.Td>
       <Table.Td>{ activeTask }</Table.Td>
