@@ -7,7 +7,7 @@ import { MantineProvider } from "@mantine/core"
 import { useMutate, useQuery } from "./doctype"
 import { ILocation } from "./@types/location"
 import { IRobotQuery, IRobot } from "./@types/robot"
-import { ITask, ITaskQuery } from "./@types/task"
+import { ITask } from "./@types/task" // ITaskQuery
 
 import { RobotProvider } from "./context/robotContext"
 import { guiSelectionContext } from "./context/guiSelectionContext"
@@ -29,7 +29,7 @@ export const App = ({
   // Initialize database
   const mutate = useMutate( docId )
   const [ initDB, setInitDB ] = useState( true )
-  // useEffect(() => {
+  useEffect(() => {
     if ( initDB ){
       console.log("[INFO] Init DB")
       mutate({ tag: "InitSchema" })
@@ -38,12 +38,9 @@ export const App = ({
         mutate({ tag: "PopulateDB" })
           .catch(( err ) => {console.error( "Failed to populate database", err )})
       }
-      setInitDB( false ) // !!
+      setInitDB( false )
     }
-    // return () => {
-    //   setInitDB( false )
-    // }
-  // }, [initDB, mutate])
+  }, [initDB, mutate])
 
   // Locations
   const { rows: locations } = useQuery<ILocation>(
@@ -64,8 +61,8 @@ export const App = ({
     sql`SELECT * FROM robots`
   )
   function getRobots (
-    robotsQuery: IRobotQuery[],
-    localRobots: IRobot[]
+    localRobots: IRobot[],
+    robotsQuery: IRobotQuery[]
   ): IRobot[] {
     const newRobots: IRobot[] = []
     if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
@@ -95,58 +92,50 @@ export const App = ({
   const [ robots, setRobots ] = useState<IRobot[]>([])
   useEffect(()=>{
     if ( Array.isArray( robotsQuery ) && robotsQuery.length > 0 ) {
-      setRobots(getRobots(robotsQuery, robots))
+      setRobots( getRobots( robots, robotsQuery ))
     }
   }, [robots, robotsQuery])
-
+  
   // Selected robot id
   const [ guiSelection, setGuiSelection ] = useState( "no selection" )
-
+  
   // If robot is being moved on GUI
   const [ moveRobot, setMoveRobot ] = useState( false )
   useEffect(()=>{
     setMoveRobot( false )
   }, [guiSelection])
-
+  
   // Tasks
-  const { rows: tasksQuery } = useQuery<ITask>(
+  const { rows: tasksQuery } = useQuery<ITask>( // ITaskQuery
     docId,
     sql`SELECT * FROM tasks ORDER BY created_at`
   )
-  function getTasks (
-    queryTasks: ITaskQuery[],
-    localTasks: ITask[],
-    robots: IRobot[]
-  ): ITask[] {
-    const newTasks: ITask[] = []
-    if ( Array.isArray( queryTasks ) && queryTasks.length > 0 ) {
-      queryTasks.map((queryTask) => {
-        const localTask = localTasks.find((r) => r.id == queryTask.id)
-        if ( localTask ) {
-          newTasks.push({
-            ...queryTask,
-            robot_desc: localTask.robot_desc
-          })
-        } else {
-          const localRobot = robots.find((r) => r.id == queryTask.robotid)
-          if ( localRobot ) {
-            newTasks.push({
-              ...queryTask,
-              robot_desc: localRobot.description
-            })
-          }
-        }
-      })
-    }
-    return newTasks
-  }
+  // function getTasks (
+  //   robots: IRobot[],
+  //   queryTasks: ITaskQuery[]
+  // ): ITask[] {
+  //   const newTasks: ITask[] = []
+  //   if ( Array.isArray( queryTasks ) && queryTasks.length > 0 ) {
+  //     queryTasks.map((queryTask) => {
+  //       const robot = robots.find((r) => r.id == queryTask.robotid)
+  //       if ( robot ) {
+  //         newTasks.push({
+  //           ...queryTask,
+  //           robot_desc: robot.description
+  //         })
+  //       }
+  //     })
+  //   }
+  //   return newTasks
+  // }
   const [ tasks, setTasks ] = useState<ITask[]>([])
   useEffect(()=>{
     if ( Array.isArray( tasksQuery ) && tasksQuery.length > 0 ) {
-      setTasks(getTasks(tasksQuery, tasks, robots))
+      setTasks( tasksQuery )
+      // setTasks( getTasks( robots, tasksQuery ))
     }
-  }, [robots, tasks, tasksQuery])
-
+  }, [tasksQuery])
+  
   // Current task being displayed on GUI
   const [ currentTask, setCurrentTask ] = useState("")
 

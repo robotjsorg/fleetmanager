@@ -1,4 +1,4 @@
-export interface ITaskQuery {
+export interface ITask { // ITaskQuery
   id: string
   robotid: string
   description: string
@@ -10,4 +10,4 @@ export interface ITaskLocal {
   robot_desc: string
 }
 
-export type ITask = ITaskQuery & ITaskLocal
+// export type ITask = ITaskQuery & ITaskLocal

@@ -4,7 +4,7 @@ import { Stack, Divider, Container, ScrollArea } from "@mantine/core"
 import { LocationTable } from "../components/LocationTable"
 import { LocationForm } from "../components/LocationForm"
 
-export const LocationsView = ({
+export const LocationView = ({
   docId,
   h
 }: {
@@ -13,7 +13,6 @@ export const LocationsView = ({
 }) => {
   return (
     <>
-      <Divider />
       <Stack h={h}>
         <ScrollArea>
           <Container size="sm">

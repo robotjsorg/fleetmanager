@@ -6,9 +6,9 @@ import { useViewportSize, useDisclosure } from "@mantine/hooks"
 
 import { IconChecklist, IconHome, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react"
 
-import { LocationsView } from "./LocationsView"
-import { RobotsView } from "./RobotsView"
-import { TasksView } from "./TasksView"
+import { LocationView } from "./LocationView"
+import { RobotView } from "./RobotView"
+import { TaskView } from "./TaskView"
 
 import { ConnectionStatus } from "../components/ConnectionStatus"
 import { LocationList } from "../components/LocationList"
@@ -138,37 +138,49 @@ export const FMAppShell = ({
             <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
             <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
           </Box>
-          <Group wrap="nowrap" gap="xs">
+          <Group wrap="nowrap" gap={0}>
             <Box hidden={locSelection == "no selection"}>
-              <Button visibleFrom="xs" color={theme.colorScheme == "dark" ? "white" : "black"}
+              <Button visibleFrom="xs"
                 onClick={() => (setPseudoRoute("location"))}
-                variant={ subpageOpened ? "subtle" : "light" }>
+                c={theme.colorScheme == "light" ? "black" : undefined}
+                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : "none" }
+                >
                 { selectedLocationDescription }
               </Button>
-              <Button hiddenFrom="xs" color={theme.colorScheme == "dark" ? "white" : "black"}
+              <Button hiddenFrom="xs"
                 onClick={() => (setPseudoRoute("location"))}
-                variant={ subpageOpened ? "subtle" : "light" }>
+                c={theme.colorScheme == "light" ? "black" : undefined}
+                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : "none" }
+                >
                 <IconHome size={18} />
               </Button>
             </Box>
-            <Button visibleFrom="xs" color={theme.colorScheme == "dark" ? "white" : "black"}
+            <Button visibleFrom="xs"
               onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
-              variant={ route != "robots" ? "subtle" : "light" }>
+              c={theme.colorScheme == "light" ? "black" : undefined}
+              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : "none" }
+              >
               Robots
             </Button>
-            <Button hiddenFrom="xs" color={theme.colorScheme == "dark" ? "white" : "black"}
+            <Button hiddenFrom="xs"
               onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
-              variant={ route != "robots" ? "subtle" : "light" }>
+              c={theme.colorScheme == "light" ? "black" : undefined}
+              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : "none" }
+              >
               <IconRobot size={18} />
             </Button>
-            <Button visibleFrom="xs" color={theme.colorScheme == "dark" ? "white" : "black"}
+            <Button visibleFrom="xs"
               onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
-              variant={ route != "tasks" ? "subtle" : "light" }>
+              c={theme.colorScheme == "light" ? "black" : undefined}
+              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : "none" }
+              >
               Tasks
             </Button>
-            <Button hiddenFrom="xs" color={theme.colorScheme == "dark" ? "white" : "black"}
+            <Button hiddenFrom="xs"
               onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
-              variant={ route != "tasks" ? "subtle" : "light" }>
+              c={ theme.colorScheme == "light" ? "black" : undefined }
+              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : "none" }
+              >
               <IconChecklist size={18} />
             </Button>
           </Group>
@@ -178,7 +190,7 @@ export const FMAppShell = ({
       <AppShell.Navbar zIndex={300} withBorder={true} px="lg" pb="lg">
         <Stack h={ fixHeight - NAVBAR_OFFSET }>
           <Divider label="Locations" labelPosition="center" />
-            <LocationList />
+          <LocationList />
         </Stack>
         <Group justify="center" p="lg">
           <Button variant="default"
@@ -190,15 +202,15 @@ export const FMAppShell = ({
         </Group>
       </AppShell.Navbar>
       <AppShell.Main onClick={ closeNav }>
+        <Divider />
         { route == "locations" ?
-          <LocationsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+          <LocationView docId={docId} h={ fixHeight - VIEW_OFFSET } />
         : route == "robots" ?
-          <RobotsView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+          <RobotView docId={docId} h={ fixHeight - VIEW_OFFSET } />
         : route == "tasks" ?
-          <TasksView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+          <TaskView docId={docId} h={ fixHeight - VIEW_OFFSET } />
         : route == "location" &&
           <Box h={ fixHeight - CONTENT_OFFSET }>
-            <Divider />
             <Fleetmanager
               updateRobotPosition={updateRobotPosition}
               updateRobotJointAngles={updateRobotJointAngles}

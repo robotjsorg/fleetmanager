@@ -1,29 +1,28 @@
 import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Stack, Divider, Container, ScrollArea } from "@mantine/core"
 
-import { TaskTable } from "../components/TaskTable"
-import { TaskForm } from "../components/TaskForm"
+import { RobotTable } from "../components/RobotTable"
+import { RobotForm } from "../components/RobotForm"
 
-export const TasksView = ({
+export const RobotView = ({
   docId,
   h
 }: {
   docId: JournalId
   h: number
-}) => {
+}) => {  
   return (
     <>
-      <Divider />
       <Stack h={h}>
         <ScrollArea>
           <Container size="sm">
-            <TaskTable docId={docId} />
+            <RobotTable docId={docId} />
           </Container>
         </ScrollArea>
       </Stack>
       <Divider />
       <Container size="xs" p="xl">
-        <TaskForm docId={docId} />
+        <RobotForm docId={docId}/>
       </Container>
     </>
   )
