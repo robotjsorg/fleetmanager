@@ -29,7 +29,7 @@ export const App = ({
   // Initialize database
   const mutate = useMutate( docId )
   const [ initDB, setInitDB ] = useState( true )
-  useEffect(() => {
+  // useEffect(() => {
     if ( initDB ){
       console.log("[INFO] Init DB")
       mutate({ tag: "InitSchema" })
@@ -38,11 +38,12 @@ export const App = ({
         mutate({ tag: "PopulateDB" })
           .catch(( err ) => {console.error( "Failed to populate database", err )})
       }
+      setInitDB( false ) // !!
     }
-    return () => {
-      setInitDB( false )
-    }
-  }, [initDB, mutate])
+    // return () => {
+    //   setInitDB( false )
+    // }
+  // }, [initDB, mutate])
 
   // Locations
   const { rows: locations } = useQuery<ILocation>(

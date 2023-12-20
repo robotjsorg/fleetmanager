@@ -27,6 +27,7 @@ export const RobotListItem = ({
   return (
     <Button ref={ref as unknown as RefObject<HTMLButtonElement>} onClick={ handleSelect } w={NAVBAR_WIDTH-41}
       justify="space-between"
+      c={theme.colorScheme == "light" ? "black" : undefined}
       bg={ selected() ? "var(--mantine-color-gray-light)" : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered ? "var(--mantine-color-gray-0)" : "none" }>
       <Text size="sm" truncate="end">
         { robot.description }

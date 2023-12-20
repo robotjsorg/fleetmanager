@@ -5,7 +5,7 @@ import { Euler, Vector3, useFrame } from "@react-three/fiber"
 import { useCursor, useGLTF } from "@react-three/drei"
 import { Select } from "@react-three/postprocessing"
 import { GLTF } from "three-stdlib"
-import { useSpring, animated, easings, useSpringRef, useChain } from "@react-spring/three"
+import { useSpring, animated, easings } from "@react-spring/three" // useSpringRef, useChain
 
 import { IRobot } from "../@types/robot"
 import { ITask } from "../@types/task"
