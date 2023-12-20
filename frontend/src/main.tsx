@@ -35,7 +35,7 @@ export const DocRoute = () => {
   const { docId } = useParams()
 
   if (!docId) {
-    console.error("doc id not found in params");
+    console.error("doc id not found in params")
     return (
       <pre style={{ color: "red" }}>ERROR: doc id not found in params</pre>
     )
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     loader: async () => {
-      const docId = await newDocumentId();
+      const docId = await newDocumentId()
       return redirect("/" + journalIdToString( docId ))
     }
   },
