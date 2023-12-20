@@ -71,7 +71,7 @@ export const FMAppShell = ({
   }, [height, width])
   
   // Menu control
-  const [ route, setPseudoRoute ] = useState( "location" );
+  const [ route, setPseudoRoute ] = useState( "location" )
   const [ mobileOpened, { toggle: toggleMobile } ] = useDisclosure( false )
   const [ desktopOpened, { toggle: toggleDesktop } ] = useDisclosure( false )
   const subpageOpened = ( route == "locations" || route == "robots" || route == "tasks" )
@@ -86,7 +86,7 @@ export const FMAppShell = ({
 
   // MantineProvider child
   const ToggleMantineTheme = () => {
-    const { colorScheme, setColorScheme } = useMantineColorScheme();
+    const { colorScheme, setColorScheme } = useMantineColorScheme()
     return (
       <Button variant="default"
         onClick={() => setColorScheme( colorScheme == "light" ? "dark" : "light" )}

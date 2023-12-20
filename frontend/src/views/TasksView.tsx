@@ -1,8 +1,8 @@
-import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { Stack, Divider, Container, ScrollArea } from "@mantine/core";
+import { JournalId } from "@orbitinghail/sqlsync-worker"
+import { Stack, Divider, Container, ScrollArea } from "@mantine/core"
 
-import { TaskTable } from "../components/TaskTable";
-import { TaskForm } from "../components/TaskForm";
+import { TaskTable } from "../components/TaskTable"
+import { TaskForm } from "../components/TaskForm"
 
 export const TasksView = ({
   docId,
@@ -26,5 +26,5 @@ export const TasksView = ({
         <TaskForm docId={docId} />
       </Container>
     </>
-  );
-};
+  )
+}
