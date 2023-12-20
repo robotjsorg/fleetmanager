@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 
-import { ScrollArea, Text } from "@mantine/core"
+import { ScrollArea, Stack, Text } from "@mantine/core"
 
 import { IRobot } from "../@types/robot"
 
@@ -19,11 +19,13 @@ export const RobotList = () => {
 
   return (
     <ScrollArea type="auto">
-      {filteredRobots.length == 0 ? <Text>No Robots</Text> :
-        filteredRobots.map((robot) => (
-          <RobotListItem key={robot.id} robot={robot} />
-        ))
-      }
+      <Stack gap={0}>
+        {filteredRobots.length == 0 ? <Text>No Robots</Text> :
+          filteredRobots.map((robot) => (
+            <RobotListItem key={robot.id} robot={robot} />
+          ))
+        }
+      </Stack>
     </ScrollArea>
   )
 }

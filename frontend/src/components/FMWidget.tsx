@@ -29,7 +29,6 @@ export const FMWidget = ({
   updateRobotState: (childData: {id: string, state: string }) => void
   updateRobotPosition: (childData: {id: string, position: number[], rotation: number[] }) => void
   updateRobotToolState: (childData: {id: string, toolState: string }) => void
-  updateRobotToolStateWrapper: (childData: {id: string, toolState: string }) => void
   updateRobotJointAngles: (childData: {id: string, jointAngles: number[] }) => void
 }) => {
   const theme = useMantineContext()

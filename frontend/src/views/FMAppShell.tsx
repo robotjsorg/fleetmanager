@@ -23,7 +23,7 @@ import { guiSelectionContext } from "../context/guiSelectionContext"
 
 import { POPULATEDB } from "../App"
 
-const NAVBAR_WIDTH   = 300 // nav width 300
+export const NAVBAR_WIDTH = 300 // nav width 300
 const HEADER_HEIGHT  = 60  // topbar 60
 const NAVBAR_OFFSET  = 155 // topbar 60 + btns 36 + padding 40 + divider 19
 const CONTENT_OFFSET = 61  // topbar 60 + divider 1
@@ -178,9 +178,7 @@ export const FMAppShell = ({
       <AppShell.Navbar zIndex={300} withBorder={true} px="lg" pb="lg">
         <Stack h={ fixHeight - NAVBAR_OFFSET }>
           <Divider label="Locations" labelPosition="center" />
-          <Box onClick={ closeNav }>
-            <LocationList docId={docId} fbDisabled={true} />
-          </Box>
+            <LocationList />
         </Stack>
         <Group justify="center" p="lg">
           <Button variant="default"
@@ -213,7 +211,7 @@ export const FMAppShell = ({
           { guiSelection == "no selection" ?
             <Stack hiddenFrom="md" px="lg">
               <Divider label="Robots" labelPosition="center" />
-              <RobotList docId={docId} fbDisabled={true} />
+              <RobotList />
             </Stack>
           : 
             <Box hiddenFrom="md">
@@ -227,7 +225,7 @@ export const FMAppShell = ({
           }
           <Stack visibleFrom="md" px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
             <Divider label="Robots" labelPosition="center" />
-            <RobotList docId={docId} fbDisabled={true} />
+            <RobotList />
           </Stack>
           <Box visibleFrom="md"  h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
             <Divider />

@@ -1,11 +1,13 @@
-import { useContext } from "react"
+import { RefObject, useContext } from "react"
 
-import { Text, Group, useMantineColorScheme } from "@mantine/core"
+import { Text, useMantineColorScheme, Button } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
 
 import { IRobot } from "../@types/robot"
 
 import { guiSelectionContext } from "../context/guiSelectionContext"
+
+import { NAVBAR_WIDTH } from "../views/FMAppShell"
 
 export const RobotListItem = ({
   robot
@@ -23,15 +25,12 @@ export const RobotListItem = ({
   }
 
   return (
-    <Group ref={ref} onClick={ handleSelect }
-      wrap="nowrap"
+    <Button ref={ref as unknown as RefObject<HTMLButtonElement>} onClick={ handleSelect } w={NAVBAR_WIDTH-41}
       justify="space-between"
-      gap="sm" px={12} py={4}
-      bg={ selected() ? "var(--mantine-color-gray-light)" : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered ? "var(--mantine-color-gray-0)" : "none" }
-      styles={{ root: { cursor: "pointer" }}}>
-      <Text size="sm">
+      bg={ selected() ? "var(--mantine-color-gray-light)" : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered ? "var(--mantine-color-gray-0)" : "none" }>
+      <Text size="sm" truncate="end">
         { robot.description }
       </Text>
-    </Group>
+    </Button>
   )
 }

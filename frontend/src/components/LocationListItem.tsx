@@ -1,12 +1,13 @@
-import { useContext } from "react"
+import { RefObject, useContext } from "react"
 
-import { Text, Group, useMantineColorScheme } from "@mantine/core"
+import { Text, useMantineColorScheme, Button } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
 
 import { ILocation } from "../@types/location"
 
 import { locSelectionContext } from "../context/locSelectionContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
+import { NAVBAR_WIDTH } from "../views/FMAppShell"
 
 export const LocationListItem = ({
   location
@@ -20,7 +21,7 @@ export const LocationListItem = ({
   const selected = () => { 
     return locSelection == location.id
   }
-  const handleLocationSelect = () => {
+  const handleSelect = () => {
     if ( locSelection != location.id ) {
       setLocationSelection( location.id )
       setGuiSelection("no selection")
@@ -28,14 +29,12 @@ export const LocationListItem = ({
   }
 
   return (
-    <Group wrap="nowrap" ref={ref} 
-      bg={ selected() ? "var(--mantine-color-gray-light)" : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered ? "var(--mantine-color-gray-0)" : "none" }
-      onClick={ handleLocationSelect }
-      justify="space-between" gap="sm" px={12} py={4}
-      styles={{ root: { cursor: "pointer" }}}>
-      <Text size="sm">
+    <Button ref={ref as unknown as RefObject<HTMLButtonElement>} onClick={ handleSelect } w={NAVBAR_WIDTH-41}
+      justify="space-between"
+      bg={ selected() ? "var(--mantine-color-gray-light)" : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered ? "var(--mantine-color-gray-0)" : "none" }>
+      <Text size="sm" truncate="end">
         { location.description }
       </Text>
-    </Group>
+    </Button>
   )
 }
