@@ -14,7 +14,7 @@ import { locSelectionContext } from "../context/locSelectionContext"
 
 const randomPosition = () => {
   const x = 4 * (Math.random() - 0.5)
-  const z = 2 * (Math.random() - 0.5) + 1
+  const z = 4 * (Math.random() - 0.5)
   return [x, -0.02, z]
 }
 const zeroRotation = () => {
