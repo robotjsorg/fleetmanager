@@ -60,60 +60,40 @@ export const App = ({
     docId,
     sql`SELECT * FROM robots`
   )
-  // function getRobots (
-  //   localRobots: IRobot[],
-  //   queryRobots: IRobotQuery[] | undefined
-  // ): IRobot[] {
-  //   const newRobots: IRobot[] = [] // get rid of this
-  //   if ( Array.isArray( queryRobots ) && queryRobots.length > 0 ) {
-  //     queryRobots.map((queryRobot) => {
-  //       const localRobot = localRobots.find((r) => r.id == queryRobot.id)
-  //       if ( localRobot ) {
-  //         newRobots.push({
-  //           ...queryRobot,
-  //           position: [queryRobot.x, -0.02, queryRobot.z],
-  //           rotation: [-Math.PI / 2, 0, queryRobot.theta],
-  //           toolState: localRobot.toolState,
-  //           jointAngles: localRobot.jointAngles
-  //         })
-  //       } else {
-  //         newRobots.push({
-  //           ...queryRobot,
-  //           position: [queryRobot.x, -0.02, queryRobot.z],
-  //           rotation: [-Math.PI / 2, 0, queryRobot.theta],
-  //           toolState: "Unactuated",
-  //           jointAngles: zeroJointAngles()
-  //         })
-  //       }
-  //     })
-  //   }
-  //   return newRobots
-  // }
-  function appendRobots (
+  function getRobots (
+    localRobots: IRobot[],
     queryRobots: IRobotQuery[]
   ): IRobot[] {
-    const newRobots: IRobot[] = [] // get rid of this
-    if ( Array.isArray( queryRobots ) && queryRobots.length > 0 ) {
-      queryRobots.map((queryRobot) => {
-        newRobots.push({
+    const updatedRobots: IRobot[] = []
+    queryRobots.map((queryRobot) => {
+      const localRobot = localRobots.find((r) => r.id == queryRobot.id)
+      if ( localRobot ) {
+        updatedRobots.push({
+          ...queryRobot,
+          position: [queryRobot.x, -0.02, queryRobot.z],
+          rotation: [-Math.PI / 2, 0, queryRobot.theta],
+          toolState: localRobot.toolState,
+          jointAngles: localRobot.jointAngles
+        })
+      } else {
+        updatedRobots.push({
           ...queryRobot,
           position: [queryRobot.x, -0.02, queryRobot.z],
           rotation: [-Math.PI / 2, 0, queryRobot.theta],
           toolState: "Unactuated",
           jointAngles: zeroJointAngles()
         })
-      })
-    }
-    return newRobots
+      }
+    })
+    return updatedRobots
   }
 
   const [ robots, setRobots ] = useState<IRobot[]>([])
   useEffect(()=>{
     if ( Array.isArray( queryRobots ) && queryRobots.length > 0 ) {
-      setRobots( appendRobots( queryRobots ) )
-      // setRobots( getRobots( robots, queryRobots ) )
+      setRobots( r => getRobots( r, queryRobots ) )
     }
-  }, [queryRobots]) // robots
+  }, [queryRobots])
 
   // Selected robot id
   const [ guiSelection, setGuiSelection ] = useState( "no selection" )
@@ -125,33 +105,14 @@ export const App = ({
   }, [guiSelection])
   
   // Tasks
-  const { rows: tasksQuery } = useQuery<ITask>( // ITaskQuery
+  const { rows: tasksQuery } = useQuery<ITask>(
     docId,
     sql`SELECT * FROM tasks ORDER BY created_at`
   )
-  // function getTasks (
-  //   robots: IRobot[],
-  //   queryTasks: ITaskQuery[]
-  // ): ITask[] {
-  //   const newTasks: ITask[] = []
-  //   if ( Array.isArray( queryTasks ) && queryTasks.length > 0 ) {
-  //     queryTasks.map((queryTask) => {
-  //       const robot = robots.find((r) => r.id == queryTask.robotid)
-  //       if ( robot ) {
-  //         newTasks.push({
-  //           ...queryTask,
-  //           robot_desc: robot.description
-  //         })
-  //       }
-  //     })
-  //   }
-  //   return newTasks
-  // }
   const [ tasks, setTasks ] = useState<ITask[]>([])
   useEffect(()=>{
     if ( Array.isArray( tasksQuery ) && tasksQuery.length > 0 ) {
       setTasks( tasksQuery )
-      // setTasks( getTasks( robots, tasksQuery ))
     }
   }, [tasksQuery])
   
@@ -176,12 +137,10 @@ export const App = ({
   const updateRobotToolState = (childData: { id: string, toolState: string }) => {
     const index = robots.findIndex((robot) => robot.id == childData.id)
     robots[index].toolState = childData.toolState
-    // setRobots(robots)
   }
   const updateRobotJointAngles = (childData: { id: string, jointAngles: number[] }) => {
     const index = robots.findIndex((robot) => robot.id == childData.id)
     robots[index].jointAngles = childData.jointAngles
-    // setRobots(robots)
   }
   // task db
   const updateTask = (childData: {id: string, state: string}) => {
