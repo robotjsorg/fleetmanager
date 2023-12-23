@@ -1,6 +1,6 @@
 import { useContext } from "react"
 
-import { ScrollArea, Text } from "@mantine/core"
+import { ScrollArea, Stack, Text } from "@mantine/core"
 
 import { RobotContext } from "../context/robotContext"
 
@@ -11,11 +11,13 @@ export const LocationList = () => {
   
   return (
     <ScrollArea type="auto">
+      <Stack gap={0}>
       {locations.length == 0 ? <Text>No Locations</Text> :
         locations.map((location) => (
           <LocationListItem key={location.id} location={location} />
         ))
       }
+      </Stack>
     </ScrollArea>
   )
 }

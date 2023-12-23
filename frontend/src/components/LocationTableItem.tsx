@@ -46,7 +46,7 @@ export const LocationTableItem = ({
           } else {
             setLocationSelection( locations[0].id )
           }
-        } else {
+        } else if ( locations.length <= 1 ) {
           setLocationSelection( "no selection" )
         }
       })
@@ -56,12 +56,12 @@ export const LocationTableItem = ({
   }, [mutate, location.id, locSelection, locations, setLocationSelection])
 
   return (
-    <Table.Tr onClick={ handleLocationSelect }
-      ref={ref as React.RefObject<HTMLTableRowElement>}
-      bg={ selected() ? "var(--mantine-color-gray-light)" : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered ? "var(--mantine-color-gray-0)" : "none" }
-      style={{ cursor: "pointer" }}>
-      <Table.Td>{ location.description }</Table.Td>
-      <Table.Td>{ numRobots }</Table.Td>
+    <Table.Tr bg={ selected() ? "var(--mantine-color-gray-light)"
+      : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)"
+      : hovered ? "var(--mantine-color-gray-0)"
+      : "none" }>
+      <Table.Td onClick={ handleLocationSelect } ref={ref as React.RefObject<HTMLTableCellElement>} style={{ cursor: "pointer" }}>{ location.description }</Table.Td>
+      <Table.Td onClick={ handleLocationSelect } ref={ref as React.RefObject<HTMLTableCellElement>} style={{ cursor: "pointer" }}>{ numRobots }</Table.Td>
       <Table.Td>
         <Flex justify="right">
           <Center>

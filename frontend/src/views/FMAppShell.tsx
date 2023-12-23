@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react"
+import { RefObject, useContext, useEffect, useState } from "react"
 
 import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Box, Button, Divider, AppShell, Group, Burger, Stack, useMantineContext, useMantineColorScheme } from "@mantine/core"
-import { useViewportSize, useDisclosure } from "@mantine/hooks"
+import { useViewportSize, useDisclosure, useHover } from "@mantine/hooks"
 
 import { IconChecklist, IconHome, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react"
 
@@ -116,6 +116,10 @@ export const FMAppShell = ({
   const { guiSelection } = useContext(guiSelectionContext)
   const { setMoveRobot } = useContext(moveRobotContext)
 
+  const { hovered: hovered1, ref: ref1 } = useHover()
+  const { hovered: hovered2, ref: ref2 } = useHover()
+  const { hovered: hovered3, ref: ref3 } = useHover()
+
   return (
     <AppShell
       withBorder={false}
@@ -143,14 +147,16 @@ export const FMAppShell = ({
               <Button visibleFrom="xs"
                 onClick={() => (setPseudoRoute("location"))}
                 c={theme.colorScheme == "light" ? "black" : undefined}
-                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : "none" }
+                ref={ref1 as unknown as RefObject<HTMLButtonElement>}
+                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : hovered1 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered1 ? "var(--mantine-color-gray-0)" : "none" }
                 >
                 { selectedLocationDescription }
               </Button>
               <Button hiddenFrom="xs"
                 onClick={() => (setPseudoRoute("location"))}
                 c={theme.colorScheme == "light" ? "black" : undefined}
-                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : "none" }
+                // ref={ref1 as unknown as RefObject<HTMLButtonElement>}
+                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : hovered1 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered1 ? "var(--mantine-color-gray-0)" : "none" }
                 >
                 <IconHome size={18} />
               </Button>
@@ -158,28 +164,32 @@ export const FMAppShell = ({
             <Button visibleFrom="xs"
               onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
               c={theme.colorScheme == "light" ? "black" : undefined}
-              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : "none" }
+              ref={ref2 as unknown as RefObject<HTMLButtonElement>}
+              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : hovered2 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered2 ? "var(--mantine-color-gray-0)" : "none" }
               >
               Robots
             </Button>
             <Button hiddenFrom="xs"
               onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
               c={theme.colorScheme == "light" ? "black" : undefined}
-              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : "none" }
+              // ref={ref2 as unknown as RefObject<HTMLButtonElement>}
+              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : hovered2 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered2 ? "var(--mantine-color-gray-0)" : "none" }
               >
               <IconRobot size={18} />
             </Button>
             <Button visibleFrom="xs"
               onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
               c={theme.colorScheme == "light" ? "black" : undefined}
-              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : "none" }
+              ref={ref3 as unknown as RefObject<HTMLButtonElement>}
+              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : hovered3 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered3 ? "var(--mantine-color-gray-0)" : "none" }
               >
               Tasks
             </Button>
             <Button hiddenFrom="xs"
               onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
               c={ theme.colorScheme == "light" ? "black" : undefined }
-              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : "none" }
+              // ref={ref3 as unknown as RefObject<HTMLButtonElement>}
+              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : hovered3 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered3 ? "var(--mantine-color-gray-0)" : "none" }
               >
               <IconChecklist size={18} />
             </Button>

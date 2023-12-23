@@ -18,7 +18,7 @@ export const TaskTableItem = ({
   task: ITask
 }) => {
   const { robots } = useContext( RobotContext )
-  const robot_desc = robots.find((r) => r.id == task.robotid)?.description
+  const robot_desc = robots.find((r) => r.id == task.robotid)!.description
 
   const mutate = useMutate( docId )
   const handleDelete = useCallback(() => {
