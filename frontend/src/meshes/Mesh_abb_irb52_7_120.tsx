@@ -117,17 +117,14 @@ export const Mesh_abb_irb52_7_120 = ({
 
   useEffect(() => {
     if ( Array.isArray( tasks ) && tasks.length > 0 ) {
-      const activeTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Active" ))
-      if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
-        setTask( activeTasks[0] )
-        if ( selected ) {
-          setCurrentTask( activeTasks[0].id )
-        }
+      const activeTask = tasks.find(( task ) => ( task.robotid == robot.id && task.state == "Active" ))
+      if ( activeTask ) {
+        setTask( activeTask )
+        selected && setCurrentTask( activeTask.id )
       } else {
-        const queuedTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Queued" ))
-        if ( Array.isArray( queuedTasks ) && queuedTasks.length > 0 ) {
-          updateTask( {id: queuedTasks[0].id, state: "Active"} )
-        }
+        setTask( undefined )
+        const queuedTask = tasks.find(( task ) => ( task.robotid == robot.id && task.state == "Queued" ))
+        queuedTask && updateTask( {id: queuedTask.id, state: "Active"} )
       }
     }
   }, [robot.id, selected, setCurrentTask, tasks, updateTask])
@@ -171,7 +168,7 @@ export const Mesh_abb_irb52_7_120 = ({
       }
       if ( springs.jointAngles.idle && task.description != "Random positions (continuous)" ) {
         updateTask( {id: task.id, state: "Completed"} )
-      }
+              }
     }
   }, [api, task, springs.jointAngles.idle, updateTask])
 

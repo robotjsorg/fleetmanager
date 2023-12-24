@@ -65,7 +65,7 @@ export const App = ({
     queryRobots: IRobotQuery[]
   ): IRobot[] {
     const updatedRobots: IRobot[] = []
-    queryRobots.map((queryRobot) => {
+    queryRobots?.map((queryRobot) => {
       const localRobot = localRobots.find((r) => r.id == queryRobot.id)
       if ( localRobot ) {
         updatedRobots.push({
@@ -87,12 +87,9 @@ export const App = ({
     })
     return updatedRobots
   }
-
-  const [ robots, setRobots ] = useState<IRobot[]>([])
+  const [ robots, setRobots ] = useState<IRobot[]>(getRobots([], queryRobots!))
   useEffect(()=>{
-    if ( Array.isArray( queryRobots ) && queryRobots.length > 0 ) {
-      setRobots( r => getRobots( r, queryRobots ) )
-    }
+    setRobots( r => getRobots( r, queryRobots! ) )
   }, [queryRobots])
 
   // Selected robot id
@@ -111,9 +108,7 @@ export const App = ({
   )
   const [ tasks, setTasks ] = useState<ITask[]>([])
   useEffect(()=>{
-    if ( Array.isArray( tasksQuery ) && tasksQuery.length > 0 ) {
-      setTasks( tasksQuery )
-    }
+    setTasks( tasksQuery! )
   }, [tasksQuery])
   
   // Current task being displayed on GUI

@@ -1,14 +1,12 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-unknown-property */
-import { useContext, useEffect, useState } from "react"
+import { useContext } from "react"
 import { useMantineContext } from "@mantine/core"
 
 import { Canvas, useThree } from "@react-three/fiber"
 import { Text, OrbitControls, TransformControls } from "@react-three/drei"
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing"
 import { proxy } from "valtio"
-
-import { IRobot } from "../@types/robot"
 
 import { RobotContext } from "../context/robotContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
@@ -37,10 +35,11 @@ export const Fleetmanager = ({
   const { guiSelection, setGuiSelection } = useContext( guiSelectionContext )
   const { moveRobot } = useContext( moveRobotContext )
 
-  const [ locationsRobots, setLocationRobots ] = useState<IRobot[]>(robots.filter(( robot )=>( robot.locationid == locSelection )))
-  useEffect(() => {
-    setLocationRobots( robots.filter(( robot )=>( robot.locationid == locSelection )) )
-  }, [locSelection, robots])
+  const locationRobots = robots.filter(( robot )=>( robot.locationid == locSelection ))
+
+  const robotCurrent = (childData: string) => {
+    state.current = childData
+  }
 
   const Controls = () => {
     const scene = useThree((state) => state.scene)
@@ -69,7 +68,7 @@ export const Fleetmanager = ({
             })
           }}
           />}
-        {guiSelection && moveRobot  && <TransformControls showX={false} showZ={false} object={object} mode="rotate"
+        {guiSelection && moveRobot && <TransformControls showX={false} showZ={false} object={object} mode="rotate"
           rotationSnap={15*0.0174533}
           onMouseUp={()=>{
             object &&
@@ -84,10 +83,6 @@ export const Fleetmanager = ({
     )
   }
 
-  const robotCurrent = (childData: string) => {
-    state.current = childData
-  }
-
   return (
     <Canvas dpr={[1, 2]} camera={{ position: [1, 2, 3], near: 0.01, far: 20 }}
       onPointerMissed={() => setGuiSelection("no selection")}>
@@ -95,7 +90,7 @@ export const Fleetmanager = ({
         <EffectComposer multisampling={8} autoClear={false}>
           <Outline visibleEdgeColor={theme.colorScheme == "dark" ? "white" : "blue"} blur edgeStrength={100} width={1000} />
         </EffectComposer>
-        {locationsRobots.map((robot) => (
+        {locationRobots.map(( robot ) => (
           <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent} updateTask={updateTask} updateRobotJointAngles={updateRobotJointAngles}/>
         ))}
       </Selection>

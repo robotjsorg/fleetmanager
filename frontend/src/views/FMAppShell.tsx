@@ -68,7 +68,7 @@ export const FMAppShell = ({
     } else {
       setFixHeight( minFixHeight )
     }
-  }, [height, width])
+  }, [width, height])
   
   // Menu control
   const [ route, setPseudoRoute ] = useState( "location" )
@@ -105,12 +105,8 @@ export const FMAppShell = ({
   const { locSelection } = useContext(locSelectionContext)
   const [ selectedLocationDescription, setSelectedLocationDescription ] = useState( initSelectionLocationDescription )
   useEffect(()=>{
-    if ( Array.isArray( locations ) && locations.length > 0 ) {
-      const selectedLocation = locations.filter(( location ) => ( location.id == locSelection ))
-      if ( Array.isArray( selectedLocation ) && selectedLocation.length > 0 ) {
-        setSelectedLocationDescription( selectedLocation[0].description )
-      }
-    }
+    const selectedLocation = locations?.find(( location ) => ( location.id == locSelection ))
+    selectedLocation && setSelectedLocationDescription( selectedLocation.description )
   }, [locSelection, locations])
 
   const { guiSelection } = useContext(guiSelectionContext)
