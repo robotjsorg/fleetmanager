@@ -45,6 +45,7 @@ export const LocationForm = ({
               form.setFieldError("description", String(err))
               console.error("Failed to create location", err)
             })
+          setLocationSelection( id )
         }
       }, [locations, form, mutate, setLocationSelection]
     )

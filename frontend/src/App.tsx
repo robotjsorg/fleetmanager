@@ -35,8 +35,8 @@ export const App = ({
       mutate({ tag: "InitSchema" })
         .catch(( err ) => {console.error( "Failed to init schema", err )})
       if ( POPULATEDB ) {
-        mutate({ tag: "PopulateDB" })
-          .catch(( err ) => {console.error( "Failed to populate database", err )})
+        mutate({ tag: "PopulateLocations" })
+          .catch(( err ) => {console.error( "Failed to populate locations", err )})
       }
       setInitDB( false )
     }
@@ -49,17 +49,29 @@ export const App = ({
   )
 
   // Selected location id
-  let initLocSelection = "no selection"
-  if ( POPULATEDB ) {
-    initLocSelection = "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99"
-  }
-  const [ locSelection, setLocationSelection ] = useState( initLocSelection )
-
+  const [ locSelection, setLocationSelection ] = useState( "no selection" )
+  useEffect(()=>{
+    if ( Array.isArray(locations) && locations.length > 0 ) {
+      if ( locSelection == "no selection" || !locations.find((location)=>(location.id == locSelection)) ) {
+        setLocationSelection( locations[0].id )
+      } else {
+        const selectedLocation = locations.find(( location ) => ( location.id == locSelection ))
+        selectedLocation && setLocationSelection( selectedLocation.id )
+      }
+    } else {
+      setLocationSelection( "no selection" )
+    }
+  }, [locSelection, locations])
+  
   // Robots
   const { rows: queryRobots } = useQuery<IRobotQuery>(
     docId,
     sql`SELECT * FROM robots`
-  )
+    )
+  if ( POPULATEDB && Array.isArray( locations ) && locations.length > 0 && ( !Array.isArray(queryRobots) || queryRobots.length == 0 )) {
+    mutate({ tag: "PopulateRobots" })
+      .catch(( err ) => {console.error( "Failed to populate robots", err )})
+  }
   function getRobots (
     localRobots: IRobot[],
     queryRobots: IRobotQuery[]
@@ -102,14 +114,18 @@ export const App = ({
   }, [guiSelection])
   
   // Tasks
-  const { rows: tasksQuery } = useQuery<ITask>(
+  const { rows: queryTasks } = useQuery<ITask>(
     docId,
     sql`SELECT * FROM tasks ORDER BY created_at`
   )
+  if ( POPULATEDB && Array.isArray( robots ) && robots.length > 0 && ( !Array.isArray(queryTasks) || queryTasks.length == 0 )) {
+    mutate({ tag: "PopulateTasks" })
+      .catch(( err ) => {console.error( "Failed to populate tasks", err )})
+  }
   const [ tasks, setTasks ] = useState<ITask[]>([])
   useEffect(()=>{
-    setTasks( tasksQuery! )
-  }, [tasksQuery])
+    setTasks( queryTasks! )
+  }, [queryTasks])
   
   // Current task being displayed on GUI
   const [ currentTask, setCurrentTask ] = useState("")

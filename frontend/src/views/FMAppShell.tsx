@@ -21,8 +21,6 @@ import { RobotContext } from "../context/robotContext"
 import { moveRobotContext } from "../context/moveRobotContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
 
-import { POPULATEDB } from "../App"
-
 export const NAVBAR_WIDTH = 300 // nav width 300
 const HEADER_HEIGHT  = 60  // topbar 60
 const NAVBAR_OFFSET  = 155 // topbar 60 + btns 36 + padding 40 + divider 19
@@ -95,26 +93,20 @@ export const FMAppShell = ({
       </Button>
     )
   }
-
-  // Selected location description
-  let initSelectionLocationDescription = ""
-  if ( POPULATEDB ) {
-    initSelectionLocationDescription = "Warehouse"
-  }
+ 
   const { locations } = useContext(RobotContext)
   const { locSelection } = useContext(locSelectionContext)
-  const [ selectedLocationDescription, setSelectedLocationDescription ] = useState( initSelectionLocationDescription )
-  useEffect(()=>{
-    const selectedLocation = locations?.find(( location ) => ( location.id == locSelection ))
-    selectedLocation && setSelectedLocationDescription( selectedLocation.description )
-  }, [locSelection, locations])
+  const locationDescription = locations ? locations.find(( location ) => ( location.id == locSelection ))?.description : undefined
 
   const { guiSelection } = useContext(guiSelectionContext)
   const { setMoveRobot } = useContext(moveRobotContext)
 
-  const { hovered: hovered1, ref: ref1 } = useHover()
-  const { hovered: hovered2, ref: ref2 } = useHover()
-  const { hovered: hovered3, ref: ref3 } = useHover()
+  const { hovered: hovered1a, ref: ref1a } = useHover()
+  const { hovered: hovered2a, ref: ref2a } = useHover()
+  const { hovered: hovered3a, ref: ref3a } = useHover()
+  const { hovered: hovered1b, ref: ref1b } = useHover()
+  const { hovered: hovered2b, ref: ref2b } = useHover()
+  const { hovered: hovered3b, ref: ref3b } = useHover()
 
   return (
     <AppShell
@@ -139,53 +131,55 @@ export const FMAppShell = ({
             <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
           </Box>
           <Group wrap="nowrap" gap={0}>
-            <Box hidden={locSelection == "no selection"}>
+            { Array.isArray( locations ) && locations.length > 0 &&
+              <>
               <Button visibleFrom="xs"
                 onClick={() => (setPseudoRoute("location"))}
                 c={theme.colorScheme == "light" ? "black" : undefined}
-                ref={ref1 as unknown as RefObject<HTMLButtonElement>}
-                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : hovered1 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered1 ? "var(--mantine-color-gray-0)" : "none" }
+                ref={ref1a as unknown as RefObject<HTMLButtonElement>}
+                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : hovered1a && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered1a ? "var(--mantine-color-gray-0)" : "none" }
                 >
-                { selectedLocationDescription }
+                { locationDescription }
               </Button>
               <Button hiddenFrom="xs"
                 onClick={() => (setPseudoRoute("location"))}
                 c={theme.colorScheme == "light" ? "black" : undefined}
-                // ref={ref1 as unknown as RefObject<HTMLButtonElement>}
-                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : hovered1 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered1 ? "var(--mantine-color-gray-0)" : "none" }
+                ref={ref1b as unknown as RefObject<HTMLButtonElement>}
+                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : hovered1b && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered1b ? "var(--mantine-color-gray-0)" : "none" }
                 >
                 <IconHome size={18} />
               </Button>
-            </Box>
+              </>
+            }
             <Button visibleFrom="xs"
               onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
               c={theme.colorScheme == "light" ? "black" : undefined}
-              ref={ref2 as unknown as RefObject<HTMLButtonElement>}
-              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : hovered2 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered2 ? "var(--mantine-color-gray-0)" : "none" }
+              ref={ref2a as unknown as RefObject<HTMLButtonElement>}
+              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : hovered2a && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered2a ? "var(--mantine-color-gray-0)" : "none" }
               >
               Robots
             </Button>
             <Button hiddenFrom="xs"
               onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
               c={theme.colorScheme == "light" ? "black" : undefined}
-              // ref={ref2 as unknown as RefObject<HTMLButtonElement>}
-              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : hovered2 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered2 ? "var(--mantine-color-gray-0)" : "none" }
+              ref={ref2b as unknown as RefObject<HTMLButtonElement>}
+              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : hovered2b && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered2b ? "var(--mantine-color-gray-0)" : "none" }
               >
               <IconRobot size={18} />
             </Button>
             <Button visibleFrom="xs"
               onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
               c={theme.colorScheme == "light" ? "black" : undefined}
-              ref={ref3 as unknown as RefObject<HTMLButtonElement>}
-              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : hovered3 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered3 ? "var(--mantine-color-gray-0)" : "none" }
+              ref={ref3a as unknown as RefObject<HTMLButtonElement>}
+              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : hovered3a && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered3a ? "var(--mantine-color-gray-0)" : "none" }
               >
               Tasks
             </Button>
             <Button hiddenFrom="xs"
               onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
               c={ theme.colorScheme == "light" ? "black" : undefined }
-              // ref={ref3 as unknown as RefObject<HTMLButtonElement>}
-              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : hovered3 && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered3 ? "var(--mantine-color-gray-0)" : "none" }
+              ref={ref3b as unknown as RefObject<HTMLButtonElement>}
+              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : hovered3b && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered3b ? "var(--mantine-color-gray-0)" : "none" }
               >
               <IconChecklist size={18} />
             </Button>

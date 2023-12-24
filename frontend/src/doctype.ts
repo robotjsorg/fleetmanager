@@ -10,7 +10,13 @@ export type Mutation =
       tag: "InitSchema"
   }
   | {
-      tag: "PopulateDB"
+      tag: "PopulateLocations"
+  }
+  | {
+      tag: "PopulateRobots"
+  }
+  | {
+      tag: "PopulateTasks"
   }
   | {
       tag: "CreateLocation"
