@@ -46,15 +46,16 @@ export const RobotTableItem = ({
   }, [robot.id, mutate])
 
   return (
-    <Table.Tr bg={ selected() ? "var(--mantine-color-gray-light)"
+    <Table.Tr ref={ref as React.RefObject<HTMLTableRowElement>}
+      bg={ selected() ? "var(--mantine-color-gray-light)"
       : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)"
       : hovered ? "var(--mantine-color-gray-0)"
       : "none" }>
-      <Table.Td onClick={ handleSelect } ref={ref as React.RefObject<HTMLTableCellElement>} style={{ cursor: "pointer" }}>{ robot.description }</Table.Td>
-      <Table.Td onClick={ handleSelect } ref={ref as React.RefObject<HTMLTableCellElement>} style={{ cursor: "pointer" }}>{ robot.state }</Table.Td>
-      <Table.Td onClick={ handleSelect } ref={ref as React.RefObject<HTMLTableCellElement>} style={{ cursor: "pointer" }}>{ activeTask }</Table.Td>
-      <Table.Td onClick={ handleSelect } ref={ref as React.RefObject<HTMLTableCellElement>} style={{ cursor: "pointer" }}>{ numCompletedTasks }</Table.Td>
-      <Table.Td onClick={ handleSelect } ref={ref as React.RefObject<HTMLTableCellElement>} style={{ cursor: "pointer" }}>{ numQueuedTasks }</Table.Td>
+      <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ robot.description }</Table.Td>
+      <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ robot.state }</Table.Td>
+      <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ activeTask }</Table.Td>
+      <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ numCompletedTasks }</Table.Td>
+      <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ numQueuedTasks }</Table.Td>
       <Table.Td>
         <Flex justify="right">
           <Center>
