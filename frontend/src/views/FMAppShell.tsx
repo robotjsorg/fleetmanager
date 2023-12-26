@@ -137,16 +137,26 @@ export const FMAppShell = ({
                 onClick={() => (setPseudoRoute("location"))}
                 c={theme.colorScheme == "light" ? "black" : undefined}
                 ref={ref1a as unknown as RefObject<HTMLButtonElement>}
-                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : hovered1a && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered1a ? "var(--mantine-color-gray-0)" : "none" }
-                >
+                bg={
+                  !subpageOpened && theme.colorScheme == "dark" ? "var(--mantine-color-dark-5)"
+                  : !subpageOpened  && theme.colorScheme == "light" ? "var(--mantine-color-gray-1)"
+                  : hovered1a && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+                  : hovered1a && theme.colorScheme == "light" ? "var(--mantine-color-gray-0)"
+                  : "none"
+                }>
                 { locationDescription }
               </Button>
               <Button hiddenFrom="xs"
                 onClick={() => (setPseudoRoute("location"))}
                 c={theme.colorScheme == "light" ? "black" : undefined}
                 ref={ref1b as unknown as RefObject<HTMLButtonElement>}
-                bg={ !subpageOpened ? "var(--mantine-color-gray-light)" : hovered1b && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered1b ? "var(--mantine-color-gray-0)" : "none" }
-                >
+                bg={
+                  !subpageOpened && theme.colorScheme == "dark" ? "var(--mantine-color-dark-5)"
+                  : !subpageOpened  && theme.colorScheme == "light" ? "var(--mantine-color-gray-1)"
+                  : hovered1b && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+                  : hovered1b && theme.colorScheme == "light" ? "var(--mantine-color-gray-0)"
+                  : "none"
+                }>
                 <IconHome size={18} />
               </Button>
               </>
@@ -155,32 +165,52 @@ export const FMAppShell = ({
               onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
               c={theme.colorScheme == "light" ? "black" : undefined}
               ref={ref2a as unknown as RefObject<HTMLButtonElement>}
-              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : hovered2a && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered2a ? "var(--mantine-color-gray-0)" : "none" }
-              >
+              bg={
+                route == "robots" && theme.colorScheme == "dark" ? "var(--mantine-color-dark-5)"
+                : route == "robots" && theme.colorScheme == "light" ? "var(--mantine-color-gray-1)"
+                : hovered2a && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+                : hovered2a && theme.colorScheme == "light" ? "var(--mantine-color-gray-0)"
+                : "none"
+              }>
               Robots
             </Button>
             <Button hiddenFrom="xs"
               onClick={() => {setPseudoRoute("robots"), setMoveRobot( false )}}
               c={theme.colorScheme == "light" ? "black" : undefined}
               ref={ref2b as unknown as RefObject<HTMLButtonElement>}
-              bg={ route == "robots" ? "var(--mantine-color-gray-light)" : hovered2b && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered2b ? "var(--mantine-color-gray-0)" : "none" }
-              >
+              bg={
+                route == "robots" && theme.colorScheme == "dark" ? "var(--mantine-color-dark-5)"
+                : route == "robots" && theme.colorScheme == "light" ? "var(--mantine-color-gray-1)"
+                : hovered2b && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+                : hovered2b && theme.colorScheme == "light" ? "var(--mantine-color-gray-0)"
+                : "none"
+              }>
               <IconRobot size={18} />
             </Button>
             <Button visibleFrom="xs"
               onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
               c={theme.colorScheme == "light" ? "black" : undefined}
               ref={ref3a as unknown as RefObject<HTMLButtonElement>}
-              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : hovered3a && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered3a ? "var(--mantine-color-gray-0)" : "none" }
-              >
+              bg={
+                route == "tasks" && theme.colorScheme == "dark" ? "var(--mantine-color-dark-5)"
+                : route == "tasks" && theme.colorScheme == "light" ? "var(--mantine-color-gray-1)"
+                : hovered3a && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+                : hovered3a && theme.colorScheme == "light" ? "var(--mantine-color-gray-0)"
+                : "none"
+              }>
               Tasks
             </Button>
             <Button hiddenFrom="xs"
               onClick={() => {setPseudoRoute("tasks"), setMoveRobot( false )}}
               c={ theme.colorScheme == "light" ? "black" : undefined }
               ref={ref3b as unknown as RefObject<HTMLButtonElement>}
-              bg={ route == "tasks" ? "var(--mantine-color-gray-light)" : hovered3b && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered3b ? "var(--mantine-color-gray-0)" : "none" }
-              >
+              bg={
+                route == "tasks" && theme.colorScheme == "dark" ? "var(--mantine-color-dark-5)"
+                : route == "tasks" && theme.colorScheme == "light" ? "var(--mantine-color-gray-1)"
+                : hovered3b && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+                : hovered3b && theme.colorScheme == "light" ? "var(--mantine-color-gray-0)"
+                : "none"
+              }>
               <IconChecklist size={18} />
             </Button>
           </Group>

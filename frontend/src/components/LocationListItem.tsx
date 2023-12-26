@@ -31,7 +31,13 @@ export const LocationListItem = ({
     <Button ref={ref as unknown as RefObject<HTMLButtonElement>} onClick={ handleSelect }
       justify="space-between"
       c={theme.colorScheme == "light" ? "black" : undefined}
-      bg={ selected() ? "var(--mantine-color-gray-light)" : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)" : hovered ? "var(--mantine-color-gray-0)" : "none" }>
+      bg={
+        selected() && theme.colorScheme == "dark" ? "var(--mantine-color-dark-5)"
+        : selected() && theme.colorScheme == "light" ? "var(--mantine-color-gray-1)"
+        : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+        : hovered && theme.colorScheme == "light" ? "var(--mantine-color-gray-0)"
+        : "none"
+      }>
       <Text size="sm" truncate="end">
         { location.description }
       </Text>

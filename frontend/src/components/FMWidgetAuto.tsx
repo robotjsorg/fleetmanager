@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react"
 
 import { JournalId } from "@orbitinghail/sqlsync-worker"
-import { Text, Button, Divider, Group, Flex, Select, Center } from "@mantine/core"
+import { Text, Button, Divider, Group, Flex, Select, Center, useMantineContext } from "@mantine/core"
 import { useForm } from "@mantine/form"
 
 import { v4 as uuidv4 } from "uuid"
@@ -18,6 +18,7 @@ export const FMWidgetAuto = ({
 }: {
   docId: JournalId
 }) => {
+  const theme = useMantineContext()
   const { robots, tasks } = useContext( RobotContext )
   const { guiSelection } = useContext( guiSelectionContext )
   const [ task, setTask ] = useState<ITask>()
@@ -74,15 +75,15 @@ export const FMWidgetAuto = ({
       <Group gap={0} py="xs">
         <Flex w="50%" gap="xs" px="xs" direction="column">
           <Text size="xs" truncate="end">
-            <Text span c="var(--mantine-color-dark-3)" inherit>task: </Text>
+            <Text span c={theme.colorScheme == "dark" ? "var(--mantine-color-dark-3)" : "var(--mantine-color-gray-6)"} inherit>task: </Text>
             {task ? task.description : "-"}
           </Text>
           <Text size="xs" truncate="end">
-            <Text span c="var(--mantine-color-dark-3)" inherit>type: </Text>
+            <Text span c={theme.colorScheme == "dark" ? "var(--mantine-color-dark-3)" : "var(--mantine-color-gray-6)"} inherit>type: </Text>
             {task ? task.description == "Random positions (continuous)" || task.description == "Pick and Place (continuous)" ? "Continuous" : "One-Shot" : "-"}
           </Text>
           <Text size="xs" truncate="end">
-            <Text span c="var(--mantine-color-dark-3)" inherit>state: </Text>
+            <Text span c={theme.colorScheme == "dark" ? "var(--mantine-color-dark-3)" : "var(--mantine-color-gray-6)"} inherit>state: </Text>
             {task ? task.state : "-"}
           </Text>
         </Flex>
