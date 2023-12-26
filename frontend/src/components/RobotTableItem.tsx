@@ -47,10 +47,13 @@ export const RobotTableItem = ({
 
   return (
     <Table.Tr ref={ref as React.RefObject<HTMLTableRowElement>}
-      bg={ selected() ? "var(--mantine-color-gray-light)"
-      : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)"
-      : hovered ? "var(--mantine-color-gray-0)"
-      : "none" }>
+      bg={
+        selected() && theme.colorScheme == "dark" ? "var(--mantine-color-dark-5)"
+        : selected() && theme.colorScheme == "light" ? "var(--mantine-color-gray-1)"
+        : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+        : hovered ? "var(--mantine-color-gray-0)"
+        : "none"
+      }>
       <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ robot.description }</Table.Td>
       <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ robot.state }</Table.Td>
       <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ activeTask }</Table.Td>

@@ -55,12 +55,21 @@ export const LocationTableItem = ({
       })
   }, [mutate, location.id, locSelection, locations, setLocationSelection])
 
+  // !subpageOpened && theme.colorScheme == "dark" ? "var(--mantine-color-dark-5)"
+  // : !subpageOpened  && theme.colorScheme == "light" ? "var(--mantine-color-gray-1)"
+  // : hovered1a && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+  // : hovered1a && theme.colorScheme == "light" ? "var(--mantine-color-gray-0)"
+  // : "none"
+
   return (
     <Table.Tr ref={ref as React.RefObject<HTMLTableRowElement>}
-      bg={ selected() ? "var(--mantine-color-gray-light)"
-      : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-gray-9)"
-      : hovered ? "var(--mantine-color-gray-0)"
-      : "none" }>
+      bg={
+        selected() && theme.colorScheme == "dark" ? "var(--mantine-color-dark-5)"
+        : selected() && theme.colorScheme == "light" ? "var(--mantine-color-gray-1)"
+        : hovered && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+        : hovered ? "var(--mantine-color-gray-0)"
+        : "none"
+      }>
       <Table.Td onClick={ handleLocationSelect } style={{ cursor: "pointer" }}>{ location.description }</Table.Td>
       <Table.Td onClick={ handleLocationSelect } style={{ cursor: "pointer" }}>{ numRobots }</Table.Td>
       <Table.Td>
