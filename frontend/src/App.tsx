@@ -116,7 +116,7 @@ export const App = ({
   // Tasks
   const { rows: queryTasks } = useQuery<ITask>(
     docId,
-    sql`SELECT * FROM tasks ORDER BY created_at`
+    sql`SELECT * FROM tasks ORDER BY robotid, created_at`
   )
   if ( POPULATEDB && Array.isArray( robots ) && robots.length > 0 && ( !Array.isArray(queryTasks) || queryTasks.length == 0 )) {
     mutate({ tag: "PopulateTasks" })
