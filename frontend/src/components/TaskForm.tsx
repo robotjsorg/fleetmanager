@@ -24,14 +24,14 @@ export const TaskForm = ({
     setFilteredRobots(robots.filter(( robot ) => ( robot.locationid == locSelection )))
   }, [locSelection, robots])
   
-  const form = useForm({
+  const form = useForm<{ robot: string | null, description: string | null }>({
     initialValues: {
-      robot: "",
-      description: ""
+      robot: null,
+      description: null
     },
     validate: {
-      robot: (value) => (value.trim().length === 0 ? "Select Robot" : null),
-      description: (value) => (value.trim().length === 0 ? "Select Task" : null)
+      robot: (value) => ( typeof value != "string" ? "Select Robot" : null ),
+      description: (value) => ( typeof value != "string" ? "Select Task" : null )
     }
   })
   const mutate = useMutate( docId )
@@ -39,7 +39,7 @@ export const TaskForm = ({
     useCallback(
       ({ robot, description }) => {
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
-        mutate({ tag: "CreateTask", id, robotid: robot, description })
+        mutate({ tag: "CreateTask", id, robotid: robot!, description: description! })
           .then(() => {
             form.reset()
           })
@@ -49,6 +49,7 @@ export const TaskForm = ({
             console.error("Failed to create task", err)
           })
       }, [mutate, form]
+      
     )
   )
 
@@ -60,6 +61,8 @@ export const TaskForm = ({
           description="Select which robot"
           placeholder="Select robot"
           clearable
+          // searchable
+          // nothingFoundMessage="No results"
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           data={( filteredRobots ).map(( robot ) => (
@@ -72,6 +75,8 @@ export const TaskForm = ({
           description="Queue a new task"
           placeholder="Queue task"
           clearable
+          // searchable
+          // nothingFoundMessage="No results"
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           data={['Random positions (continuous)', 'Home',

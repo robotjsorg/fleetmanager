@@ -40,32 +40,33 @@ export const FMWidgetAuto = ({
     }
   }, [currentTask, guiSelection, setCurrentTask, tasks])
 
-  const autoSelectForm = useForm({
+  const form = useForm<{ description: string | null }>({
     initialValues: {
-      description: ""
+      description: null
     },
     validate: {
-      description: (value) => (value.trim().length === 0 ? "Select Task" : null)
+      description: (value) => ( typeof value != "string" ? "Select Task" : null )
     }
   })
 
   const mutate = useMutate( docId )
 
-  const handleAutoSelect = autoSelectForm.onSubmit(
+  const handleSubmit = form.onSubmit(
     useCallback(
       ({ description }) => {
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
         const robotid = robots[robots.findIndex((robot) => robot.id == guiSelection)].id
-        mutate({ tag: "CreateTask", id, robotid: robotid, description })
-        .then(() => {
-          autoSelectForm.reset()
-        })
-        .catch((err) => {
-          autoSelectForm.setFieldError("description", String(err))
-          autoSelectForm.setErrors({ description: String(err) })
-          console.error("Failed to create task", err)
-        })
-      }, [autoSelectForm, guiSelection, mutate, robots]
+        mutate({ tag: "CreateTask", id, robotid: robotid, description: description! })
+          .then(() => {
+            form.reset()
+          })
+          .catch((err) => {
+            form.setFieldError("description", String(err))
+            form.setErrors({ description: String(err) })
+            console.error("Failed to create task", err)
+          })
+        form.reset()
+      }, [form, guiSelection, mutate, robots]
     )
   )
 
@@ -89,14 +90,15 @@ export const FMWidgetAuto = ({
         </Flex>
       </Group>
       <Center>
-        <form onSubmit={handleAutoSelect}>
+        <form onSubmit={handleSubmit}>
           <Group>
             <Select
+              clearable
               size="xs"
               placeholder="Queue task"
               data={['Random positions (continuous)', 'Home',
                 'Move pre-pick', 'Move pick', 'Move post-pick', 'Move pre-place', 'Move place', 'Move post-place']}
-              {...autoSelectForm.getInputProps("description")}
+              {...form.getInputProps("description")}
             />
             <Button size="xs" variant="default" type="submit">Queue</Button>
           </Group>
