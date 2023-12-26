@@ -107,37 +107,37 @@ export const FMWidget = ({
       <Group gap={0} p="xs" align="start">
         <Stack w="50%" gap="xs">
           <Text size="xs" truncate="end">
-            <Text span c="gray" inherit>name: </Text>
+            <Text span c="var(--mantine-color-dark-3)" inherit>name: </Text>
             { selectedRobot ? selectedRobot.description : "-"}
           </Text>
           <Text size="xs" truncate="end">
-            <Text span c="gray" inherit>part: </Text>
+            <Text span c="var(--mantine-color-dark-3)" inherit>part: </Text>
             { selectedRobot ? "Not Present" : "-"}<br/>
-            <Text span c="gray" inherit>tool: </Text>
+            <Text span c="var(--mantine-color-dark-3)" inherit>tool: </Text>
             { selectedRobot ? toolState : "-"}
           </Text>
           { selectedRobot ? 
             <Text size="xs" truncate="end" fw="bold" c={theme.colorScheme == "dark" ? "white" : "black"}>
-              <Text span c="gray" fw="normal" inherit>state: </Text>
+              <Text span c="var(--mantine-color-dark-3)" fw="normal" inherit>state: </Text>
               { selectedRobot ? state : "-"}
             </Text>
           :
             <Text size="xs" fw="normal">
-              <Text span c="gray" fw="normal" inherit>state: </Text>-
+              <Text span c="var(--mantine-color-dark-3)" fw="normal" inherit>state: </Text>-
             </Text>
           }
         </Stack>
         <Stack w="50%" gap="xs">
           <Text size="xs" truncate="end">
-            <Text span c="gray" inherit>type: </Text>
+            <Text span c="var(--mantine-color-dark-3)" inherit>type: </Text>
             { selectedRobot ? "ABB IRB 52" : "-"}
           </Text>
           <Text size="xs">
-            <Text span c="gray" inherit>x: </Text>
+            <Text span c="var(--mantine-color-dark-3)" inherit>x: </Text>
             { selectedRobot ? <NumberFormatter value={selectedRobot.position[0]} decimalScale={1} /> : "-"}<br/>
-            <Text span c="gray" inherit>z: </Text>
+            <Text span c="var(--mantine-color-dark-3)" inherit>z: </Text>
             { selectedRobot ? <NumberFormatter value={selectedRobot.position[2]} decimalScale={1} /> : "-"}<br/>
-            <Text span c="gray" inherit>&theta;: </Text>
+            <Text span c="var(--mantine-color-dark-3)" inherit>&theta;: </Text>
             { selectedRobot ? <NumberFormatter value={selectedRobot.rotation[2]*RADS_DEGS} decimalScale={0} /> : "-"}
           </Text>
         </Stack>

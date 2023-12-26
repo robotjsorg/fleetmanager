@@ -74,15 +74,15 @@ export const FMWidgetAuto = ({
       <Group gap={0} py="xs">
         <Flex w="50%" gap="xs" px="xs" direction="column">
           <Text size="xs" truncate="end">
-            <Text span c="gray" inherit>task: </Text>
+            <Text span c="var(--mantine-color-dark-3)" inherit>task: </Text>
             {task ? task.description : "-"}
           </Text>
           <Text size="xs" truncate="end">
-            <Text span c="gray" inherit>type: </Text>
+            <Text span c="var(--mantine-color-dark-3)" inherit>type: </Text>
             {task ? task.description == "Random positions (continuous)" || task.description == "Pick and Place (continuous)" ? "Continuous" : "One-Shot" : "-"}
           </Text>
           <Text size="xs" truncate="end">
-            <Text span c="gray" inherit>state: </Text>
+            <Text span c="var(--mantine-color-dark-3)" inherit>state: </Text>
             {task ? task.state : "-"}
           </Text>
         </Flex>
