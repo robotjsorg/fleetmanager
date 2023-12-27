@@ -5,7 +5,7 @@ import { Euler, Vector3, useFrame } from "@react-three/fiber"
 import { useCursor, useGLTF } from "@react-three/drei"
 import { Select } from "@react-three/postprocessing"
 import { GLTF } from "three-stdlib"
-import { useSpring, animated, easings } from "@react-spring/three" // useSpringRef, useChain
+import { useSprings, animated, easings } from "@react-spring/three"
 
 import { IRobot } from "../@types/robot"
 import { ITask } from "../@types/task"
@@ -47,6 +47,7 @@ type GLTFResult = GLTF & {
 export const zeroJointAngles = () => {
   return [Math.PI/4, -Math.PI/4, Math.PI/4, 0, 0, 0]
 }
+
 const randomJointAngles = () => {
   const angles = [0, 0, 0, 0, 0, 0]
   for( let i = 0; i < JOINT_LIMITS.length; i++ ){
@@ -100,8 +101,9 @@ export const Mesh_abb_irb52_7_120 = ({
   const [ jointAngles, setJointAngles ] = useState( robot.jointAngles )
 
   const SHADOWS = false
-
-  const [springs, api] = useSpring(
+  
+  const [springs, api] = useSprings(
+    1,
     () => ({
       jointAngles: jointAngles,
       config: {
@@ -129,10 +131,11 @@ export const Mesh_abb_irb52_7_120 = ({
     }
   }, [robot.id, selected, setCurrentTask, tasks, updateTask])
 
+  // Trigger robot animation with joint angles input based on task, and then update task when animation is completed
   useEffect(()=>{
     if ( task && task.state == "Active" ) {
       if ( task.description == "Random positions (continuous)" ) {
-        if ( springs.jointAngles.idle ) {
+        if ( springs[0].jointAngles.idle ) {
           api.start({
             jointAngles: randomJointAngles()
           })
@@ -166,20 +169,21 @@ export const Mesh_abb_irb52_7_120 = ({
           jointAngles: postplace()
         })
       }
-      if ( springs.jointAngles.idle && task.description != "Random positions (continuous)" ) {
+      if ( springs[0].jointAngles.idle && task.description != "Random positions (continuous)" ) {
         updateTask( {id: task.id, state: "Completed"} )
-              }
+      }
     }
-  }, [api, task, springs.jointAngles.idle, updateTask])
+  }, [api, task, springs, updateTask])
 
   const [ hovered, hover ] = useState( false )
   useCursor( hovered )
 
+  // 
   const handleStates = () => {
     switch( robot.state ) {
       case "Manual": {
-        if ( springs.jointAngles.get() != robot.jointAngles ) {
-          springs.jointAngles.set( robot.jointAngles )
+        if ( springs[0].jointAngles.get() != robot.jointAngles ) {
+          springs[0].jointAngles.set( robot.jointAngles )
         }
         if ( jointAngles != robot.jointAngles ) {
           setJointAngles( robot.jointAngles )
@@ -189,16 +193,16 @@ export const Mesh_abb_irb52_7_120 = ({
       }
       case "Auto": {
         if ( task ) {
-          if ( robot.jointAngles != springs.jointAngles.get() ) {
-            robot.jointAngles = springs.jointAngles.get()
+          if ( robot.jointAngles != springs[0].jointAngles.get() ) {
+            robot.jointAngles = springs[0].jointAngles.get()
           }
-          if ( jointAngles != springs.jointAngles.get() ) {
-            setJointAngles( springs.jointAngles.get() )
-            updateRobotJointAngles({ id: robot.id, jointAngles: springs.jointAngles.get() })
+          if ( jointAngles != springs[0].jointAngles.get() ) {
+            setJointAngles( springs[0].jointAngles.get() )
+            updateRobotJointAngles({ id: robot.id, jointAngles: springs[0].jointAngles.get() })
           }
         } else {
-          if ( springs.jointAngles.get() != robot.jointAngles ) {
-            springs.jointAngles.set( robot.jointAngles )
+          if ( springs[0].jointAngles.get() != robot.jointAngles ) {
+            springs[0].jointAngles.set( robot.jointAngles )
           }
           if ( jointAngles != robot.jointAngles ) {
             setJointAngles( robot.jointAngles )
@@ -208,8 +212,8 @@ export const Mesh_abb_irb52_7_120 = ({
         break 
       }
       default: { // Off, Error
-        if ( springs.jointAngles.get() != robot.jointAngles ) {
-          springs.jointAngles.set( robot.jointAngles )
+        if ( springs[0].jointAngles.get() != robot.jointAngles ) {
+          springs[0].jointAngles.set( robot.jointAngles )
         }
         if ( jointAngles != robot.jointAngles ) {
           setJointAngles( robot.jointAngles )

@@ -25,8 +25,6 @@ export const RobotTableItem = ({
   if ( Array.isArray( activeTasks ) && activeTasks.length > 0 ) {
     activeTask = activeTasks[0].description
   }
-  const completedTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Completed" ))
-  const numCompletedTasks = completedTasks.length
   const queuedTasks = tasks.filter(( task ) => ( task.robotid == robot.id && task.state == "Queued" ))
   const numQueuedTasks = queuedTasks.length
   const { hovered, ref } = useHover()
@@ -57,7 +55,6 @@ export const RobotTableItem = ({
       <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ robot.description }</Table.Td>
       <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ robot.state }</Table.Td>
       <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ activeTask }</Table.Td>
-      <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ numCompletedTasks }</Table.Td>
       <Table.Td onClick={ handleSelect } style={{ cursor: "pointer" }}>{ numQueuedTasks }</Table.Td>
       <Table.Td>
         <Flex justify="right">

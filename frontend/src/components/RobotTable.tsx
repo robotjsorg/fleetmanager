@@ -24,7 +24,6 @@ export const RobotTable = ({
           <Table.Th>Robot</Table.Th>
           <Table.Th>Mode</Table.Th>
           <Table.Th>Active Task</Table.Th>
-          <Table.Th>Completed Tasks</Table.Th>
           <Table.Th>Queued Tasks</Table.Th>
         </Table.Tr>
       </Table.Thead>
