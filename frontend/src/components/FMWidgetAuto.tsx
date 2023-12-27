@@ -74,14 +74,14 @@ export const FMWidgetAuto = ({
     <>
       <Divider mx="xs" />
       <Group gap={0} py="xs">
-        <Flex w="50%" gap="xs" px="xs" direction="column">
+        <Flex gap="xs" px="xs" direction="column">
           <Text size="xs" truncate="end">
             <Text span c={theme.colorScheme == "dark" ? "var(--mantine-color-dark-3)" : "var(--mantine-color-gray-6)"} inherit>task: </Text>
             {task ? task.description : "-"}
           </Text>
           <Text size="xs" truncate="end">
             <Text span c={theme.colorScheme == "dark" ? "var(--mantine-color-dark-3)" : "var(--mantine-color-gray-6)"} inherit>type: </Text>
-            {task ? task.description == "Random positions (continuous)" || task.description == "Pick and Place (continuous)" ? "Continuous" : "One-Shot" : "-"}
+            {task ? task.description == "Random position (continuous)" || task.description == "Pick and place (continuous)" ? "Continuous" : "One-Shot" : "-"}
           </Text>
           <Text size="xs" truncate="end">
             <Text span c={theme.colorScheme == "dark" ? "var(--mantine-color-dark-3)" : "var(--mantine-color-gray-6)"} inherit>state: </Text>
@@ -96,8 +96,7 @@ export const FMWidgetAuto = ({
               clearable
               size="xs"
               placeholder="Queue task"
-              data={['Random positions (continuous)', 'Home',
-                'Move pre-pick', 'Move pick', 'Move post-pick', 'Move pre-place', 'Move place', 'Move post-place']}
+              data={['Home', 'Random position', 'Pick and place', 'Random position (continuous)', 'Pick and place (continuous)']}
               {...form.getInputProps("description")}
             />
             <Button size="xs" variant="default" type="submit">Queue</Button>

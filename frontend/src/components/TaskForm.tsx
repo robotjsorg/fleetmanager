@@ -61,8 +61,6 @@ export const TaskForm = ({
           description="Select which robot"
           placeholder="Select robot"
           clearable
-          // searchable
-          // nothingFoundMessage="No results"
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
           data={( filteredRobots ).map(( robot ) => (
@@ -75,12 +73,9 @@ export const TaskForm = ({
           description="Queue a new task"
           placeholder="Queue task"
           clearable
-          // searchable
-          // nothingFoundMessage="No results"
           style={{ flex: 1 }}
           styles={{ input: { fontSize: "16px" } }}
-          data={['Random positions (continuous)', 'Home',
-          'Move pre-pick', 'Move pick', 'Move post-pick', 'Move pre-place', 'Move place', 'Move post-place']}
+          data={['Home', 'Random position', 'Pick and place', 'Random position (continuous)', 'Pick and place (continuous)']}
           {...form.getInputProps("description")}
         />
         <Button variant="default" type="submit">Queue</Button>

@@ -1,11 +1,11 @@
 /* eslint-disable react/no-unknown-property */
-import { useRef, useContext, useState, useEffect } from "react"
+import { useRef, useContext, useState, useEffect } from "react" // , useTransition
 
 import { Euler, Vector3, useFrame } from "@react-three/fiber"
 import { useCursor, useGLTF } from "@react-three/drei"
 import { Select } from "@react-three/postprocessing"
 import { GLTF } from "three-stdlib"
-import { useSprings, animated, easings } from "@react-spring/three"
+import { useSpring, animated, easings } from "@react-spring/three" // , useChain, useSpring, useSpringRef
 
 import { IRobot } from "../@types/robot"
 import { ITask } from "../@types/task"
@@ -19,7 +19,14 @@ const localFilepath = "../../assets/gltf/"
 const filename = "abb_irb52_7_120.glb"
 const filepath = isLocalhost ? localFilepath + filename : filename
 
-export const JOINT_LIMITS = [[-180*0.0174533, 180*0.0174533], [-63*0.0174533, 110*0.0174533], [-235*0.0174533, 55*0.0174533], [-200*0.0174533, 200*0.0174533], [-115*0.0174533, 115*0.0174533], [-400*0.0174533, 400*0.0174533]]
+export const JOINT_LIMITS = [
+  [-180*0.0174533, 180*0.0174533],
+  [-63*0.0174533, 110*0.0174533],
+  [-235*0.0174533, 55*0.0174533],
+  [-200*0.0174533, 200*0.0174533],
+  [-115*0.0174533, 115*0.0174533],
+  [-400*0.0174533, 400*0.0174533]
+]
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -101,9 +108,8 @@ export const Mesh_abb_irb52_7_120 = ({
   const [ jointAngles, setJointAngles ] = useState( robot.jointAngles )
 
   const SHADOWS = false
-  
-  const [springs, api] = useSprings(
-    1,
+
+  const [springs, api] = useSpring(
     () => ({
       jointAngles: jointAngles,
       config: {
@@ -131,59 +137,78 @@ export const Mesh_abb_irb52_7_120 = ({
     }
   }, [robot.id, selected, setCurrentTask, tasks, updateTask])
 
-  // Trigger robot animation with joint angles input based on task, and then update task when animation is completed
+  const [ numSubtasks, setNumSubtasks ] = useState(1)
+  const [ animationStep, setAnimationStep ] = useState(1)
+
   useEffect(()=>{
     if ( task && task.state == "Active" ) {
-      if ( task.description == "Random positions (continuous)" ) {
-        if ( springs[0].jointAngles.idle ) {
-          api.start({
-            jointAngles: randomJointAngles()
-          })
-        }
-      } else if ( task.description == "Home" ) {
+      if ( task.description == "Home" ) {
+        setNumSubtasks( 1 )
         api.start({
           jointAngles: home()
         })
-      } else if ( task.description == "Move pre-pick" ) {
-        api.start({
-          jointAngles: prepick()
-        })
-      } else if ( task.description == "Move pick" ) {
-        api.start({
-          jointAngles: pick()
-        })
-      } else if ( task.description == "Move post-pick" ) {
-        api.start({
-          jointAngles: postpick()
-        })
-      } else if ( task.description == "Move pre-place" ) {
-        api.start({
-          jointAngles: preplace()
-        })
-      } else if ( task.description == "Move place" ) {
-        api.start({
-          jointAngles: place()
-        })
-      } else if ( task.description == "Move post-place" ) {
-        api.start({
-          jointAngles: postplace()
-        })
+      } else if ( task.description == "Random position" || task.description == "Random position (continuous)") {
+        setNumSubtasks( 1 )
+        if ( animationStep == 1 ) {
+          api.start({
+            jointAngles: randomJointAngles()
+          })
+          setAnimationStep( 0 )
+        }
+      } else if ( task.description == "Pick and place" || task.description == "Pick and place (continuous)" ) {
+        setNumSubtasks( 7 )
+        if ( animationStep == 1 ) {
+          api.start({
+            jointAngles: prepick()
+          })
+        } else if ( animationStep == 2 ) {
+          api.start({
+            jointAngles: pick()
+          })
+        } else if ( animationStep == 3 ) {
+          api.start({
+            jointAngles: postpick()
+          })
+        } else if ( animationStep == 4 ) {
+          api.start({
+            jointAngles: preplace()
+          })
+        } else if ( animationStep == 5 ) {
+          api.start({
+            jointAngles: place()
+          })
+        } else if ( animationStep == 6 ) {
+          api.start({
+            jointAngles: postplace()
+          })
+        } else if ( animationStep == 7 ) {
+          api.start({
+            jointAngles: home()
+          })
+        }
       }
-      if ( springs[0].jointAngles.idle && task.description != "Random positions (continuous)" ) {
-        updateTask( {id: task.id, state: "Completed"} )
+
+      if ( springs.jointAngles.idle ) {
+        if ( animationStep == numSubtasks || animationStep == 0 ) {
+          if ( task.description != "Pick and place (continuous)" && task.description != "Random position (continuous)" ) {
+            updateTask( {id: task.id, state: "Completed"} )
+          }
+          setAnimationStep( 1 )
+        } else if ( animationStep < numSubtasks && numSubtasks > 1 && task.description != "Random position" && task.description != "Random position (continuous)" ) {
+          setAnimationStep( animationStep + 1 )
+        }
       }
     }
-  }, [api, task, springs, updateTask])
+  }, [api, task, springs, updateTask, animationStep, numSubtasks])
 
   const [ hovered, hover ] = useState( false )
   useCursor( hovered )
 
-  // 
   const handleStates = () => {
     switch( robot.state ) {
       case "Manual": {
-        if ( springs[0].jointAngles.get() != robot.jointAngles ) {
-          springs[0].jointAngles.set( robot.jointAngles )
+        if ( springs.jointAngles.get() != robot.jointAngles ) {
+          springs.jointAngles.set( robot.jointAngles )
         }
         if ( jointAngles != robot.jointAngles ) {
           setJointAngles( robot.jointAngles )
@@ -193,16 +218,16 @@ export const Mesh_abb_irb52_7_120 = ({
       }
       case "Auto": {
         if ( task ) {
-          if ( robot.jointAngles != springs[0].jointAngles.get() ) {
-            robot.jointAngles = springs[0].jointAngles.get()
+          if ( robot.jointAngles != springs.jointAngles.get() ) {
+            robot.jointAngles = springs.jointAngles.get()
           }
-          if ( jointAngles != springs[0].jointAngles.get() ) {
-            setJointAngles( springs[0].jointAngles.get() )
-            updateRobotJointAngles({ id: robot.id, jointAngles: springs[0].jointAngles.get() })
+          if ( jointAngles != springs.jointAngles.get() ) {
+            setJointAngles( springs.jointAngles.get() )
+            updateRobotJointAngles({ id: robot.id, jointAngles: springs.jointAngles.get() })
           }
         } else {
-          if ( springs[0].jointAngles.get() != robot.jointAngles ) {
-            springs[0].jointAngles.set( robot.jointAngles )
+          if ( springs.jointAngles.get() != robot.jointAngles ) {
+            springs.jointAngles.set( robot.jointAngles )
           }
           if ( jointAngles != robot.jointAngles ) {
             setJointAngles( robot.jointAngles )
@@ -212,8 +237,8 @@ export const Mesh_abb_irb52_7_120 = ({
         break 
       }
       default: { // Off, Error
-        if ( springs[0].jointAngles.get() != robot.jointAngles ) {
-          springs[0].jointAngles.set( robot.jointAngles )
+        if ( springs.jointAngles.get() != robot.jointAngles ) {
+          springs.jointAngles.set( robot.jointAngles )
         }
         if ( jointAngles != robot.jointAngles ) {
           setJointAngles( robot.jointAngles )

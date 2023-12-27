@@ -113,83 +113,17 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
             execute!("
                 INSERT OR IGNORE
                 INTO tasks (id, robotid, description, state, created_at)
-                SELECT '48228b08-1b8a-4d54-9b90-16f1f73fb1cc', '24db4c5b-1e3a-4853-8316-1d6ad07beed1', 'Move pre-pick', 'Queued', datetime('now')
+                SELECT '48228b08-1b8a-4d54-9b90-16f1f73fb1cc', '24db4c5b-1e3a-4853-8316-1d6ad07beed1', 'Pick and place (continuous)', 'Queued', datetime('now')
                 UNION
-                SELECT 'ea131ae6-13a8-4a23-9436-5f46f3dcffd1', '402e7545-512b-4b7d-b570-e94311b38ab6', 'Move pre-pick', 'Queued', datetime('now')
+                SELECT 'ea131ae6-13a8-4a23-9436-5f46f3dcffd1', '402e7545-512b-4b7d-b570-e94311b38ab6', 'Pick and place (continuous)', 'Queued', datetime('now')
                 UNION
-                SELECT '720187e4-94f4-4a11-b998-5938554a2fb4', 'f7a3408d-6329-47fd-ada9-72e6f249c3e2', 'Move pre-pick', 'Queued', datetime('now')
+                SELECT '720187e4-94f4-4a11-b998-5938554a2fb4', 'f7a3408d-6329-47fd-ada9-72e6f249c3e2', 'Pick and place (continuous)', 'Queued', datetime('now')
                 UNION
-                SELECT 'b15b8fc2-cd05-4511-8810-f447c2cc69a1', 'c583ab7f-fd7d-4100-9c3e-aa343ea1c232', 'Move pre-pick', 'Queued', datetime('now')
+                SELECT 'b15b8fc2-cd05-4511-8810-f447c2cc69a1', 'c583ab7f-fd7d-4100-9c3e-aa343ea1c232', 'Pick and place (continuous)', 'Queued', datetime('now')
                 UNION
-                SELECT '69c35b71-8715-4eff-bd02-82cfd283cbc8', 'd544e656-0e8c-4c3d-91fc-02e38b326c47', 'Random positions (continuous)', 'Queued', datetime('now')
+                SELECT '69c35b71-8715-4eff-bd02-82cfd283cbc8', 'd544e656-0e8c-4c3d-91fc-02e38b326c47', 'Random position (continuous)', 'Queued', datetime('now')
                 UNION
-                SELECT '7d77e2f1-8c58-4af4-9f04-0a39bcabb998', '8e5cc95b-bb27-4150-adfa-2bab6daf313f', 'Random positions (continuous)', 'Queued', datetime('now')
-            ").await;
-            execute!("
-                INSERT OR IGNORE
-                INTO tasks (id, robotid, description, state, created_at)
-                SELECT '3f6a9edb-aeb7-4dd4-9025-cbf306b79b31', '24db4c5b-1e3a-4853-8316-1d6ad07beed1', 'Move pick', 'Queued', datetime('now')
-                UNION
-                SELECT 'db9cb069-80f4-4437-8c28-2bfdf6ee6ffe', '402e7545-512b-4b7d-b570-e94311b38ab6', 'Move pick', 'Queued', datetime('now')
-                UNION
-                SELECT '76a07539-d0e9-41cc-b3ff-30b60e07507b', 'f7a3408d-6329-47fd-ada9-72e6f249c3e2', 'Move pick', 'Queued', datetime('now')
-                UNION
-                SELECT '854c85ea-1010-4b17-ae1c-580bd2c0ef4d', 'c583ab7f-fd7d-4100-9c3e-aa343ea1c232', 'Move pick', 'Queued', datetime('now')
-            ").await;
-            execute!("
-                INSERT OR IGNORE
-                INTO tasks (id, robotid, description, state, created_at)
-                SELECT 'a16e07c1-0a02-46a5-9616-af68377e9a5b', '24db4c5b-1e3a-4853-8316-1d6ad07beed1', 'Move post-pick', 'Queued', datetime('now')
-                UNION
-                SELECT 'd6251c03-f599-4364-9ebe-2fa45cfcd7a8', '402e7545-512b-4b7d-b570-e94311b38ab6', 'Move post-pick', 'Queued', datetime('now')
-                UNION
-                SELECT 'b274c685-e6b1-4fa0-8148-46c3dda13553', 'f7a3408d-6329-47fd-ada9-72e6f249c3e2', 'Move post-pick', 'Queued', datetime('now')
-                UNION
-                SELECT '37091772-f903-4064-b179-803c00c00499', 'c583ab7f-fd7d-4100-9c3e-aa343ea1c232', 'Move post-pick', 'Queued', datetime('now')
-            ").await;
-            execute!("
-                INSERT OR IGNORE
-                INTO tasks (id, robotid, description, state, created_at)
-                SELECT 'c6380b22-7a6c-47db-9b77-cce8fd815dec', '24db4c5b-1e3a-4853-8316-1d6ad07beed1', 'Move pre-place', 'Queued', datetime('now')
-                UNION
-                SELECT '010dd323-c702-4d84-9eac-c14b1a88c311', '402e7545-512b-4b7d-b570-e94311b38ab6', 'Move pre-place', 'Queued', datetime('now')
-                UNION
-                SELECT '509342e5-4cc9-4eff-8fcd-38a7ec2b1082', 'f7a3408d-6329-47fd-ada9-72e6f249c3e2', 'Move pre-place', 'Queued', datetime('now')
-                UNION
-                SELECT 'c29e796e-2a66-4644-a14a-c9ca5098efac', 'c583ab7f-fd7d-4100-9c3e-aa343ea1c232', 'Move pre-place', 'Queued', datetime('now')
-            ").await;
-            execute!("
-                INSERT OR IGNORE
-                INTO tasks (id, robotid, description, state, created_at)
-                SELECT '77529737-904a-4d55-aa0c-30a69ca5f06b', '24db4c5b-1e3a-4853-8316-1d6ad07beed1', 'Move place', 'Queued', datetime('now')
-                UNION
-                SELECT '13d61ca5-6a9b-4566-920f-fc07ce266c4c', '402e7545-512b-4b7d-b570-e94311b38ab6', 'Move place', 'Queued', datetime('now')
-                UNION
-                SELECT 'bb3e7a54-3702-4d0b-8b0e-709505411a09', 'f7a3408d-6329-47fd-ada9-72e6f249c3e2', 'Move place', 'Queued', datetime('now')
-                UNION
-                SELECT 'cc69bc98-4733-4e0b-9324-886932a3fd20', 'c583ab7f-fd7d-4100-9c3e-aa343ea1c232', 'Move place', 'Queued', datetime('now')
-            ").await;
-            execute!("
-                INSERT OR IGNORE
-                INTO tasks (id, robotid, description, state, created_at)
-                SELECT '24e6452c-75b5-4cff-8bdc-811b6e38d58d', '24db4c5b-1e3a-4853-8316-1d6ad07beed1', 'Move post-place', 'Queued', datetime('now')
-                UNION
-                SELECT '4b920927-6051-479b-9d23-f2eb8ded0832', '402e7545-512b-4b7d-b570-e94311b38ab6', 'Move post-place', 'Queued', datetime('now')
-                UNION
-                SELECT '8646dac1-7b3d-420e-8ed8-251bedca9c1d', 'f7a3408d-6329-47fd-ada9-72e6f249c3e2', 'Move post-place', 'Queued', datetime('now')
-                UNION
-                SELECT '74b684ce-332b-4e07-8c34-7be7f44e8f86', 'c583ab7f-fd7d-4100-9c3e-aa343ea1c232', 'Move post-place', 'Queued', datetime('now')
-            ").await;
-            execute!("
-                INSERT OR IGNORE
-                INTO tasks (id, robotid, description, state, created_at)
-                SELECT '9d8286ce-b319-4442-b9b0-81bbef1e59d5', '24db4c5b-1e3a-4853-8316-1d6ad07beed1', 'Home', 'Queued', datetime('now')
-                UNION
-                SELECT '9be5ed70-c6dd-47cc-80e7-c269aa51a858', '402e7545-512b-4b7d-b570-e94311b38ab6', 'Home', 'Queued', datetime('now')
-                UNION
-                SELECT '828a86e1-6c24-4f44-9ae2-839355ae5f9d', 'f7a3408d-6329-47fd-ada9-72e6f249c3e2', 'Home', 'Queued', datetime('now')
-                UNION
-                SELECT '18b810fa-8c8a-4b94-be5a-84f3315d660b', 'c583ab7f-fd7d-4100-9c3e-aa343ea1c232', 'Home', 'Queued', datetime('now')
+                SELECT '7d77e2f1-8c58-4af4-9f04-0a39bcabb998', '8e5cc95b-bb27-4150-adfa-2bab6daf313f', 'Random position (continuous)', 'Queued', datetime('now')
             ").await;
         }
 
