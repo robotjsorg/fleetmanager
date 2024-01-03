@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-unknown-property */
-import { useContext } from "react"
+import { useContext, useRef } from "react"
 import { useMantineContext } from "@mantine/core"
 
-import { Canvas, useThree } from "@react-three/fiber"
-import { Text, OrbitControls, TransformControls } from "@react-three/drei"
+import { Canvas, useFrame, useThree, Vector3 } from "@react-three/fiber"
+import { Text, OrbitControls, OrbitControlsProps, TransformControls } from "@react-three/drei"
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing"
+import { BlendFunction } from 'postprocessing'
 import { proxy } from "valtio"
 
 import { RobotContext } from "../context/robotContext"
@@ -14,11 +15,28 @@ import { locSelectionContext } from "../context/locSelectionContext"
 import { moveRobotContext } from "../context/moveRobotContext"
 
 import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120"
+
 // import { Urdf_T12 } from "../meshes/Urdf_T12"
 
 export const GRID_BOUND = 4
 
 const state = proxy({ current: "" })
+
+const Bound = (input: number, bound: number) => {
+  if ( input > bound ) {
+    return bound
+  }
+  if ( input < -bound ) {
+    return -bound
+  }
+  return input
+}
+
+const clamp = ( number: number, min: number, max: number ) => {
+  return (
+    Math.max( min, Math.min( number, max ))
+  )
+}
 
 export const Fleetmanager = ({
   updateRobotPosition,
@@ -41,19 +59,9 @@ export const Fleetmanager = ({
     state.current = childData
   }
 
-  const Controls = () => {
+  const RobotControls = () => {
     const scene = useThree((state) => state.scene)
     const object = scene.getObjectByName(guiSelection)
-
-    const Bound = (input: number, bound: number) => {
-      if ( input > bound ) {
-        return bound
-      }
-      if ( input < -bound ) {
-        return -bound
-      }
-      return input
-    }
 
     return (
       <>
@@ -83,12 +91,53 @@ export const Fleetmanager = ({
     )
   }
 
+  function SceneControls() {
+    // const scene = useThree((state) => state.scene)
+    // const object = scene.getObjectByName(guiSelection)
+
+    // const ref = useRef(null)
+    // const { camera } = useThree()
+    // const props: OrbitControlsProps = {
+    //   makeDefault: true,
+    //   screenSpacePanning: false,
+    //   enableZoom: true,
+    //   minDistance: 2,
+    //   maxDistance: 5,
+    //   maxPolarAngle: Math.PI/2,
+    //   enablePan: true,
+    //   target: [0.25, 0, 1]
+    // }
+
+    // useFrame(()=>{
+    //   const controls = ref.current
+    //   if (controls != null && controls != undefined && 'target' in controls) {
+    //     const target = controls.target as number[]
+    //     const clampedTarget: Vector3 = [clamp(target.x as number, -GRID_BOUND, GRID_BOUND), target.y as number, clamp(target.z as number, -GRID_BOUND, GRID_BOUND)]
+    //     if ( object ) {
+    //       const pos: number[] = [ object.position.x, object.position.y, object.position.z ]
+    //       camera.lookAt( pos[0], pos[1], pos[2] )
+    //     } else {
+    //       camera.lookAt( clampedTarget[0], clampedTarget[1], clampedTarget[2] )
+    //     }
+    //   }
+    //   const clampedCamera: Vector3 = [clamp(camera.position.x, -2*GRID_BOUND, 2*GRID_BOUND), camera.position.y, clamp(camera.position.z, -2*GRID_BOUND, 2*GRID_BOUND)]
+    //   camera.position.x = clampedCamera[0]
+    //   camera.position.y = clampedCamera[1]
+    //   camera.position.z = clampedCamera[2]
+    // })
+
+    return (
+      // <OrbitControls ref={ref} args={[camera]} {...props} />
+      <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0.25, 0, 1] } />
+    )
+  }
+
   return (
     <Canvas dpr={[1, 2]} camera={{ position: [1, 2, 3], near: 0.01, far: 20 }}
       onPointerMissed={() => setGuiSelection("no selection")}>
       <Selection>
         <EffectComposer multisampling={8} autoClear={false}>
-          <Outline visibleEdgeColor={theme.colorScheme == "dark" ? "white" : "blue"} blur edgeStrength={100} width={1000} />
+          <Outline visibleEdgeColor={theme.colorScheme == "dark" ? 0xFFFFFF : 0x000000} blendFunction={BlendFunction.ALPHA} blur edgeStrength={100} width={1600} xRay={false} />
         </EffectComposer>
         {locationRobots.map(( robot ) => (
           <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent} updateTask={updateTask} updateRobotJointAngles={updateRobotJointAngles}/>
@@ -105,7 +154,8 @@ export const Fleetmanager = ({
       <directionalLight intensity={2} position={ [-5, 5, 5] } />
       <directionalLight intensity={2} position={ [-5, 5, -5] } />
 
-      <Controls />
+      <RobotControls />
+      {/* <SceneControls /> */}
       <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0.25, 0, 1] } />
       {/* autoRotate={ true } */}
 

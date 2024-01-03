@@ -1,11 +1,10 @@
-/* eslint-disable react/no-unknown-property */
-import { useRef, useContext, useState, useEffect } from "react" // , useTransition
+import { useRef, useContext, useState, useEffect } from "react"
 
 import { Euler, Vector3, useFrame } from "@react-three/fiber"
 import { useCursor, useGLTF } from "@react-three/drei"
 import { Select } from "@react-three/postprocessing"
 import { GLTF } from "three-stdlib"
-import { useSpring, animated, easings } from "@react-spring/three" // , useChain, useSpring, useSpringRef
+import { useSpring, animated, easings } from "@react-spring/three"
 
 import { IRobot } from "../@types/robot"
 import { ITask } from "../@types/task"
@@ -13,6 +12,8 @@ import { ITask } from "../@types/task"
 import { RobotContext } from "../context/robotContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
 import { currentTaskContext } from "../context/currentTaskContext"
+
+// import { Mesh } from "@types/three"
 
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168")
 const localFilepath = "../../assets/gltf/"
@@ -267,52 +268,52 @@ export const Mesh_abb_irb52_7_120 = ({
         rotation={robot.rotation as Euler}
         castShadow={SHADOWS}
         receiveShadow={SHADOWS}>
-        <mesh
+        <animated.mesh
           geometry={nodes.link_1.geometry}
           material={materials.gkmodel0_link_1_geom0}
           position={[0, 0, 0.486]}
           rotation={[0, 0, jointAngles[0]]}
           castShadow={SHADOWS}
           receiveShadow={SHADOWS}>
-          <mesh
+          <animated.mesh
             geometry={nodes.link_2.geometry}
             material={materials.gkmodel0_link_2_geom0}
             position={[0.15, 0, 0]}
             rotation={[0, jointAngles[1], 0]}
             castShadow={SHADOWS}
             receiveShadow={SHADOWS}>
-            <mesh
+            <animated.mesh
               geometry={nodes.link_3.geometry}
               material={materials.gkmodel0_link_3_geom0}
               position={[0, 0, 0.475]}
               rotation={[0, jointAngles[2], 0]}
               castShadow={SHADOWS}
               receiveShadow={SHADOWS}>
-              <mesh
+              <animated.mesh
                 geometry={nodes.link_4.geometry}
                 material={materials.gkmodel0_link_4_geom0}
                 position={[0.6, 0, 0]}
                 rotation={[jointAngles[3], 0, 0]}
                 castShadow={SHADOWS}
                 receiveShadow={SHADOWS}>
-                <mesh
+                <animated.mesh
                   rotation={[0, jointAngles[4], 0]}
                   geometry={nodes.link_5.geometry}
                   material={materials.gkmodel0_link_5_geom0}
                   castShadow={SHADOWS}
                   receiveShadow={SHADOWS}>
-                  <mesh
+                  <animated.mesh
                     geometry={nodes.link_6.geometry}
                     material={materials.gkmodel0_link_6_geom0}
                     position={[0.065, 0, 0]}
                     rotation={[jointAngles[5], 0, 0]}
                     castShadow={SHADOWS}
                     receiveShadow={SHADOWS}/>
-                </mesh>
-              </mesh>
-            </mesh>
-          </mesh>
-        </mesh>
+                </animated.mesh>
+              </animated.mesh>
+            </animated.mesh>
+          </animated.mesh>
+        </animated.mesh>
       </animated.mesh>
     </Select>
   )

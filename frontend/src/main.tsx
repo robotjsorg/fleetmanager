@@ -13,6 +13,10 @@ import "@mantine/code-highlight/styles.css"
 
 import { App } from "./App"
 
+// import { WS_Client } from "./ros/WS_Client"
+// import { RosWasm } from "./ros/RosWasm"
+// import { RosExample } from "./ros/RosExample"
+
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168")
 
 const COORDINATOR_URL = isLocalhost
@@ -66,6 +70,10 @@ const router = createBrowserRouter([
     element: <DocRoute />
   }
 ])
+
+// WS_Client()
+// RosWasm()
+// RosExample()
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -67,7 +67,7 @@ export const App = ({
   const { rows: queryRobots } = useQuery<IRobotQuery>(
     docId,
     sql`SELECT * FROM robots`
-    )
+  )
   if ( POPULATEDB && Array.isArray( locations ) && locations.length > 0 && ( !Array.isArray(queryRobots) || queryRobots.length == 0 )) {
     mutate({ tag: "PopulateRobots" })
       .catch(( err ) => {console.error( "Failed to populate robots", err )})

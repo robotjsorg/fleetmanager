@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid"
 
 import { useMutate } from "../doctype"
 
-import { RobotContext } from "../context/robotContext"
+// import { RobotContext } from "../context/robotContext"
 import { locSelectionContext } from "../context/locSelectionContext"
 
 export const LocationForm = ({
@@ -16,7 +16,7 @@ export const LocationForm = ({
 }: {
   docId: JournalId
 }) => {
-  const { locations } = useContext( RobotContext )
+  // const { locations } = useContext( RobotContext )
   const { setLocationSelection } = useContext( locSelectionContext )
 
   const form = useForm({
@@ -31,10 +31,10 @@ export const LocationForm = ({
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ description }) => {
-        const locationDescriptions = locations.map(( location )=>( location.description ))
-        if (locationDescriptions.includes(description)) {
-          form.setFieldError("description", "Duplicate location description")
-        } else {
+        // const locationDescriptions = locations.map(( location )=>( location.description ))
+        // if (locationDescriptions.includes(description)) {
+        //   form.setFieldError("description", "Duplicate location description")
+        // } else {
           const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
           mutate({ tag: "CreateLocation", id, description })
             .then(() => {
@@ -46,8 +46,8 @@ export const LocationForm = ({
               console.error("Failed to create location", err)
             })
           setLocationSelection( id )
-        }
-      }, [locations, form, mutate, setLocationSelection]
+        // }
+      }, [form, mutate, setLocationSelection]
     )
   )
 
