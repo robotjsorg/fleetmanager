@@ -14,23 +14,54 @@ enum Mutation {
 
     PopulateTasks,
 
-    CreateLocation { id: String, description: String },
+    CreateLocation {
+        id: String,
+        description: String,
+    },
 
-    DeleteLocation { id: String },
- 
-    CreateRobot { id: String, locationid: String, description: String, x: f32, z: f32, theta: f32 },
+    DeleteLocation {
+        id: String,
+    },
 
-    DeleteRobot { id: String },
+    CreateRobot {
+        id: String,
+        locationid: String,
+        description: String,
+        x: f32,
+        z: f32,
+        theta: f32,
+    },
 
-    UpdateRobotState { id: String, state: String },
+    DeleteRobot {
+        id: String,
+    },
 
-    UpdateRobotPosition { id: String, x: f32, z: f32, theta: f32 },
+    UpdateRobotState {
+        id: String,
+        state: String,
+    },
 
-    CreateTask { id: String, robotid: String, description: String },
+    UpdateRobotPosition {
+        id: String,
+        x: f32,
+        z: f32,
+        theta: f32,
+    },
 
-    DeleteTask { id: String },
+    CreateTask {
+        id: String,
+        robotid: String,
+        description: String,
+    },
 
-    UpdateTask { id: String, state: String }
+    DeleteTask {
+        id: String,
+    },
+
+    UpdateTask {
+        id: String,
+        state: String,
+    },
 }
 
 init_reducer!(reducer);
@@ -46,7 +77,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                     created_at TEXT NOT NULL
                 )"
             )
-            .await;
+            .await?;
             execute!(
                 "CREATE TABLE IF NOT EXISTS robots (
                     id TEXT PRIMARY KEY,
@@ -60,7 +91,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                     theta FLOAT NOT NULL
                 )"
             )
-            .await;
+            .await?;
             execute!(
                 "CREATE TABLE IF NOT EXISTS tasks (
                     id TEXT PRIMARY KEY,
@@ -70,11 +101,12 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                     created_at TEXT NOT NULL
                 )"
             )
-            .await;
+            .await?;
         }
 
         Mutation::PopulateLocations => {
-            execute!("
+            execute!(
+                "
                 INSERT
                 INTO locations (id, description, created_at)
                 SELECT 'c0f67f5f-3414-4e50-9ea7-9ae053aa1f99', 'Warehouse', datetime('now')
@@ -82,7 +114,9 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 UNION
                 SELECT 'ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d', 'Apartment', datetime('now')
                 WHERE NOT EXISTS (SELECT 1 FROM locations)
-            ").await;
+            "
+            )
+            .await?;
         }
 
         Mutation::PopulateRobots => {
@@ -106,7 +140,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 UNION
                 SELECT '8e5cc95b-bb27-4150-adfa-2bab6daf313f', 'ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d', 'House Bot 2', 'Auto', datetime('now'), datetime('now'), 1, 0, 3.14
                 WHERE NOT EXISTS (SELECT 1 FROM robots)
-            ").await;
+            ").await?;
         }
 
         Mutation::PopulateTasks => {
@@ -124,7 +158,7 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 SELECT '69c35b71-8715-4eff-bd02-82cfd283cbc8', 'd544e656-0e8c-4c3d-91fc-02e38b326c47', 'Random position (continuous)', 'Queued', datetime('now')
                 UNION
                 SELECT '7d77e2f1-8c58-4af4-9f04-0a39bcabb998', '8e5cc95b-bb27-4150-adfa-2bab6daf313f', 'Random position (continuous)', 'Queued', datetime('now')
-            ").await;
+            ").await?;
         }
 
         Mutation::CreateLocation { id, description } => {
@@ -134,16 +168,22 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                     VALUES (?, ?, datetime('now'))",
                 id,
                 description
-            ).await;
+            )
+            .await?;
         }
 
         Mutation::DeleteLocation { id } => {
-            execute!(
-                "DELETE FROM locations WHERE id = ?", id
-            ).await;
+            execute!("DELETE FROM locations WHERE id = ?", id).await?;
         }
 
-        Mutation::CreateRobot { id, locationid, description , x, z, theta } => {
+        Mutation::CreateRobot {
+            id,
+            locationid,
+            description,
+            x,
+            z,
+            theta,
+        } => {
             log::debug!("appending robot({}): {}", id, description);
             execute!(
                 "INSERT INTO robots (id, locationid, description, state, created_at, updated_at, x, z, theta)
@@ -155,13 +195,11 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 x,
                 z,
                 theta
-            ).await;
+            ).await?;
         }
 
         Mutation::DeleteRobot { id } => {
-            execute!(
-                "DELETE FROM robots WHERE id = ?", id
-            ).await;
+            execute!("DELETE FROM robots WHERE id = ?", id).await?;
         }
 
         Mutation::UpdateRobotState { id, state } => {
@@ -170,10 +208,10 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 state,
                 id
             )
-            .await;
+            .await?;
         }
 
-        Mutation::UpdateRobotPosition { id , x, z, theta } => {
+        Mutation::UpdateRobotPosition { id, x, z, theta } => {
             execute!(
                 "UPDATE robots SET x = ?, z = ?, theta = ?, updated_at = datetime('now') WHERE id = ?",
                 x,
@@ -181,11 +219,20 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 theta,
                 id
             )
-            .await;
+            .await?;
         }
 
-        Mutation::CreateTask { id, robotid, description } => {
-            log::debug!("appending task({}) to robot({}): {}", id, robotid, description);
+        Mutation::CreateTask {
+            id,
+            robotid,
+            description,
+        } => {
+            log::debug!(
+                "appending task({}) to robot({}): {}",
+                id,
+                robotid,
+                description
+            );
             execute!(
                 "INSERT INTO tasks (id, robotid, description, state, created_at)
                     VALUES (?, ?, ?, ?, datetime('now'))",
@@ -194,20 +241,15 @@ async fn reducer(mutation: Vec<u8>) -> Result<(), ReducerError> {
                 description,
                 "Queued"
             )
-            .await;
+            .await?;
         }
 
         Mutation::DeleteTask { id } => {
-            execute!("DELETE FROM tasks WHERE id = ?", id).await;
+            execute!("DELETE FROM tasks WHERE id = ?", id).await?;
         }
 
         Mutation::UpdateTask { id, state } => {
-            execute!(
-                "UPDATE tasks SET state = ? WHERE id = ?",
-                state,
-                id
-            )
-            .await;
+            execute!("UPDATE tasks SET state = ? WHERE id = ?", state, id).await?;
         }
     }
 
