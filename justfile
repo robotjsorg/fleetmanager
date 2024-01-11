@@ -9,8 +9,7 @@ upload-reducer target='local':
     #!/usr/bin/env bash
     just wasm-reducer
     set -euo pipefail
-    cd ../sqlsync/demo/cloudflare-backend
-    REDUCER_PATH="../../../fleetmanager/reducer/target/wasm32-unknown-unknown/release/reducer.wasm"
+    REDUCER_PATH="reducer/target/wasm32-unknown-unknown/release/reducer.wasm"
     
     if [[ '{{target}}' = 'remote' ]]; then
         echo "[INFO] Uploading $REDUCER_PATH to {SQLSYNC_PROD_URL}}"

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
-import { sql } from "@orbitinghail/sqlsync-react"
+import { JournalId, sql } from "@orbitinghail/sqlsync-worker"
 import { MantineProvider } from "@mantine/core"
 
 import { useMutate, useQuery } from "./doctype"
