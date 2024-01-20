@@ -1,9 +1,7 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/no-unknown-property */
 import { useContext } from "react"
 import { useMantineContext } from "@mantine/core"
 
-import { Canvas, useThree } from "@react-three/fiber"
+import { AxesHelperProps, Canvas, DirectionalLightProps, GridHelperProps, useThree } from "@react-three/fiber"
 import { Text, OrbitControls, TransformControls } from "@react-three/drei"
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing"
 import { proxy } from "valtio"
@@ -14,9 +12,10 @@ import { locSelectionContext } from "../context/locSelectionContext"
 import { moveRobotContext } from "../context/moveRobotContext"
 
 import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120"
-// import { Urdf_T12 } from "../meshes/Urdf_T12"
+import { Urdf_T12 } from "../meshes/Urdf_T12"
+// import { Mesh_cardboard_box_01 } from "../meshes/Mesh_cardboard_box_01"
 
-export const GRID_BOUND = 4
+export const GRID_BOUND = 5
 
 const state = proxy({ current: "" })
 
@@ -83,37 +82,44 @@ export const Fleetmanager = ({
     )
   }
 
+  const gridHelperProps: GridHelperProps = {args: [GRID_BOUND*2, GRID_BOUND*2, theme.colorScheme == "dark" ? "white" : "black", "gray"], position: [0, -0.02, 0], rotation: [0, 0, 0] }
+  const axesHelperProps: AxesHelperProps = {args: [1], position: [-0.01, -0.01, -0.01]}
+  const directionalLightProps1: DirectionalLightProps = {intensity: 2, position: [5, 5, 5]}
+  const directionalLightProps2: DirectionalLightProps = {intensity: 2, position: [5, 5, -5]}
+  const directionalLightProps3: DirectionalLightProps = {intensity: 2, position: [-5, 5, 5]}
+  const directionalLightProps4: DirectionalLightProps = {intensity: 2, position: [-5, 5, -5]}
+
   return (
     <Canvas dpr={[1, 2]} camera={{ position: [1, 2, 3], near: 0.01, far: 20 }}
       onPointerMissed={() => setGuiSelection("no selection")}>
       <Selection>
         <EffectComposer multisampling={8} autoClear={false}>
-          <Outline visibleEdgeColor={theme.colorScheme == "dark" ? "white" : "blue"} blur edgeStrength={100} width={1000} />
+          <Outline visibleEdgeColor={theme.colorScheme == "dark" ? 0xFFFFFF : 0x364FC7} blur edgeStrength={100} width={1000} />
         </EffectComposer>
         {locationRobots.map(( robot ) => (
           <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent} updateTask={updateTask} updateRobotJointAngles={updateRobotJointAngles}/>
         ))}
       </Selection>
 
-      <gridHelper args={[GRID_BOUND*2, GRID_BOUND*2, theme.colorScheme == "dark" ? "white" : "black", "gray"]} position={[0, -0.02, 0]} rotation={[0, 0, 0]} />
-      <axesHelper args={[1]} position={[-0.01, -0.01, -0.01]} />
+      <gridHelper {...gridHelperProps} />
+      <axesHelper {...axesHelperProps} />
       <Text color={"#E03131"} rotation={[Math.PI/2, Math.PI, Math.PI]} position={[0.9, 0, -0.1]} fontSize={0.12}>X</Text>
       <Text color={"#1971C2"} rotation={[Math.PI/2, Math.PI, Math.PI]} position={[0.1, 0, 0.9]} fontSize={0.12}>Z</Text>
 
-      <directionalLight intensity={2} position={ [5, 5, 5] } />
-      <directionalLight intensity={2} position={ [5, 5, -5] } />
-      <directionalLight intensity={2} position={ [-5, 5, 5] } />
-      <directionalLight intensity={2} position={ [-5, 5, -5] } />
+      <directionalLight {...directionalLightProps1} />
+      <directionalLight {...directionalLightProps2} />
+      <directionalLight {...directionalLightProps3} />
+      <directionalLight {...directionalLightProps4} />
 
       <Controls />
       <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0.25, 0, 1] } />
       {/* autoRotate={ true } */}
 
-      {/* <Urdf_T12 /> */}
+      <Urdf_T12 />
 
-      {/* <Mesh_cardboard_box_01 /> */}
-      {/* <Mesh_cardboard_box_01 /> */}
-      {/* <Mesh_cardboard_box_01 /> */}
+      {/* <Mesh_cardboard_box_01 />
+      <Mesh_cardboard_box_01 />
+      <Mesh_cardboard_box_01 /> */}
 
       {/* <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
         preset={ locSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 

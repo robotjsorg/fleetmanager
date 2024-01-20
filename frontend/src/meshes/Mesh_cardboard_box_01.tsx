@@ -1,11 +1,10 @@
-/* eslint-disable react/no-unknown-property */
 import { useState } from "react"
 import { useGLTF } from "@react-three/drei"
 import { GLTF } from "three-stdlib"
 import { Euler, Vector3 } from "@react-three/fiber"
 
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168")
-const localFilepath = "../../assets/gltf/"
+const localFilepath = "../../assets/gltf_copy/"
 const filename = "cardboard_box_01_4k.gltf"
 const filepath = isLocalhost ? localFilepath + filename : filename
 
@@ -36,18 +35,20 @@ export function Mesh_cardboard_box_01() {
   const [ rotation ] = useState( randomRotation() )
 
   const SHADOWS = false
+  const groupProps = { dispose: null }
+  const meshProps = {
+    geometry: nodes.cardboard_box_01.geometry,
+    material: materials.cardboard_box_01,
+    position: position,
+    rotation: rotation,
+    castShadow: SHADOWS,
+    receiveShadow: SHADOWS,
+    scale: 0.8
+  }
 
   return (
-    <group dispose={null}>
-      <mesh
-        geometry={nodes.cardboard_box_01.geometry}
-        material={materials.cardboard_box_01}
-        position={position}
-        rotation={rotation}
-        castShadow={SHADOWS}
-        receiveShadow={SHADOWS}
-        scale={0.8}
-      />
+    <group {...groupProps}>
+      <mesh {...meshProps} />
     </group>
   )
 }
