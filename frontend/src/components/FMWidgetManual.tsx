@@ -106,7 +106,7 @@ export const FMWidgetManual = ({
       </Group>
       {toggleManual ? // Joints
         <form>
-          <Group gap={0} px="xs" onMouseUp={()=>{handleManualJoints()}}>
+          <Group gap={0} px="xs" onClick={()=>{handleManualJoints()}} onChange={()=>{handleManualJoints()}}>
             <Stack w="50%" gap="xs" pr="xs">
               <NumberInput
                 leftSection={<Text span size="xs">J1</Text>}
