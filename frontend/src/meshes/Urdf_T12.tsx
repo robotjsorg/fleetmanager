@@ -28,7 +28,11 @@ export const Urdf_T12 = () => {
     }
   }
 
-  const jointMeshTree = ( joint: URDFJoint ): { element: ReactElement } => {
+  const jointMeshTree = (
+    joint: URDFJoint
+  ): {
+    element: ReactElement | null
+  } => {
     const link = joint.children[0] as URDFLink
     if ( link ) {
       const visual = link.children[0] as URDFVisual
@@ -40,30 +44,32 @@ export const Urdf_T12 = () => {
           const nested: ReactElement[] = []
           joints?.forEach(joint => {
             const { element } = jointMeshTree( joint )
-            nested.push( element )
+            if ( element ) {
+              nested.push( element )
+            }
           })
-          const element = <mesh key={link.name} {...meshProps}>{nested}</mesh>
-          return { element }
+          return { element: <mesh {...meshProps}>{nested}</mesh> }
         }
       }
     }
-    const element = <mesh key={joint.name}/>
-    return { element }
+    return { element: null }
   }
 
-  const getMeshTree = ( link: URDFRobot | undefined ) => {
-    if ( link && meshTree == null ) {
-      const mesh = link.children[0].children[0] as THREE.Mesh
+  const getMeshTree = ( robot: URDFRobot | undefined ) => {
+    if ( robot && meshTree == null ) {
+      const mesh = robot.children[0].children[0] as THREE.Mesh
       if ( mesh ) {
-        const meshProps: MeshProps = { key: link.name, geometry: mesh.geometry }
-        const joints = link.children.slice(1) as URDFJoint[]
+        const meshProps: MeshProps = { key: robot.name, geometry: mesh.geometry }
+        const joints = robot.children.slice(1) as URDFJoint[]
         const meshes: ReactElement[] = []
         joints.forEach( joint => {
           const { element } = jointMeshTree( joint )
-          meshes.push( element )
+          if ( element ) {
+            meshes.push( element )
+          }
         })
         setMeshTree(
-          <mesh key={link.name} {...meshProps}>
+          <mesh {...meshProps}>
             {meshes}
           </mesh>
         )
