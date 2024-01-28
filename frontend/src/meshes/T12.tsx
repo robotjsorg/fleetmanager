@@ -2,23 +2,23 @@ import { useState, useEffect, ReactElement } from "react"
 import { useFrame, MeshProps } from "@react-three/fiber"
 import URDFLoader, { URDFRobot, URDFLink, URDFJoint, URDFVisual } from "urdf-loader"
 
-export const Urdf_T12 = () => {
-  const [ model, setModel ] = useState<URDFRobot>()
-  const [ meshTree, setMeshTree ] = useState<ReactElement>()
+export const T12 = () => {
+  const [ T12URDF, setT12URDF ] = useState<URDFRobot>()
+  const [ T12React, setT12React ] = useState<ReactElement>()
 
   useEffect(()=>{
-    if ( model == null ) {
+    if ( T12URDF == null ) {
       const loader = new URDFLoader()
       loader.load( "../../assets/urdf/T12/urdf/T12.URDF", urdf => {
-        setModel( urdf )
+        setT12URDF( urdf )
       })
     }
     else {
-      console.log(model)
-      console.log(model.links)
-      console.log(model.joints)
+      console.log(T12URDF)
+      console.log(T12URDF.links)
+      console.log(T12URDF.joints)
     }
-  }, [model])
+  }, [T12URDF])
 
   const getLinkJoints = ( link: URDFLink ) => {
     if ( link.children.length > 0 ) {
@@ -29,7 +29,8 @@ export const Urdf_T12 = () => {
   }
 
   const jointMeshTree = (
-    joint: URDFJoint
+    joint: URDFJoint,
+    time: number
   ): {
     element: ReactElement | null
   } => {
@@ -39,36 +40,39 @@ export const Urdf_T12 = () => {
       if ( visual ) {
         const mesh = visual.children[0] as THREE.Mesh
         if ( mesh ) {
-          const meshProps: MeshProps = { key: link.name, geometry: mesh.geometry, position: joint.position, rotation: joint.rotation }
+          // joint.setJointValue(time)
+          // const rotation: Euler = [joint.rotation.x, joint.rotation.y, joint.rotation.z + time]
+          const meshProps: MeshProps = { key: link.name, geometry: mesh.geometry, position: joint.position, rotation: joint.rotation, castShadow: true, receiveShadow: true }
           const joints = getLinkJoints( link )
           const nested: ReactElement[] = []
           joints?.forEach(joint => {
-            const { element } = jointMeshTree( joint )
+            const { element } = jointMeshTree( joint, time )
             if ( element ) {
               nested.push( element )
             }
           })
-          return { element: <mesh {...meshProps}>{nested}</mesh> }
+          return { element: <mesh {...meshProps}>{nested}<meshBasicMaterial/></mesh> }
         }
       }
     }
     return { element: null }
   }
 
-  const getMeshTree = ( robot: URDFRobot | undefined ) => {
-    if ( robot && meshTree == null ) {
+  const getMeshTree = ( robot: URDFRobot | undefined, time: number ) => {
+    if ( robot && T12React == null ) {
       const mesh = robot.children[0].children[0] as THREE.Mesh
       if ( mesh ) {
-        const meshProps: MeshProps = { key: robot.name, geometry: mesh.geometry }
+        robot.rotateX(Math.PI/2)
+        const meshProps: MeshProps = { key: robot.name, geometry: mesh.geometry, position: robot.position, rotation: robot.rotation, castShadow: true, receiveShadow: true }
         const joints = robot.children.slice(1) as URDFJoint[]
         const meshes: ReactElement[] = []
         joints.forEach( joint => {
-          const { element } = jointMeshTree( joint )
+          const { element } = jointMeshTree( joint, time )
           if ( element ) {
             meshes.push( element )
           }
         })
-        setMeshTree(
+        setT12React(
           <mesh {...meshProps}>
             {meshes}
           </mesh>
@@ -77,13 +81,14 @@ export const Urdf_T12 = () => {
     }
   }
 
-  useFrame(()=>(
-    getMeshTree(model)
+  useFrame((state)=>(
+    console.log(state.clock.elapsedTime),
+    getMeshTree(T12URDF, state.clock.elapsedTime)
   ))
 
   return (
     <>
-      {meshTree}
+      {T12React}
     </>
   )
 }

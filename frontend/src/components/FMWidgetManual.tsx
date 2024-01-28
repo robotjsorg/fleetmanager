@@ -10,7 +10,7 @@ import { IRobot } from "../@types/robot"
 import { RobotContext } from "../context/robotContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
 
-import { JOINT_LIMITS } from "../meshes/Mesh_abb_irb52_7_120"
+import { JOINT_LIMITS } from "../meshes/abb_irb52_7_120"
 
 const RADS_DEGS = 57.2958
 
@@ -96,7 +96,6 @@ export const FMWidgetManual = ({
     <>
       <Divider mx="xs" />
       <Group gap="xs" p="xs" justify="center">
-        {/* <SegmentedControl data={['Joints', 'Tool']} /> */}
         <Button color="gray" onClick={()=>setToggleManual(true)} variant={toggleManual ? "light" : "subtle"} size="xs" leftSection={<IconAngle size={18}/>}>
           Joints
         </Button>

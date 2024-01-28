@@ -88,7 +88,7 @@ const postplace = () => {
   return [-Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0]
 }
 
-export const Mesh_abb_irb52_7_120 = ({
+export const Abb_irb52_7_120 = ({
   robot,
   selected,
   robotCurrent,

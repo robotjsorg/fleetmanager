@@ -11,8 +11,8 @@ import { guiSelectionContext } from "../context/guiSelectionContext"
 import { locSelectionContext } from "../context/locSelectionContext"
 import { moveRobotContext } from "../context/moveRobotContext"
 
-import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120"
-import { Urdf_T12 } from "../meshes/Urdf_T12"
+import { Abb_irb52_7_120 } from "../meshes/abb_irb52_7_120"
+import { T12 } from "../meshes/T12"
 // import { Mesh_cardboard_box_01 } from "../meshes/Mesh_cardboard_box_01"
 
 export const GRID_BOUND = 5
@@ -97,9 +97,11 @@ export const Fleetmanager = ({
           <Outline visibleEdgeColor={theme.colorScheme == "dark" ? 0xFFFFFF : 0x364FC7} blur edgeStrength={100} width={1000} />
         </EffectComposer>
         {locationRobots.map(( robot ) => (
-          <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent} updateTask={updateTask} updateRobotJointAngles={updateRobotJointAngles}/>
+          <Abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent} updateTask={updateTask} updateRobotJointAngles={updateRobotJointAngles}/>
         ))}
       </Selection>
+
+      <T12 />
 
       <gridHelper {...gridHelperProps} />
       <axesHelper {...axesHelperProps} />
@@ -114,8 +116,6 @@ export const Fleetmanager = ({
       <Controls />
       <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0.25, 0, 1] } />
       {/* autoRotate={ true } */}
-
-      <Urdf_T12 />
 
       {/* <Mesh_cardboard_box_01 />
       <Mesh_cardboard_box_01 />
