@@ -12,7 +12,7 @@ import { locSelectionContext } from "../context/locSelectionContext"
 import { moveRobotContext } from "../context/moveRobotContext"
 
 import { Abb_irb52_7_120 } from "../meshes/abb_irb52_7_120"
-import { T12 } from "../meshes/T12"
+import { URDF } from "../meshes/URDF"
 // import { Mesh_cardboard_box_01 } from "../meshes/Mesh_cardboard_box_01"
 
 export const GRID_BOUND = 5
@@ -101,7 +101,7 @@ export const Fleetmanager = ({
         ))}
       </Selection>
 
-      <T12 />
+      <URDF />
 
       <gridHelper {...gridHelperProps} />
       <axesHelper {...axesHelperProps} />
