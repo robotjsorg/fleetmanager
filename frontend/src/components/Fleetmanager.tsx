@@ -101,8 +101,9 @@ export const Fleetmanager = ({
         ))}
       </Selection>
 
-      <URDF {...[4, 0, 0]} />
-      <URDF {...[-4, 0, 0]} />
+      <URDF {...[0, 0, 0]} />
+      <URDF {...[0, -1, 0]} />
+      <URDF {...[0, -2, 0]} />
 
       <gridHelper {...gridHelperProps} />
       <axesHelper {...axesHelperProps} />

@@ -1,5 +1,5 @@
-import { useState, useEffect, ReactElement } from "react"
-import { useFrame, MeshProps, Vector3 } from "@react-three/fiber"
+import { useState, useEffect, ReactElement, useCallback } from "react"
+import { MeshProps, Vector3 } from "@react-three/fiber"
 import URDFLoader, { URDFRobot, URDFLink, URDFJoint, URDFVisual } from "urdf-loader"
 
 export const URDF = (
@@ -25,7 +25,7 @@ export const URDF = (
     }
   }
 
-  const jointMeshTree = (
+  const jointMeshTree = useCallback((
     joint: URDFJoint
   ): {
     element: ReactElement | null
@@ -50,17 +50,21 @@ export const URDF = (
       }
     }
     return { element: null }
-  }
+  }, [])
 
-  const getMeshTree = ( robot: URDFRobot | undefined, position: Vector3 ) => {
+  const getMeshTree = useCallback(( robot: URDFRobot | undefined, position: Vector3 ) => {
     if ( robot ) {
       const mesh = robot.children[0].children[0] as THREE.Mesh
       if ( mesh ) {
         const pos = position as number[]
+        // const rot = rotation as number[]
         robot.translateX(pos[0])
         robot.translateY(pos[1])
         robot.translateZ(pos[2])
         robot.rotateX(Math.PI/2)
+        // robot.rotateX(rot[0])
+        // robot.rotateY(rot[1])
+        // robot.rotateZ(rot[2])
         const meshProps: MeshProps = { key: robot.name, geometry: mesh.geometry, position: robot.position, rotation: robot.rotation, castShadow: true, receiveShadow: true }
         const joints = robot.children.slice(1) as URDFJoint[]
         const meshes: ReactElement[] = []
@@ -78,11 +82,11 @@ export const URDF = (
         )
       }
     }
-  }
+  }, [jointMeshTree])
 
-  useFrame(()=>(
+  useEffect(()=>{
     getMeshTree(URDFRobot, position)
-  ))
+  }, [URDFRobot, getMeshTree, position])
 
   return (
     <>
