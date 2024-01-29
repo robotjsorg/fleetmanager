@@ -45,7 +45,7 @@ export const URDF = (
               nested.push( element )
             }
           })
-          return { element: <mesh {...meshProps}>{nested}<meshBasicMaterial/></mesh> }
+          return { element: <mesh {...meshProps}>{nested}<meshStandardMaterial/></mesh> }
         }
       }
     }
@@ -73,6 +73,7 @@ export const URDF = (
         setURDF(
           <mesh {...meshProps}>
             {meshes}
+            <meshStandardMaterial/>
           </mesh>
         )
       }
