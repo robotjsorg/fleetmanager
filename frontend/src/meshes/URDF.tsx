@@ -50,35 +50,31 @@ export const URDF = () => {
     return { element: null }
   }
 
-  const getRobot = ( robot: URDFRobot | undefined ) => {
-    if ( robot && URDF == null ) {
-      getMeshTree( robot )
-    }
-  }
-
-  const getMeshTree = ( robot: URDFRobot ) => {
-    const mesh = robot.children[0].children[0] as THREE.Mesh
-    if ( mesh ) {
-      robot.rotateX(Math.PI/2)
-      const meshProps: MeshProps = { key: robot.name, geometry: mesh.geometry, position: robot.position, rotation: robot.rotation, castShadow: true, receiveShadow: true }
-      const joints = robot.children.slice(1) as URDFJoint[]
-      const meshes: ReactElement[] = []
-      joints.forEach( joint => {
-        const { element } = jointMeshTree( joint  )
-        if ( element ) {
-          meshes.push( element )
-        }
-      })
-      setURDF(
-        <mesh {...meshProps}>
-          {meshes}
-        </mesh>
-      )
+  const getMeshTree = ( robot: URDFRobot | undefined ) => {
+    if ( robot ) {
+      const mesh = robot.children[0].children[0] as THREE.Mesh
+      if ( mesh ) {
+        robot.rotateX(Math.PI/2)
+        const meshProps: MeshProps = { key: robot.name, geometry: mesh.geometry, position: robot.position, rotation: robot.rotation, castShadow: true, receiveShadow: true }
+        const joints = robot.children.slice(1) as URDFJoint[]
+        const meshes: ReactElement[] = []
+        joints.forEach( joint => {
+          const { element } = jointMeshTree( joint  )
+          if ( element ) {
+            meshes.push( element )
+          }
+        })
+        setURDF(
+          <mesh {...meshProps}>
+            {meshes}
+          </mesh>
+        )
+      }
     }
   }
 
   useFrame(()=>(
-    getRobot(URDFRobot)
+    getMeshTree(URDFRobot)
   ))
 
   return (
