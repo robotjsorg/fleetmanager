@@ -7,10 +7,7 @@ export const URDF = (
 ) => {
   const [ URDFRobot, setURDFRobot ] = useState<URDFRobot>()
   const [ URDF, setURDF ] = useState<ReactElement>()
-  // List of refs
-  const refs = useRef<THREE.Mesh[]>([])
-  // Dict of refs
-  // const refs = useRef({})
+  const refs = useRef<Record<string, THREE.Mesh>>({})
 
   useEffect(()=>{
     if ( URDFRobot == null ) {
@@ -50,11 +47,9 @@ export const URDF = (
                 nested.push( element )
               }
             })
-            // list of refs: ref={(element) => refs.current.push(element!)}
-            // dict of refs: ref={(element) => refs.current[link.name] = element}
             return {
               element:
-              <mesh {...meshProps} ref={(element) => refs.current.push(element!)}>
+              <mesh {...meshProps} ref={(meshElement) => refs.current[link.name] = meshElement!}>
                 {nested}
                 <meshStandardMaterial/>
               </mesh>
@@ -108,12 +103,13 @@ export const URDF = (
   }, [URDFRobot, getMeshTree, position])
 
   useFrame(({clock}) => {
-    if ( Array.isArray(refs.current) && refs.current.length > 1 ) {
-      refs.current.forEach((ref)=>{
-        if ( ref ) {
-          ref.rotation.z = clock.getElapsedTime()
-        }
-      })
+    // // Move every joint
+    // for (const key in refs.current) {
+    //     refs.current[key].rotation.z = clock.getElapsedTime()
+    // }
+    // Move named joint
+    if ( refs.current.Thigh6 ){
+      refs.current.Thigh6.rotation.z = clock.getElapsedTime()
     }
   })
 
