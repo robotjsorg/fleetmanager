@@ -1,7 +1,7 @@
 import { useContext } from "react"
 import { useMantineContext } from "@mantine/core"
 
-import { AxesHelperProps, Canvas, DirectionalLightProps, GridHelperProps, useThree } from "@react-three/fiber"
+import { AxesHelperProps, Canvas, DirectionalLightProps, Euler, GridHelperProps, useThree, Vector3 } from "@react-three/fiber"
 import { Text, OrbitControls, TransformControls } from "@react-three/drei"
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing"
 import { proxy } from "valtio"
@@ -18,6 +18,11 @@ import { URDF } from "../meshes/URDF"
 export const GRID_BOUND = 5
 
 const state = proxy({ current: "" })
+
+export interface URDFProps {
+  position: Vector3,
+  rotation: Euler
+}
 
 export const Fleetmanager = ({
   updateRobotPosition,
@@ -89,6 +94,10 @@ export const Fleetmanager = ({
   const directionalLightProps3: DirectionalLightProps = {intensity: 2, position: [-5, 5, 5]}
   const directionalLightProps4: DirectionalLightProps = {intensity: 2, position: [-5, 5, -5]}
 
+  const URDFProps1: URDFProps = {position: [0, 0, 0], rotation: [Math.PI/2, 0, 0]}
+  const URDFProps2: URDFProps = {position: [0, -1, 0], rotation: [Math.PI/2, 0, 0]}
+  const URDFProps3: URDFProps = {position: [0, -2, 0], rotation: [Math.PI/2, 0, 0]}
+
   return (
     <Canvas dpr={[1, 2]} camera={{ position: [1, 2, 3], near: 0.01, far: 20 }}
       onPointerMissed={() => setGuiSelection("no selection")}>
@@ -101,9 +110,9 @@ export const Fleetmanager = ({
         ))}
       </Selection>
 
-      <URDF {...[0, 0, 0]} />
-      <URDF {...[0, -1, 0]} />
-      <URDF {...[0, -2, 0]} />
+      <URDF {...URDFProps1} />
+      <URDF {...URDFProps2} />
+      <URDF {...URDFProps3} />
 
       <gridHelper {...gridHelperProps} />
       <axesHelper {...axesHelperProps} />
