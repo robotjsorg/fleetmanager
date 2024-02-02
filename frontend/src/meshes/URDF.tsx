@@ -3,8 +3,13 @@ import { Euler, MeshProps, useFrame, Vector3 } from "@react-three/fiber"
 import URDFLoader, { URDFRobot, URDFLink, URDFJoint, URDFVisual } from "urdf-loader"
 import { URDFProps } from "../components/Fleetmanager"
 
-type meshPropsWithJointLimit = MeshProps & {
-  limit: { lower: number; upper: number; }
+interface limit {
+  lower: number; upper: number;
+}
+
+type meshProps = MeshProps & {
+  limit: limit,
+  startRotation: number
 }
 
 export const URDF = (
@@ -38,16 +43,13 @@ export const URDF = (
     ): {
       element: ReactElement | null
     } => {
-      const limit = joint.limit
-      console.log(limit)
       const link = joint.children[0] as URDFLink
       if ( link ) {
         const visual = link.children[0] as URDFVisual
         if ( visual ) {
           const mesh = visual.children[0] as THREE.Mesh
           if ( mesh ) {
-            // const meshProps: MeshProps = { key: link.name, geometry: mesh.geometry, position: joint.position, rotation: joint.rotation, castShadow: true, receiveShadow: true }
-            const customMeshProps: meshPropsWithJointLimit = { limit: {lower: joint.limit.lower as number, upper: joint.limit.upper as number}, key: link.name, geometry: mesh.geometry, position: joint.position, rotation: joint.rotation, castShadow: true, receiveShadow: true }
+            const meshProps: meshProps = { limit: {lower: joint.limit.lower as number, upper: joint.limit.upper as number}, startRotation: joint.rotation.z, key: link.name, geometry: mesh.geometry, position: joint.position, rotation: joint.rotation, castShadow: true, receiveShadow: true }
             const linkChildren = getLinkChildren( link )
             const nested: ReactElement[] = []
             linkChildren?.forEach(child => {
@@ -60,14 +62,10 @@ export const URDF = (
             })
             return {
               element:
-              <mesh {...customMeshProps} ref={(meshElement) => refs.current[link.name] = meshElement!}>
+              <mesh {...meshProps} ref={(meshElement) => refs.current[link.name] = meshElement!}>
                 {nested}
                 <meshStandardMaterial/>
               </mesh>
-              // <mesh {...meshProps} ref={(meshElement) => refs.current[link.name] = meshElement!}>
-              //   {nested}
-              //   <meshStandardMaterial/>
-              // </mesh>
             }
           }
         }
@@ -117,48 +115,44 @@ export const URDF = (
     getMeshTree(URDFRobot, props.position, props.rotation)
   }, [URDFRobot, getMeshTree, props])
 
-  useEffect(()=>{
-    console.log(refs.current.Thigh6)
-  }, [refs])
+  // useEffect(()=>{
+  //   console.log(refs.current.Thigh5)
+  //   console.log(refs.current.Thigh6)
+  // })
 
-  // const randomJointAngles = () => {
-  //   for (const key in refs.current) {
-  //     const big = JOINT_LIMITS[i][1]
-  //     const small = JOINT_LIMITS[i][0]
-  //     angles[ i ] = Math.random() * ( big - small ) + small
-  //   }
-  //   return (
-  //     angles
-  //   )
-  // }
-
-  useFrame(({clock}) => {
+  useFrame((state) => {
     // Move all named joints
-    for ( const key in refs.current ) {
-      if ( key.startsWith("Hip") ) {
-        console.log( refs.current[key] )
-        refs.current[key].rotation.z = clock.getElapsedTime()
-      }
-      // if ( key.startsWith("Thigh") ) {
-      //   refs.current[key].rotation.z = clock.getElapsedTime()
-      // }
-      // if ( key.startsWith("Knee") ) {
-      //   refs.current[key].rotation.z = clock.getElapsedTime()
-      // }
-      // if ( key.startsWith("Shin") ) {
-      //   refs.current[key].rotation.z = clock.getElapsedTime()
-      // }
-      // if ( key.startsWith("Ankle") ) {
-      //   refs.current[key].rotation.z = clock.getElapsedTime()
-      // }
-      // if ( key.startsWith("Foot") ) {
-      //   refs.current[key].rotation.z = clock.getElapsedTime()
-      // }
-    }
-    // // Move named joint
-    // if ( refs.current.Thigh6 ){
-    //   refs.current.Thigh6.rotation.z = clock.getElapsedTime()
+    // for ( const key in refs.current ) {
+    //   if ( key.startsWith("Hip") ) {
+    //     const meshProps = refs.current[key] as unknown as meshProps
+    //     refs.current[key].rotation.z = (( meshProps.startRotation + state.clock.getElapsedTime() ) % ( meshProps.limit.upper - meshProps.limit.lower )) + meshProps.limit.lower
+    //   }
+    //   if ( key.startsWith("Thigh") ) {
+    //     const meshProps = refs.current[key] as unknown as meshProps
+    //     refs.current[key].rotation.z = (( meshProps.startRotation + state.clock.getElapsedTime() ) % ( meshProps.limit.upper - meshProps.limit.lower )) + meshProps.limit.lower
+    //   }
+    //   if ( key.startsWith("Knee") ) {
+    //     const meshProps = refs.current[key] as unknown as meshProps
+    //     refs.current[key].rotation.z = (( meshProps.startRotation + state.clock.getElapsedTime() ) % ( meshProps.limit.upper - meshProps.limit.lower )) + meshProps.limit.lower
+    //   }
+    //   if ( key.startsWith("Shin") ) {
+    //     const meshProps = refs.current[key] as unknown as meshProps
+    //     refs.current[key].rotation.z = (( meshProps.startRotation + state.clock.getElapsedTime() ) % ( meshProps.limit.upper - meshProps.limit.lower )) + meshProps.limit.lower
+    //   }
+    //   if ( key.startsWith("Ankle") ) {
+    //     const meshProps = refs.current[key] as unknown as meshProps
+    //     refs.current[key].rotation.z = (( meshProps.startRotation + state.clock.getElapsedTime() ) % ( meshProps.limit.upper - meshProps.limit.lower )) + meshProps.limit.lower
+    //   }
+    //   if ( key.startsWith("Foot") ) {
+    //     const meshProps = refs.current[key] as unknown as meshProps
+    //     refs.current[key].rotation.z = (( meshProps.startRotation + state.clock.getElapsedTime() ) % ( meshProps.limit.upper - meshProps.limit.lower )) + meshProps.limit.lower
+    //   }
     // }
+    // Move named joint
+    if ( refs.current.Thigh6 ){
+      const meshProps = refs.current.Thigh6 as unknown as meshProps
+      refs.current.Thigh6.rotation.z = (( meshProps.startRotation + state.clock.getElapsedTime() ) % ( meshProps.limit.upper - meshProps.limit.lower )) + meshProps.limit.lower
+    }
   })
 
   return (
