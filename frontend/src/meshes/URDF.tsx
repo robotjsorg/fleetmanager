@@ -3,6 +3,10 @@ import { Euler, MeshProps, useFrame, Vector3 } from "@react-three/fiber"
 import URDFLoader, { URDFRobot, URDFLink, URDFJoint, URDFVisual } from "urdf-loader"
 import { URDFProps } from "../components/Fleetmanager"
 
+type meshPropsWithJointLimit = MeshProps & {
+  limit: { lower: number; upper: number; }
+}
+
 export const URDF = (
   props: URDFProps
 ) => {
@@ -19,7 +23,7 @@ export const URDF = (
     }
   }, [URDFRobot])
 
-  const getLinkJoints = ( link: URDFLink ) => {
+  const getLinkChildren = ( link: URDFLink ) => {
     if ( link.children.length > 0 ) {
       return link.children as URDFJoint[]
     } else {
@@ -27,33 +31,43 @@ export const URDF = (
     }
   }
 
+  // TODO: Update for missing visuals
   const jointMeshTree = useCallback(
     (
       joint: URDFJoint
     ): {
       element: ReactElement | null
     } => {
+      const limit = joint.limit
+      console.log(limit)
       const link = joint.children[0] as URDFLink
       if ( link ) {
         const visual = link.children[0] as URDFVisual
         if ( visual ) {
           const mesh = visual.children[0] as THREE.Mesh
           if ( mesh ) {
-            const meshProps: MeshProps = { key: link.name, geometry: mesh.geometry, position: joint.position, rotation: joint.rotation, castShadow: true, receiveShadow: true }
-            const joints = getLinkJoints( link )
+            // const meshProps: MeshProps = { key: link.name, geometry: mesh.geometry, position: joint.position, rotation: joint.rotation, castShadow: true, receiveShadow: true }
+            const customMeshProps: meshPropsWithJointLimit = { limit: {lower: joint.limit.lower as number, upper: joint.limit.upper as number}, key: link.name, geometry: mesh.geometry, position: joint.position, rotation: joint.rotation, castShadow: true, receiveShadow: true }
+            const linkChildren = getLinkChildren( link )
             const nested: ReactElement[] = []
-            joints?.forEach(joint => {
-              const { element } = jointMeshTree( joint )
-              if ( element ) {
-                nested.push( element )
+            linkChildren?.forEach(child => {
+              if ( child.type == "URDFJoint" ) {
+                const { element } = jointMeshTree( child )
+                if ( element ) {
+                  nested.push( element )
+                }
               }
             })
             return {
               element:
-              <mesh {...meshProps} ref={(meshElement) => refs.current[link.name] = meshElement!}>
+              <mesh {...customMeshProps} ref={(meshElement) => refs.current[link.name] = meshElement!}>
                 {nested}
                 <meshStandardMaterial/>
               </mesh>
+              // <mesh {...meshProps} ref={(meshElement) => refs.current[link.name] = meshElement!}>
+              //   {nested}
+              //   <meshStandardMaterial/>
+              // </mesh>
             }
           }
         }
@@ -103,12 +117,43 @@ export const URDF = (
     getMeshTree(URDFRobot, props.position, props.rotation)
   }, [URDFRobot, getMeshTree, props])
 
+  useEffect(()=>{
+    console.log(refs.current.Thigh6)
+  }, [refs])
+
+  // const randomJointAngles = () => {
+  //   for (const key in refs.current) {
+  //     const big = JOINT_LIMITS[i][1]
+  //     const small = JOINT_LIMITS[i][0]
+  //     angles[ i ] = Math.random() * ( big - small ) + small
+  //   }
+  //   return (
+  //     angles
+  //   )
+  // }
+
   useFrame(({clock}) => {
     // Move all named joints
-    for (const key in refs.current) {
-      if ( key.startsWith("Thigh") ) {
+    for ( const key in refs.current ) {
+      if ( key.startsWith("Hip") ) {
+        console.log( refs.current[key] )
         refs.current[key].rotation.z = clock.getElapsedTime()
       }
+      // if ( key.startsWith("Thigh") ) {
+      //   refs.current[key].rotation.z = clock.getElapsedTime()
+      // }
+      // if ( key.startsWith("Knee") ) {
+      //   refs.current[key].rotation.z = clock.getElapsedTime()
+      // }
+      // if ( key.startsWith("Shin") ) {
+      //   refs.current[key].rotation.z = clock.getElapsedTime()
+      // }
+      // if ( key.startsWith("Ankle") ) {
+      //   refs.current[key].rotation.z = clock.getElapsedTime()
+      // }
+      // if ( key.startsWith("Foot") ) {
+      //   refs.current[key].rotation.z = clock.getElapsedTime()
+      // }
     }
     // // Move named joint
     // if ( refs.current.Thigh6 ){
