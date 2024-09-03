@@ -12,8 +12,6 @@ import { locSelectionContext } from "../context/locSelectionContext"
 import { moveRobotContext } from "../context/moveRobotContext"
 
 import { Abb_irb52_7_120 } from "../meshes/abb_irb52_7_120"
-import { URDF } from "../meshes/URDF"
-// import { Mesh_cardboard_box_01 } from "../meshes/Mesh_cardboard_box_01"
 
 export const GRID_BOUND = 5
 
@@ -94,10 +92,6 @@ export const Fleetmanager = ({
   const directionalLightProps3: DirectionalLightProps = {intensity: 2, position: [-5, 5, 5]}
   const directionalLightProps4: DirectionalLightProps = {intensity: 2, position: [-5, 5, -5]}
 
-  const URDFProps1: URDFProps = {position: [0, 0, 0], rotation: [Math.PI/2, 0, 0]}
-  const URDFProps2: URDFProps = {position: [0, -1, 0], rotation: [Math.PI/2, 0, 0]}
-  const URDFProps3: URDFProps = {position: [0, -2, 0], rotation: [Math.PI/2, 0, 0]}
-
   return (
     <Canvas dpr={[1, 2]} camera={{ position: [1, 2, 3], near: 0.01, far: 20 }}
       onPointerMissed={() => setGuiSelection("no selection")}>
@@ -109,10 +103,6 @@ export const Fleetmanager = ({
           <Abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent} updateTask={updateTask} updateRobotJointAngles={updateRobotJointAngles}/>
         ))}
       </Selection>
-
-      <URDF {...URDFProps1} />
-      <URDF {...URDFProps2} />
-      <URDF {...URDFProps3} />
 
       <gridHelper {...gridHelperProps} />
       <axesHelper {...axesHelperProps} />
@@ -126,22 +116,6 @@ export const Fleetmanager = ({
 
       <Controls />
       <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0.25, 0, 1] } />
-      {/* autoRotate={ true } */}
-
-      {/* <Mesh_cardboard_box_01 />
-      <Mesh_cardboard_box_01 />
-      <Mesh_cardboard_box_01 /> */}
-
-      {/* <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
-        preset={ locSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 
-        : locSelection == "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d" ? "apartment" 
-        : "city" } /> */}
-      {/* <mesh position={[0, -0.03, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[10, 10, 10]}>
-        <planeGeometry />
-        <meshBasicMaterial color="#d2d2d2" />
-      </mesh> */}
-      {/* <ambientLight intensity={1} /> */}
-      {/* <ContactShadows scale={ 150 } position={ [0.33, -0.33, 0.33] } opacity={ 1.5 } /> */}
     </Canvas>
   )
 }
