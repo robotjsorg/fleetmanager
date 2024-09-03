@@ -16,7 +16,7 @@ import { currentTaskContext } from "./context/currentTaskContext"
 
 import { FMAppShell } from "./views/FMAppShell"
 
-import { zeroJointAngles } from "./meshes/Mesh_abb_irb52_7_120"
+import { zeroJointAngles } from "./meshes/abb_irb52_7_120"
 
 export const POPULATEDB = true
 

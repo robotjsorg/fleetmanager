@@ -4,7 +4,7 @@ import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Box, Button, Divider, AppShell, Group, Burger, Stack, useMantineContext, useMantineColorScheme } from "@mantine/core"
 import { useViewportSize, useDisclosure, useHover } from "@mantine/hooks"
 
-import { IconChecklist, IconHome, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react"
+import { IconBrandPaypalFilled, IconChecklist, IconHome, IconMoon, IconRobot, IconSettings, IconSun } from "@tabler/icons-react"
 
 import { LocationView } from "./LocationView"
 import { RobotView } from "./RobotView"
@@ -104,12 +104,17 @@ export const FMAppShell = ({
   const { hovered: hovered1a, ref: ref1a } = useHover()
   const { hovered: hovered2a, ref: ref2a } = useHover()
   const { hovered: hovered3a, ref: ref3a } = useHover()
+  const { hovered: hovered4a, ref: ref4a } = useHover()
   const { hovered: hovered1b, ref: ref1b } = useHover()
   const { hovered: hovered2b, ref: ref2b } = useHover()
   const { hovered: hovered3b, ref: ref3b } = useHover()
+  const { hovered: hovered4b, ref: ref4b } = useHover()
 
   return (
     <AppShell
+      style={{
+        backgroundColor: theme.colorScheme == "dark" ? "var(--mantine-color-dark-7)" : "#fff"
+      }}
       withBorder={false}
       header={{
         height: HEADER_HEIGHT
@@ -214,7 +219,37 @@ export const FMAppShell = ({
               <IconChecklist size={18} />
             </Button>
           </Group>
-          <ConnectionStatus docId={docId} />
+          <Group wrap="nowrap" gap={0}>
+            <Button visibleFrom="xs"
+              component="a"
+              href="https://www.paypal.com/donate/?hosted_button_id=MDRSS47BS5638"
+              target="_blank"
+              c={ theme.colorScheme == "light" ? "black" : undefined }
+              ref={ ref4a as unknown as undefined }
+              bg={
+                hovered4a && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+                : hovered4a && theme.colorScheme == "light" ? "var(--mantine-color-gray-0)"
+                : "none"
+              }
+              leftSection={<IconBrandPaypalFilled size={18} />}
+              >
+                Donate
+            </Button>
+            <Button hiddenFrom="xs"
+              component="a"
+              href="https://www.paypal.com/donate/?hosted_button_id=MDRSS47BS5638"
+              target="_blank"
+              c={ theme.colorScheme == "light" ? "black" : undefined }
+              ref={ ref4b as unknown as undefined }
+              bg={
+                hovered4b && theme.colorScheme == "dark" ? "var(--mantine-color-dark-6)"
+                : hovered4b && theme.colorScheme == "light" ? "var(--mantine-color-gray-0)"
+                : "none"
+              }>
+              <IconBrandPaypalFilled size={18} />
+            </Button>
+            <ConnectionStatus docId={docId} />
+          </Group>
         </Group>
       </AppShell.Header>
       <AppShell.Navbar zIndex={300} withBorder={true} px="lg" pb="lg">

@@ -1,7 +1,7 @@
 import { useContext } from "react"
 import { useMantineContext } from "@mantine/core"
 
-import { AxesHelperProps, Canvas, DirectionalLightProps, GridHelperProps, useThree } from "@react-three/fiber"
+import { AxesHelperProps, Canvas, DirectionalLightProps, Euler, GridHelperProps, useThree, Vector3 } from "@react-three/fiber"
 import { Text, OrbitControls, TransformControls } from "@react-three/drei"
 import { Selection, EffectComposer, Outline } from "@react-three/postprocessing"
 import { proxy } from "valtio"
@@ -11,13 +11,16 @@ import { guiSelectionContext } from "../context/guiSelectionContext"
 import { locSelectionContext } from "../context/locSelectionContext"
 import { moveRobotContext } from "../context/moveRobotContext"
 
-import { Mesh_abb_irb52_7_120 } from "../meshes/Mesh_abb_irb52_7_120"
-import { Urdf_T12 } from "../meshes/Urdf_T12"
-// import { Mesh_cardboard_box_01 } from "../meshes/Mesh_cardboard_box_01"
+import { Abb_irb52_7_120 } from "../meshes/abb_irb52_7_120"
 
 export const GRID_BOUND = 5
 
 const state = proxy({ current: "" })
+
+export interface URDFProps {
+  position: Vector3,
+  rotation: Euler
+}
 
 export const Fleetmanager = ({
   updateRobotPosition,
@@ -97,7 +100,7 @@ export const Fleetmanager = ({
           <Outline visibleEdgeColor={theme.colorScheme == "dark" ? 0xFFFFFF : 0x364FC7} blur edgeStrength={100} width={1000} />
         </EffectComposer>
         {locationRobots.map(( robot ) => (
-          <Mesh_abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent} updateTask={updateTask} updateRobotJointAngles={updateRobotJointAngles}/>
+          <Abb_irb52_7_120 key={robot.id} robot={robot} selected={guiSelection == robot.id ? true : false} robotCurrent={robotCurrent} updateTask={updateTask} updateRobotJointAngles={updateRobotJointAngles}/>
         ))}
       </Selection>
 
@@ -113,24 +116,6 @@ export const Fleetmanager = ({
 
       <Controls />
       <OrbitControls makeDefault screenSpacePanning={ false } enableZoom={ false } maxPolarAngle={Math.PI/2} enablePan={ true } target={ [0.25, 0, 1] } />
-      {/* autoRotate={ true } */}
-
-      <Urdf_T12 />
-
-      {/* <Mesh_cardboard_box_01 />
-      <Mesh_cardboard_box_01 />
-      <Mesh_cardboard_box_01 /> */}
-
-      {/* <Environment background ground={{ height: 10, radius: 43, scale: 6 }}
-        preset={ locSelection == "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" ? "warehouse" 
-        : locSelection == "ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d" ? "apartment" 
-        : "city" } /> */}
-      {/* <mesh position={[0, -0.03, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[10, 10, 10]}>
-        <planeGeometry />
-        <meshBasicMaterial color="#d2d2d2" />
-      </mesh> */}
-      {/* <ambientLight intensity={1} /> */}
-      {/* <ContactShadows scale={ 150 } position={ [0.33, -0.33, 0.33] } opacity={ 1.5 } /> */}
     </Canvas>
   )
 }

@@ -1,4 +1,4 @@
-import { useRef, useContext, useState, useEffect } from "react"
+import { useContext, useState, useEffect } from "react"
 
 import { Euler, MeshProps, Vector3, useFrame } from "@react-three/fiber"
 import { useCursor, useGLTF } from "@react-three/drei"
@@ -88,7 +88,7 @@ const postplace = () => {
   return [-Math.PI/6, Math.PI/4, -Math.PI/12, 0, Math.PI/3, 0]
 }
 
-export const Mesh_abb_irb52_7_120 = ({
+export const Abb_irb52_7_120 = ({
   robot,
   selected,
   robotCurrent,
@@ -101,7 +101,6 @@ export const Mesh_abb_irb52_7_120 = ({
   updateTask: (childData: {id: string, state: string}) => void
   updateRobotJointAngles: (childData: {id: string, jointAngles: number[]}) => void
 }) => {
-  const ref = useRef<THREE.Mesh>(null!)
   const { nodes, materials } = useGLTF( filepath ) as GLTFResult
   const { setGuiSelection } = useContext( guiSelectionContext )
   const [ jointAngles, setJointAngles ] = useState( robot.jointAngles )
@@ -247,7 +246,7 @@ export const Mesh_abb_irb52_7_120 = ({
     }
   }
 
-  useFrame(() => ( // _state, delta
+  useFrame(() => (
     handleStates()
   ))
 
@@ -303,7 +302,6 @@ export const Mesh_abb_irb52_7_120 = ({
   return (
     <Select enabled={ selected || hovered }>
       <animated.mesh
-        ref={ref}
         name={robot.id}
         onClick={(e) => (e.stopPropagation(), setGuiSelection(robot.id), robotCurrent(robot.id))}
         onPointerMissed={(e) => e.type === 'click' && robotCurrent("")}
