@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Button, Group, TextInput } from "@mantine/core"
 import { useForm } from "@mantine/form"
 
@@ -12,9 +12,9 @@ import { RobotContext } from "../context/robotContext"
 import { locSelectionContext } from "../context/locSelectionContext"
 
 export const LocationForm = ({
-  docId
+  // docId
 }: {
-  docId: JournalId
+  // docId: JournalId
 }) => {
   const { locations } = useContext( RobotContext )
   const { setLocationSelection } = useContext( locSelectionContext )
@@ -27,7 +27,8 @@ export const LocationForm = ({
       description: (value) => (value.trim().length === 0 ? "Enter Description" : null),
     },
   })
-  const mutate = useMutate( docId )
+  // const mutate = useMutate( docId )
+  // TODO: How to create a location without sqlsync mutation?
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ description }) => {

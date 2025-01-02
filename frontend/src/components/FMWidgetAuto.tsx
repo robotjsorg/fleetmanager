@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Text, Button, Divider, Group, Flex, Select, Center, useMantineContext } from "@mantine/core"
 import { useForm } from "@mantine/form"
 
@@ -14,9 +14,9 @@ import { guiSelectionContext } from "../context/guiSelectionContext"
 import { currentTaskContext } from "../context/currentTaskContext"
 
 export const FMWidgetAuto = ({
-  docId
+  // docId
 }: {
-  docId: JournalId
+  // docId: JournalId
 }) => {
   const theme = useMantineContext()
   const { robots, tasks } = useContext( RobotContext )
@@ -49,13 +49,14 @@ export const FMWidgetAuto = ({
     }
   })
 
-  const mutate = useMutate( docId )
+  // const mutate = useMutate( docId )
 
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ description }) => {
         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
         const robotid = robots[robots.findIndex((robot) => robot.id == guiSelection)].id
+        // TODO: How to create task without sqlsync mutation?
         mutate({ tag: "CreateTask", id, robotid: robotid, description: description! })
           .then(() => {
             form.reset()

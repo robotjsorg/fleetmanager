@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { ActionIcon, Center, Flex, Table } from "@mantine/core"
 
 import { IconX } from "@tabler/icons-react"
@@ -11,16 +11,17 @@ import { ITask } from "../@types/task"
 import { RobotContext } from "../context/robotContext"
 
 export const TaskTableItem = ({
-  docId,
+  // docId,
   task
 }: {
-  docId: JournalId
+  // docId: JournalId
   task: ITask
 }) => {
   const { robots } = useContext( RobotContext )
   const robot_desc = robots.find((r) => r.id == task.robotid)!.description
 
-  const mutate = useMutate( docId )
+  // const mutate = useMutate( docId )
+  // TODO: How to delete a task without sqlsync mutation?
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteTask", id: task.id }).catch((err) => {
       console.error("Failed to delete", err)

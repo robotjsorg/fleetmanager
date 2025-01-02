@@ -1,15 +1,15 @@
 import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Table } from "@mantine/core"
 
-import { ITask } from "../@types/task"
+// import { ITask } from "../@types/task"
 
 import { TaskTableItem } from "./TaskTableItem"
 
 export const TaskTable = ({
-  docId,
+  // docId,
   tasks
 }: {
-  docId: JournalId
+  // docId: JournalId
   tasks: ITask[]
 }) => {
   return (
@@ -24,7 +24,8 @@ export const TaskTable = ({
       </Table.Thead>
       <Table.Tbody>
         {tasks.map((task) => (
-          <TaskTableItem key={task.id} docId={docId} task={task} />
+          // <TaskTableItem key={task.id} docId={docId} task={task} />
+          <TaskTableItem key={task.id} task={task} />
         ))}
       </Table.Tbody>
     </Table>

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Text, Button, Group, NumberFormatter, Stack, Center, useMantineContext } from "@mantine/core"
 
 import { IconBrandAppleArcade, IconPower, IconSettingsAutomation } from "@tabler/icons-react"
@@ -19,13 +19,13 @@ import { FMWidgetError } from "./FMWidgetError"
 const RADS_DEGS = 57.2958
 
 export const FMWidget = ({
-  docId,
+  // docId,
   updateRobotState,
   updateRobotPosition,
   updateRobotToolState,
   updateRobotJointAngles
 }: {
-  docId: JournalId
+  // docId: JournalId
   updateRobotState: (childData: {id: string, state: string }) => void
   updateRobotPosition: (childData: {id: string, position: number[], rotation: number[] }) => void
   updateRobotToolState: (childData: {id: string, toolState: string }) => void
@@ -193,7 +193,8 @@ export const FMWidget = ({
       : selectedRobot && state == "Manual" ?
         <FMWidgetManual updateRobotToolStateWrapper={updateRobotToolStateWrapper} updateRobotJointAngles={updateRobotJointAngles} />
       : selectedRobot && state == "Auto" &&
-        <FMWidgetAuto docId={docId} />
+        // <FMWidgetAuto docId={docId} />
+        <FMWidgetAuto />
       }
     </>
   )

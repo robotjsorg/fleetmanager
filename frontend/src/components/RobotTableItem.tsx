@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { ActionIcon, Center, Flex, Table, useMantineColorScheme } from "@mantine/core"
 
 import { useMutate } from "../doctype"
@@ -11,10 +11,10 @@ import { RobotContext } from "../context/robotContext"
 import { useHover } from "@mantine/hooks"
 
 export const RobotTableItem = ({
-  docId,
+  // docId,
   robot
 }: {
-  docId: JournalId
+  // docId: JournalId
   robot: IRobot
 }) => {
   const theme = useMantineColorScheme()
@@ -36,7 +36,8 @@ export const RobotTableItem = ({
       setGuiSelection( robot.id )
     }
   }
-  const mutate = useMutate( docId )
+  // const mutate = useMutate( docId )
+  // TODO: How to delete a robot without sqlsync mutation?
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteRobot", id: robot.id }).catch((err) => {
       console.error("Failed to delete", err)

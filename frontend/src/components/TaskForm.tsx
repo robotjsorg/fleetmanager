@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Button, Group, Select } from "@mantine/core"
 import { useForm } from "@mantine/form"
 
@@ -13,9 +13,9 @@ import { RobotContext } from "../context/robotContext"
 import { locSelectionContext } from "../context/locSelectionContext"
 
 export const TaskForm = ({
-  docId
+  // docId
 }: {
-  docId: JournalId
+  // docId: JournalId
 }) => {
   const { robots } = useContext( RobotContext )
   const { locSelection } = useContext( locSelectionContext )
@@ -34,7 +34,8 @@ export const TaskForm = ({
       description: (value) => ( typeof value != "string" ? "Select Task" : null )
     }
   })
-  const mutate = useMutate( docId )
+  // const mutate = useMutate( docId )
+  // TODO: How to create a task without sqlsync callback?
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ robot, description }) => {

@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Button, Group, TextInput } from "@mantine/core"
 import { useForm } from "@mantine/form"
 
@@ -22,9 +22,9 @@ const zeroRotation = () => {
 }
 
 export const RobotForm = ({
-  docId
+  // docId
 }: {
-  docId: JournalId
+  // docId: JournalId
 }) => {
   const { robots } = useContext( RobotContext )
   const { locSelection } = useContext( locSelectionContext )
@@ -38,7 +38,8 @@ export const RobotForm = ({
       description: (value) => (value.trim().length === 0 ? "Enter Description" : null)
     },
   })
-  const mutate = useMutate( docId )
+  // const mutate = useMutate( docId )
+  // TODO: How to create a robot without sqlsync mutation?
   const handleSubmit = form.onSubmit(
     useCallback(
       ({ description }) => {

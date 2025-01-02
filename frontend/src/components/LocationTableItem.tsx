@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { ActionIcon, Center, Flex, Table, useMantineColorScheme } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
 
@@ -14,10 +14,10 @@ import { locSelectionContext } from "../context/locSelectionContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
 
 export const LocationTableItem = ({
-  docId,
+  // docId,
   location
 }: {
-  docId: JournalId
+  // docId: JournalId
   location: ILocation
 }) => {
   const theme = useMantineColorScheme()
@@ -36,7 +36,8 @@ export const LocationTableItem = ({
       setGuiSelection("no selection")
     }
   }
-  const mutate = useMutate( docId )
+  // const mutate = useMutate( docId )
+  // TODO: How to delete a location without sqlsync mutation?
   const handleDelete = useCallback(() => {
     mutate({ tag: "DeleteLocation", id: location.id })
       .then(() => {

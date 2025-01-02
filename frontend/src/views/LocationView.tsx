@@ -1,14 +1,14 @@
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Stack, Divider, Container, ScrollArea } from "@mantine/core"
 
 import { LocationTable } from "../components/LocationTable"
 import { LocationForm } from "../components/LocationForm"
 
 export const LocationView = ({
-  docId,
+  // docId,
   h
 }: {
-  docId: JournalId
+  // docId: JournalId
   h: number
 }) => {
   return (
@@ -16,13 +16,15 @@ export const LocationView = ({
       <Stack h={h}>
         <ScrollArea>
           <Container size="sm">
-            <LocationTable docId={docId} />
+            {/*<LocationTable docId={docId} />*/}
+            <LocationTable />
           </Container>
         </ScrollArea>
       </Stack>
       <Divider />
       <Container size="xs" p="xl">
-        <LocationForm docId={docId} />
+        {/*<LocationForm docId={docId} />*/}
+        <LocationForm />
       </Container>
     </>
   )

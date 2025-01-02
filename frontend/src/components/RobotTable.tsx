@@ -1,6 +1,6 @@
 import { useContext } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Table } from "@mantine/core"
 
 import { RobotContext } from "../context/robotContext"
@@ -9,9 +9,9 @@ import { locSelectionContext } from "../context/locSelectionContext"
 import { RobotTableItem } from "./RobotTableItem"
 
 export const RobotTable = ({
-  docId
+  // docId
 }: {
-  docId: JournalId
+  // docId: JournalId
 }) => {
   const { robots } = useContext( RobotContext )
   const { locSelection } = useContext( locSelectionContext )
@@ -29,7 +29,8 @@ export const RobotTable = ({
       </Table.Thead>
       <Table.Tbody>
         {filteredRobots.map((robot) => (
-          <RobotTableItem key={robot.id} docId={docId} robot={robot} />
+          // <RobotTableItem key={robot.id} docId={docId} robot={robot} />
+          <RobotTableItem key={robot.id} robot={robot} />
         ))}
       </Table.Tbody>
     </Table>

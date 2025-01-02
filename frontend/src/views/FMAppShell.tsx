@@ -1,6 +1,6 @@
 import { RefObject, useContext, useEffect, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Box, Button, Divider, AppShell, Group, Burger, Stack, useMantineContext, useMantineColorScheme } from "@mantine/core"
 import { useViewportSize, useDisclosure, useHover } from "@mantine/hooks"
 
@@ -29,14 +29,14 @@ const WIDGET_OFFSET  = 117 // topbar 60 + divider (19 * 3)
 const VIEW_OFFSET    = 222 // topbar 60 + divider 1 + padding 40 + divider 41 + form 80
 
 export const FMAppShell = ({
-  docId,
+  // docId,
   updateRobotState,
   updateRobotPosition,
   updateRobotToolState,
   updateRobotJointAngles,
   updateTask
 }: {
-  docId: JournalId
+  // docId: JournalId
   updateRobotState: (childData: {id: string, state: string }) => void
   updateRobotPosition: (childData: {id: string, position: number[], rotation: number[] }) => void
   updateRobotToolState: (childData: {id: string, toolState: string }) => void
@@ -248,7 +248,7 @@ export const FMAppShell = ({
               }>
               <IconBrandPaypalFilled size={18} />
             </Button>
-            <ConnectionStatus docId={docId} />
+            {/*<ConnectionStatus docId={docId} />*/}
           </Group>
         </Group>
       </AppShell.Header>
@@ -269,11 +269,14 @@ export const FMAppShell = ({
       <AppShell.Main onClick={ closeNav }>
         <Divider />
         { route == "locations" ?
-          <LocationView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+          // <LocationView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+          <LocationView h={ fixHeight - VIEW_OFFSET } />
         : route == "robots" ?
-          <RobotView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+          // <RobotView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+          <RobotView h={ fixHeight - VIEW_OFFSET } />
         : route == "tasks" ?
-          <TaskView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+          // <TaskView docId={docId} h={ fixHeight - VIEW_OFFSET } />
+          <TaskView h={ fixHeight - VIEW_OFFSET } />
         : route == "location" &&
           <Box h={ fixHeight - CONTENT_OFFSET }>
             <Fleetmanager
@@ -293,7 +296,7 @@ export const FMAppShell = ({
           : 
             <Box hiddenFrom="md">
               <Divider />
-              <FMWidget docId={docId}
+              <FMWidget //docId={docId}
                 updateRobotState={updateRobotState}
                 updateRobotPosition={updateRobotPosition}
                 updateRobotToolState={updateRobotToolState}
@@ -306,7 +309,7 @@ export const FMAppShell = ({
           </Stack>
           <Box visibleFrom="md"  h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
             <Divider />
-              <FMWidget docId={docId}
+              <FMWidget //docId={docId}
                 updateRobotState={updateRobotState}
                 updateRobotPosition={updateRobotPosition}
                 updateRobotToolState={updateRobotToolState}

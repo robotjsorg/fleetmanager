@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 
-import { JournalId } from "@orbitinghail/sqlsync-worker"
+// import { JournalId } from "@orbitinghail/sqlsync-worker"
 import { Stack, Divider, Container, ScrollArea } from "@mantine/core"
 
 import { ITask } from "../@types/task"
@@ -12,10 +12,10 @@ import { TaskTable } from "../components/TaskTable"
 import { TaskForm } from "../components/TaskForm"
 
 export const TaskView = ({
-  docId,
+  // docId,
   h
 }: {
-  docId: JournalId
+  // docId: JournalId
   h: number
 }) => {
   const { robots, tasks } = useContext( RobotContext )
@@ -32,13 +32,15 @@ export const TaskView = ({
       <Stack h={h}>
         <ScrollArea>
           <Container size="sm">
-            <TaskTable docId={docId} tasks={filteredTasks} />
+            {/*<TaskTable docId={docId} tasks={filteredTasks} />*/}
+            <TaskTable tasks={filteredTasks} />
           </Container>
         </ScrollArea>
       </Stack>
       <Divider />
       <Container size="xs" p="xl">
-        <TaskForm docId={docId} />
+        {/*<TaskForm docId={docId} />*/}
+        <TaskForm />
       </Container>
     </>
   )
