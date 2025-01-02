@@ -2,6 +2,7 @@ import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { RouterProvider, createBrowserRouter, redirect, useParams } from "react-router-dom"
 
+// TODO: Delete all sqlSync references and replace with local client data structs
 import workerUrl from "@orbitinghail/sqlsync-worker/worker.js?url"
 import sqlSyncWasmUrl from "@orbitinghail/sqlsync-worker/sqlsync.wasm?url"
 

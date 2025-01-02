@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 
+// TODO: Delete all sqlSync references and replace with local client data structs
 import { JournalId, sql } from "@orbitinghail/sqlsync-worker"
 import { MantineProvider } from "@mantine/core"
 
