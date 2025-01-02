@@ -4,7 +4,7 @@
 import { createContext } from "react"
 
 export const locSelectionContext = createContext({
-  // locSelection: "no selection",
-  locSelection: "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
+  locSelection: "no selection",
+  // locSelection: "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99",
   setLocationSelection: (_foo: any) => {}
 })
