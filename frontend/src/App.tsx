@@ -19,7 +19,7 @@ import { FMAppShell } from "./views/FMAppShell"
 
 import { zeroJointAngles } from "./meshes/abb_irb52_7_120"
 
-export const POPULATEDB = true
+// export const POPULATEDB = true
 
 export const App = ({
   // docId
@@ -52,11 +52,14 @@ export const App = ({
     {id: 'c0f67f5f-3414-4e50-9ea7-9ae053aa1f99', name: 'Warehouse', created_at: currentDate.toLocaleString()},
     {id: 'ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d', name: 'Apartment', created_at: currentDate.toLocaleString()}
   ]
+  console.log({locations})
 
   // Selected location id
-  const [ locSelection, setLocationSelection ] = useState( "no selection" )
+  // const [ locSelection, setLocationSelection ] = useState( "no selection" )
+  const [ locSelection, setLocationSelection ] = useState( "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" )
   useEffect(()=>{
     if ( Array.isArray(locations) && locations.length > 0 ) {
+      console.log(locations.length)
       if ( locSelection == "no selection" || !locations.find((location)=>(location.id == locSelection)) ) {
         setLocationSelection( locations[0].id )
       } else {
