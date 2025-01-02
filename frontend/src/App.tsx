@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
 // TODO: Delete all sqlSync references and replace with local client data structs
-import { JournalId, sql } from "@orbitinghail/sqlsync-worker"
+// import { JournalId, sql } from "@orbitinghail/sqlsync-worker"
 import { MantineProvider } from "@mantine/core"
 
 import { useMutate, useQuery } from "./doctype"
@@ -67,7 +67,7 @@ export const App = ({
       setLocationSelection( "no selection" )
     }
   }, [locSelection, locations])
-  
+
   // Robots
   // const { rows: queryRobots } = useQuery<IRobotQuery>(
   //   docId,
