@@ -54,8 +54,7 @@ export const App = ({
   ]
 
   // Selected location id
-  // const [ locSelection, setLocationSelection ] = useState( "no selection" )
-  const [ locSelection, setLocationSelection ] = useState( "c0f67f5f-3414-4e50-9ea7-9ae053aa1f99" )
+  const [ locSelection, setLocationSelection ] = useState( "no selection" )
   useEffect(()=>{
     if ( Array.isArray(locations) && locations.length > 0 ) {
       if ( locSelection == "no selection" || !locations.find((location)=>(location.id == locSelection)) ) {
