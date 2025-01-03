@@ -10,7 +10,7 @@ import { LocationView } from "./LocationView"
 import { RobotView } from "./RobotView"
 import { TaskView } from "./TaskView"
 
-import { ConnectionStatus } from "../components/ConnectionStatus"
+// import { ConnectionStatus } from "../components/ConnectionStatus"
 import { LocationList } from "../components/LocationList"
 import { Fleetmanager } from "../components/Fleetmanager"
 import { RobotList } from "../components/RobotList"
@@ -67,7 +67,7 @@ export const FMAppShell = ({
       setFixHeight( minFixHeight )
     }
   }, [width, height])
-  
+
   // Menu control
   const [ route, setPseudoRoute ] = useState( "location" )
   const [ mobileOpened, { toggle: toggleMobile } ] = useDisclosure( false )
@@ -93,7 +93,7 @@ export const FMAppShell = ({
       </Button>
     )
   }
- 
+
   const { locations } = useContext(RobotContext)
   const { locSelection } = useContext(locSelectionContext)
   const locationDescription = locations ? locations.find(( location ) => ( location.id == locSelection ))?.description : undefined
@@ -293,7 +293,7 @@ export const FMAppShell = ({
               <Divider label="Robots" labelPosition="center" />
               <RobotList />
             </Stack>
-          : 
+          :
             <Box hiddenFrom="md">
               <Divider />
               <FMWidget //docId={docId}
@@ -303,7 +303,7 @@ export const FMAppShell = ({
                 updateRobotJointAngles={updateRobotJointAngles} />
             </Box>
           }
-          <Stack visibleFrom="md" px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }> 
+          <Stack visibleFrom="md" px="lg" h={ ( fixHeight - WIDGET_OFFSET ) / 2 }>
             <Divider label="Robots" labelPosition="center" />
             <RobotList />
           </Stack>

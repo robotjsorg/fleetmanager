@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 // import { JournalId, sql } from "@orbitinghail/sqlsync-worker"
 import { MantineProvider } from "@mantine/core"
 
-import { useMutate, useQuery } from "./doctype"
+// import { useMutate, useQuery } from "./doctype"
 import { ILocation } from "./@types/location"
 import { IRobotQuery, IRobot } from "./@types/robot"
 import { ITask } from "./@types/task"
@@ -21,11 +21,12 @@ import { zeroJointAngles } from "./meshes/abb_irb52_7_120"
 
 // export const POPULATEDB = true
 
-export const App = ({
-  // docId
-}: {
-  // docId: JournalId
-}) => {
+// export const App = ({
+//   docId
+// }: {
+//   docId: JournalId
+// }) => {
+export const App = () => {
   // Initialize database
   // const mutate = useMutate( docId )
   // const [ initDB, setInitDB ] = useState( true )
@@ -48,7 +49,8 @@ export const App = ({
   //   sql`SELECT * FROM locations`
   // )
   const currentDate = new Date()
-  const locations = [
+
+  const locations: ILocation[] = [
     {id: 'c0f67f5f-3414-4e50-9ea7-9ae053aa1f99', description: 'Warehouse', created_at: currentDate.toLocaleString()},
     {id: 'ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d', description: 'Apartment', created_at: currentDate.toLocaleString()}
   ]
@@ -77,7 +79,7 @@ export const App = ({
   //   mutate({ tag: "PopulateRobots" })
   //     .catch(( err ) => {console.error( "Failed to populate robots", err )})
   // }
-  const queryRobots = [
+  const queryRobots: IRobotQuery[] = [
     {id: '24db4c5b-1e3a-4853-8316-1d6ad07beed1', locationid: 'c0f67f5f-3414-4e50-9ea7-9ae053aa1f99', description: 'Rusty', state: 'Auto', created_at: currentDate.toLocaleString(), updated_at: currentDate.toLocaleString(), x: 1.0, z: 1.0, theta: 2.355},
     {id: '402e7545-512b-4b7d-b570-e94311b38ab6', locationid: 'c0f67f5f-3414-4e50-9ea7-9ae053aa1f99', description: 'D.A.R.Y.L.', state: 'Auto', created_at: currentDate.toLocaleString(), updated_at: currentDate.toLocaleString(), x: 1, z: -1, theta: -2.355},
     {id: 'f7a3408d-6329-47fd-ada9-72e6f249c3e2', locationid: 'c0f67f5f-3414-4e50-9ea7-9ae053aa1f99', description: 'Nozzle', state: 'Auto', created_at: currentDate.toLocaleString(), updated_at: currentDate.toLocaleString(), x: -1, z: -1, theta: -0.785},
@@ -113,20 +115,22 @@ export const App = ({
     })
     return updatedRobots
   }
-  const [ robots, setRobots ] = useState<IRobot[]>(getRobots([], queryRobots!))
+  // const [ robots, setRobots ] = useState<IRobot[]>(getRobots([], queryRobots!))
+  const [ robots, setRobots ] = useState<IRobot[]>(getRobots([], queryRobots))
   useEffect(()=>{
-    setRobots( r => getRobots( r, queryRobots! ) )
+    // setRobots( r => getRobots( r, queryRobots! ) )
+    setRobots( r => getRobots( r, queryRobots ) )
   }, [queryRobots])
 
   // Selected robot id
   const [ guiSelection, setGuiSelection ] = useState( "no selection" )
-  
+
   // If robot is being moved on GUI
   const [ moveRobot, setMoveRobot ] = useState( false )
   useEffect(()=>{
     setMoveRobot( false )
   }, [guiSelection])
-  
+
   // Tasks
   // const { rows: queryTasks } = useQuery<ITask>(
   //   docId,
@@ -136,7 +140,7 @@ export const App = ({
   //   mutate({ tag: "PopulateTasks" })
   //     .catch(( err ) => {console.error( "Failed to populate tasks", err )})
   // }
-  const queryTasks = [
+  const queryTasks: ITask[] = [
     {id: '48228b08-1b8a-4d54-9b90-16f1f73fb1cc', robotid: '24db4c5b-1e3a-4853-8316-1d6ad07beed1', description: 'Pick and place (continuous)', state: 'Queued', created_at: currentDate.toLocaleString()},
     {id: 'ea131ae6-13a8-4a23-9436-5f46f3dcffd1', robotid: '402e7545-512b-4b7d-b570-e94311b38ab6', description: 'Pick and place (continuous)', state: 'Queued', created_at: currentDate.toLocaleString()},
     {id: '720187e4-94f4-4a11-b998-5938554a2fb4', robotid: 'f7a3408d-6329-47fd-ada9-72e6f249c3e2', description: 'Pick and place (continuous)', state: 'Queued', created_at: currentDate.toLocaleString()},
@@ -146,9 +150,10 @@ export const App = ({
   ]
   const [ tasks, setTasks ] = useState<ITask[]>([])
   useEffect(()=>{
-    setTasks( queryTasks! )
+    // setTasks( queryTasks! )
+    setTasks( queryTasks )
   }, [queryTasks])
-  
+
   // Current task being displayed on GUI
   const [ currentTask, setCurrentTask ] = useState("")
 
