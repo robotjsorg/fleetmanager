@@ -23,10 +23,11 @@ export const TaskTableItem = ({
   // const mutate = useMutate( docId )
   // TODO: How to delete a task without sqlsync mutation?
   const handleDelete = useCallback(() => {
-    mutate({ tag: "DeleteTask", id: task.id }).catch((err) => {
-      console.error("Failed to delete", err)
-    })
-  }, [task.id, mutate])
+  //   mutate({ tag: "DeleteTask", id: task.id }).catch((err) => {
+  //     console.error("Failed to delete", err)
+  //   })
+  // }, [task.id, mutate])
+  })
 
   return (
     <Table.Tr>

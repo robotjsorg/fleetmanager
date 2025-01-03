@@ -49,8 +49,8 @@ export const App = ({
   // )
   const currentDate = new Date()
   const locations = [
-    {id: 'c0f67f5f-3414-4e50-9ea7-9ae053aa1f99', name: 'Warehouse', created_at: currentDate.toLocaleString()},
-    {id: 'ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d', name: 'Apartment', created_at: currentDate.toLocaleString()}
+    {id: 'c0f67f5f-3414-4e50-9ea7-9ae053aa1f99', description: 'Warehouse', created_at: currentDate.toLocaleString()},
+    {id: 'ff96decd-dd89-46ee-b6c9-8c5bbbb34d2d', description: 'Apartment', created_at: currentDate.toLocaleString()}
   ]
 
   // Selected location id

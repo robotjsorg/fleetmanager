@@ -30,26 +30,26 @@ export const LocationForm = ({
   // const mutate = useMutate( docId )
   // TODO: How to create a location without sqlsync mutation?
   const handleSubmit = form.onSubmit(
-    useCallback(
-      ({ description }) => {
-        const locationDescriptions = locations.map(( location )=>( location.description ))
-        if (locationDescriptions.includes(description)) {
-          form.setFieldError("description", "Duplicate location description")
-        } else {
-          const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
-          mutate({ tag: "CreateLocation", id, description })
-            .then(() => {
-              setLocationSelection( id )
-              form.reset()
-            })
-            .catch((err) => {
-              form.setFieldError("description", String(err))
-              console.error("Failed to create location", err)
-            })
-          setLocationSelection( id )
-        }
-      }, [locations, form, mutate, setLocationSelection]
-    )
+    // useCallback(
+    //   ({ description }) => {
+    //     const locationDescriptions = locations.map(( location )=>( location.description ))
+    //     if (locationDescriptions.includes(description)) {
+    //       form.setFieldError("description", "Duplicate location description")
+    //     } else {
+    //       const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
+    //       mutate({ tag: "CreateLocation", id, description })
+    //         .then(() => {
+    //           setLocationSelection( id )
+    //           form.reset()
+    //         })
+    //         .catch((err) => {
+    //           form.setFieldError("description", String(err))
+    //           console.error("Failed to create location", err)
+    //         })
+    //       setLocationSelection( id )
+    //     }
+    //   }, [locations, form, mutate, setLocationSelection]
+    // )
   )
 
   return (

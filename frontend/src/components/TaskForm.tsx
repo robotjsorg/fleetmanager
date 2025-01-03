@@ -37,21 +37,20 @@ export const TaskForm = ({
   // const mutate = useMutate( docId )
   // TODO: How to create a task without sqlsync callback?
   const handleSubmit = form.onSubmit(
-    useCallback(
-      ({ robot, description }) => {
-        const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
-        mutate({ tag: "CreateTask", id, robotid: robot!, description: description! })
-          .then(() => {
-            form.reset()
-          })
-          .catch((err) => {
-            form.setFieldError("description", String(err))
-            form.setErrors({ robot: String(err), description: String(err) })
-            console.error("Failed to create task", err)
-          })
-      }, [mutate, form]
-      
-    )
+    // useCallback(
+    //   ({ robot, description }) => {
+    //     const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
+    //     mutate({ tag: "CreateTask", id, robotid: robot!, description: description! })
+    //       .then(() => {
+    //         form.reset()
+    //       })
+    //       .catch((err) => {
+    //         form.setFieldError("description", String(err))
+    //         form.setErrors({ robot: String(err), description: String(err) })
+    //         console.error("Failed to create task", err)
+    //       })
+    //   }, [mutate, form]
+    // )
   )
 
   return (

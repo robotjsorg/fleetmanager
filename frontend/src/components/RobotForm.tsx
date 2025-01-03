@@ -41,33 +41,33 @@ export const RobotForm = ({
   // const mutate = useMutate( docId )
   // TODO: How to create a robot without sqlsync mutation?
   const handleSubmit = form.onSubmit(
-    useCallback(
-      ({ description }) => {
-        if ( locSelection == "no selection" ) {
-          form.setFieldError("description", "No Locations exist")
-        } else {
-          const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ))
-          const robotDescriptions = filteredRobots.map(( robot ) => ( robot.description ))
-          if (robotDescriptions.includes(description)) {
-            form.setFieldError("description", "Duplicate robot description")
-          } else {
-            const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
-            const position = randomPosition()
-            const rotation = zeroRotation()
-            mutate({ tag: "CreateRobot", id, locationid: locSelection, description, x: position[0], z: position[2], theta: rotation[2] })
-              .then(() => {
-                setGuiSelection(id)
-                form.reset()
-              })
-              .catch(( err ) => {
-                form.setFieldError("description", String(err))
-                console.error("Failed to create robot", err)
-                form.setValues( { description: "" } )
-              })
-          }
-        }
-      }, [robots, locSelection, form, mutate, setGuiSelection]
-    )
+    // useCallback(
+    //   ({ description }) => {
+    //     if ( locSelection == "no selection" ) {
+    //       form.setFieldError("description", "No Locations exist")
+    //     } else {
+    //       const filteredRobots = robots.filter(( robot ) => ( robot.locationid == locSelection ))
+    //       const robotDescriptions = filteredRobots.map(( robot ) => ( robot.description ))
+    //       if (robotDescriptions.includes(description)) {
+    //         form.setFieldError("description", "Duplicate robot description")
+    //       } else {
+    //         const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
+    //         const position = randomPosition()
+    //         const rotation = zeroRotation()
+    //         mutate({ tag: "CreateRobot", id, locationid: locSelection, description, x: position[0], z: position[2], theta: rotation[2] })
+    //           .then(() => {
+    //             setGuiSelection(id)
+    //             form.reset()
+    //           })
+    //           .catch(( err ) => {
+    //             form.setFieldError("description", String(err))
+    //             console.error("Failed to create robot", err)
+    //             form.setValues( { description: "" } )
+    //           })
+    //       }
+    //     }
+    //   }, [robots, locSelection, form, mutate, setGuiSelection]
+    // )
   )
 
   return (

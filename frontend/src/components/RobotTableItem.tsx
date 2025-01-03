@@ -39,10 +39,11 @@ export const RobotTableItem = ({
   // const mutate = useMutate( docId )
   // TODO: How to delete a robot without sqlsync mutation?
   const handleDelete = useCallback(() => {
-    mutate({ tag: "DeleteRobot", id: robot.id }).catch((err) => {
-      console.error("Failed to delete", err)
-    })
-  }, [robot.id, mutate])
+    // mutate({ tag: "DeleteRobot", id: robot.id }).catch((err) => {
+    //   console.error("Failed to delete", err)
+    // })
+  //}, [robot.id, mutate])
+  })
 
   return (
     <Table.Tr ref={ref as React.RefObject<HTMLTableRowElement>}

@@ -52,23 +52,23 @@ export const FMWidgetAuto = ({
   // const mutate = useMutate( docId )
 
   const handleSubmit = form.onSubmit(
-    useCallback(
-      ({ description }) => {
-        const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
-        const robotid = robots[robots.findIndex((robot) => robot.id == guiSelection)].id
-        // TODO: How to create task without sqlsync mutation?
-        mutate({ tag: "CreateTask", id, robotid: robotid, description: description! })
-          .then(() => {
-            form.reset()
-          })
-          .catch((err) => {
-            form.setFieldError("description", String(err))
-            form.setErrors({ description: String(err) })
-            console.error("Failed to create task", err)
-          })
-        form.reset()
-      }, [form, guiSelection, mutate, robots]
-    )
+    // useCallback(
+    //   ({ description }) => {
+    //     const id = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
+    //     const robotid = robots[robots.findIndex((robot) => robot.id == guiSelection)].id
+    //     // TODO: How to create task without sqlsync mutation?
+    //     mutate({ tag: "CreateTask", id, robotid: robotid, description: description! })
+    //       .then(() => {
+    //         form.reset()
+    //       })
+    //       .catch((err) => {
+    //         form.setFieldError("description", String(err))
+    //         form.setErrors({ description: String(err) })
+    //         console.error("Failed to create task", err)
+    //       })
+    //     form.reset()
+    //   }, [form, guiSelection, mutate, robots]
+    // )
   )
 
   return (

@@ -27,7 +27,7 @@ export const LocationTableItem = ({
   const filteredRobots = robots.filter(( robot ) => ( robot.locationid == location.id ))
   const numRobots = filteredRobots.length
   const { hovered, ref } = useHover()
-  const selected = () => { 
+  const selected = () => {
     return locSelection == location.id
   }
   const handleLocationSelect = () => {
@@ -39,22 +39,23 @@ export const LocationTableItem = ({
   // const mutate = useMutate( docId )
   // TODO: How to delete a location without sqlsync mutation?
   const handleDelete = useCallback(() => {
-    mutate({ tag: "DeleteLocation", id: location.id })
-      .then(() => {
-        if ( location.id == locSelection && Array.isArray( locations ) && locations.length > 1 ) {
-          if ( locations[0].id == locSelection) {
-            setLocationSelection( locations[1].id )
-          } else {
-            setLocationSelection( locations[0].id )
-          }
-        } else if ( locations.length <= 1 ) {
-          setLocationSelection( "no selection" )
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to delete", err)
-      })
-  }, [mutate, location.id, locSelection, locations, setLocationSelection])
+  //   mutate({ tag: "DeleteLocation", id: location.id })
+  //     .then(() => {
+  //       if ( location.id == locSelection && Array.isArray( locations ) && locations.length > 1 ) {
+  //         if ( locations[0].id == locSelection) {
+  //           setLocationSelection( locations[1].id )
+  //         } else {
+  //           setLocationSelection( locations[0].id )
+  //         }
+  //       } else if ( locations.length <= 1 ) {
+  //         setLocationSelection( "no selection" )
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error("Failed to delete", err)
+  //     })
+  // }, [mutate, location.id, locSelection, locations, setLocationSelection])
+  })
 
   // !subpageOpened && theme.colorScheme == "dark" ? "var(--mantine-color-dark-5)"
   // : !subpageOpened  && theme.colorScheme == "light" ? "var(--mantine-color-gray-1)"
