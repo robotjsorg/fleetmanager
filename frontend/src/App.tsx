@@ -132,6 +132,7 @@ export const App = () => {
   }, [guiSelection])
 
   // Tasks
+  // ------------------------------ sqlsync ------------------------------
   // const { rows: queryTasks } = useQuery<ITask>(
   //   docId,
   //   sql`SELECT * FROM tasks ORDER BY robotid, created_at`
@@ -140,6 +141,12 @@ export const App = () => {
   //   mutate({ tag: "PopulateTasks" })
   //     .catch(( err ) => {console.error( "Failed to populate tasks", err )})
   // }
+  // const [ tasks, setTasks ] = useState<ITask[]>()
+  // useEffect(()=>{
+  //   // setTasks( queryTasks! )
+  //   setTasks( queryTasks )
+  // }, [queryTasks])
+  // ------------------------------ local useState ------------------------------
   const queryTasks: ITask[] = [
     {id: '48228b08-1b8a-4d54-9b90-16f1f73fb1cc', robotid: '24db4c5b-1e3a-4853-8316-1d6ad07beed1', description: 'Pick and place (continuous)', state: 'Queued', created_at: currentDate.toLocaleString()},
     {id: 'ea131ae6-13a8-4a23-9436-5f46f3dcffd1', robotid: '402e7545-512b-4b7d-b570-e94311b38ab6', description: 'Pick and place (continuous)', state: 'Queued', created_at: currentDate.toLocaleString()},
@@ -148,11 +155,7 @@ export const App = () => {
     {id: '69c35b71-8715-4eff-bd02-82cfd283cbc8', robotid: 'd544e656-0e8c-4c3d-91fc-02e38b326c47', description: 'Random position (continuous)', state: 'Queued', created_at: currentDate.toLocaleString()},
     {id: '7d77e2f1-8c58-4af4-9f04-0a39bcabb998', robotid: '8e5cc95b-bb27-4150-adfa-2bab6daf313f', description: 'Random position (continuous)', state: 'Queued', created_at: currentDate.toLocaleString()}
   ]
-  const [ tasks, setTasks ] = useState<ITask[]>([])
-  useEffect(()=>{
-    // setTasks( queryTasks! )
-    setTasks( queryTasks )
-  }, [queryTasks])
+  const [ tasks, setTasks ] = useState<ITask[]>(queryTasks)
 
   // Current task being displayed on GUI
   const [ currentTask, setCurrentTask ] = useState("")
@@ -189,7 +192,6 @@ export const App = () => {
     const index = tasks.findIndex((task) => task.id == childData.id)
     tasks[index].state = childData.state
     setTasks(tasks)
-
     // mutate({ tag: "UpdateTask", id: childData.id, state: childData.state })
     //   .catch((err) => {
     //     console.error("Failed to update task", err)

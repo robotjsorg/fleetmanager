@@ -142,13 +142,13 @@ export const Abb_irb52_7_120 = ({
     if ( task && task.state == "Active" ) {
       if ( task.description == "Home" ) {
         setNumSubtasks( 1 )
-        api.start({
+        void api.start({
           jointAngles: home()
         })
       } else if ( task.description == "Random position" || task.description == "Random position (continuous)") {
         setNumSubtasks( 1 )
         if ( animationStep == 1 ) {
-          api.start({
+          void api.start({
             jointAngles: randomJointAngles()
           })
           setAnimationStep( 0 )
@@ -156,31 +156,31 @@ export const Abb_irb52_7_120 = ({
       } else if ( task.description == "Pick and place" || task.description == "Pick and place (continuous)" ) {
         setNumSubtasks( 7 )
         if ( animationStep == 1 ) {
-          api.start({
+          void api.start({
             jointAngles: prepick()
           })
         } else if ( animationStep == 2 ) {
-          api.start({
+          void api.start({
             jointAngles: pick()
           })
         } else if ( animationStep == 3 ) {
-          api.start({
+          void api.start({
             jointAngles: postpick()
           })
         } else if ( animationStep == 4 ) {
-          api.start({
+          void api.start({
             jointAngles: preplace()
           })
         } else if ( animationStep == 5 ) {
-          api.start({
+          void api.start({
             jointAngles: place()
           })
         } else if ( animationStep == 6 ) {
-          api.start({
+          void api.start({
             jointAngles: postplace()
           })
         } else if ( animationStep == 7 ) {
-          api.start({
+          void api.start({
             jointAngles: home()
           })
         }
@@ -212,7 +212,7 @@ export const Abb_irb52_7_120 = ({
           setJointAngles( robot.jointAngles )
           updateRobotJointAngles({ id: robot.id, jointAngles: robot.jointAngles })
         }
-        break 
+        break
       }
       case "Auto": {
         if ( task ) {
@@ -232,7 +232,7 @@ export const Abb_irb52_7_120 = ({
             updateRobotJointAngles({ id: robot.id, jointAngles: robot.jointAngles })
           }
         }
-        break 
+        break
       }
       default: { // Off, Error
         if ( springs.jointAngles.get() != robot.jointAngles ) {
@@ -241,7 +241,7 @@ export const Abb_irb52_7_120 = ({
         if ( jointAngles != robot.jointAngles ) {
           setJointAngles( robot.jointAngles )
         }
-        break 
+        break
       }
     }
   }
