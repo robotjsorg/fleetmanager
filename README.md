@@ -42,8 +42,14 @@ These are instructions for deploying to Cloudflare.
 
 #### Frontend
 * Build the frontend distribution using `npx vite build` from `fleetmanager/frontend/`
-* Copy favicon and GLTF files using `just prep-front` from `fleetmanager/frontend/`
-* Deploy the frontend to Cloudflare using `npx wrangler page deploy dist`
+* Copy GLTF files `cp -r assets/gltf/ dist/assets/`
+* Copy favicon files `cp -r assets/favicon/ dist/assets/`
+* Deploy the frontend to Cloudflare using `npx wrangler pages deploy dist`
+
+#### Old frontend instructions
+* Build the frontend distribution using `npx vite build` from `fleetmanager/frontend/`
+* Copy favicon and GLTF files using `just prep-frontend` from `fleetmanager/frontend/`
+  * NOTE: The bash commands to automatically copy some of the code aren't working yet. Open the justfile and perform the steps manually.
 * Double check `.wasm`, `.gltf`, `.glb`, `.jpg` and `.png` files are under 25MB (for example, should be 2MB compared to 60MB)
 * Manually copy and paste GLTF files to `dist/`
 * Manually upload `fleetmanager/frontend/dist/` to Cloudflare Pages

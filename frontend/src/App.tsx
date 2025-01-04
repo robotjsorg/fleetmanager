@@ -163,39 +163,43 @@ export const App = () => {
   // Callback updates
   // robot db
   const updateRobotState = (childData: { id: string, state: string }) => {
+    const index = robots.findIndex((robot) => robot.state == childData.state)
+    robots[index].state = childData.state
     // mutate({ tag: "UpdateRobotState", id: childData.id, state: childData.state })
     //   .catch((err) => {
     //     console.error("Failed to update robot", err)
     //   })
-    const index = robots.findIndex((robot) => robot.state == childData.state)
-    robots[index].state = childData.state
+    setRobots(robots)
   }
   const updateRobotPosition = (childData: { id: string, position: number[], rotation: number[] }) => {
+    const index = robots.findIndex((robot) => robot.position == childData.position)
+    robots[index].position = childData.position
     // mutate({ tag: "UpdateRobotPosition", id: childData.id, x: childData.position[0], z: childData.position[2], theta: childData.rotation[2] })
     //   .catch((err) => {
     //     console.error("Failed to update robot", err)
     //   })
-    const index = robots.findIndex((robot) => robot.position == childData.position)
-    robots[index].position = childData.position
+    setRobots(robots)
   }
   // robot local
   const updateRobotToolState = (childData: { id: string, toolState: string }) => {
     const index = robots.findIndex((robot) => robot.id == childData.id)
     robots[index].toolState = childData.toolState
+    setRobots(robots)
   }
   const updateRobotJointAngles = (childData: { id: string, jointAngles: number[] }) => {
     const index = robots.findIndex((robot) => robot.id == childData.id)
     robots[index].jointAngles = childData.jointAngles
+    setRobots(robots)
   }
   // task db
   const updateTask = (childData: {id: string, state: string}) => {
     const index = tasks.findIndex((task) => task.id == childData.id)
     tasks[index].state = childData.state
-    setTasks(tasks)
     // mutate({ tag: "UpdateTask", id: childData.id, state: childData.state })
     //   .catch((err) => {
     //     console.error("Failed to update task", err)
     //   })
+    setTasks(tasks)
   }
 
   return (

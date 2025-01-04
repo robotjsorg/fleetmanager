@@ -20,8 +20,8 @@ upload-reducer target='local':
     fi
 
 prep-frontend:
-    cp -r ./frontend/assets/gltf/ ./frontend/dist/
-    cp -r ./frontend/assets/favicon/ ./frontend/dist/
+    cp -r ./frontend/assets/gltf/ ./frontend/dist/assets/
+    cp -r ./frontend/assets/favicon/ ./frontend/dist/assets/
     # TODO: copy and paste ./frontend/dist/index.html L15-16 to ./frontend/dist/assets/index.html L17-18
     # line15=sed -n 15p ./frontend/dist/index.html
     # line16=sed -n 16p ./frontend/dist/index.html
