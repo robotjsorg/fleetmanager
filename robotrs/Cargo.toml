@@ -1,0 +1,17 @@
+[package]
+name = "robotrs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm = "0.28.1"
+image = "0.25.6"
+rfd = "0.15.3"
+device_query = "3.0.1"
+egui = "0.31.1"
+eframe = "0.31.1"
+axum = { version = "0.8.1" , features = ["tokio", "http1"] }
+hyper = { version = "1.6.0", features = ["full"] }
+tokio = { version = "1.44.1", features = ["full"] }
+rustls = "0.23.25"
+tokio-rustls = "0.26.2"
