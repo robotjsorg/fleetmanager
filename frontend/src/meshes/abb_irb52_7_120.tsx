@@ -15,9 +15,9 @@ import { currentTaskContext } from "../context/currentTaskContext"
 
 const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168")
 const localFilepath = "../../assets/gltf/"
+const remoteFilepath = "/assets/gltf/"
 const filename = "abb_irb52_7_120.glb"
-// const filepath = isLocalhost ? localFilepath + filename : filename
-const filepath = filename
+const filepath = isLocalhost ? localFilepath + filename : remoteFilepath + filename
 
 export const JOINT_LIMITS = [
   [-180*0.0174533, 180*0.0174533],
