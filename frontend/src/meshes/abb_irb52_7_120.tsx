@@ -13,10 +13,9 @@ import { RobotContext } from "../context/robotContext"
 import { guiSelectionContext } from "../context/guiSelectionContext"
 import { currentTaskContext } from "../context/currentTaskContext"
 
-const isLocalhost = location.hostname === "localhost" || location.hostname.startsWith("192.168")
-const localFilepath = "../../assets/gltf/"
-const filename = "abb_irb52_7_120.glb"
-const filepath = isLocalhost ? localFilepath + filename : filename
+// Resolve the GLB asset URL at build time so the app fetches the binary
+// file instead of the SPA index HTML (fixes "Unexpected token '<'" errors).
+const filepath = new URL("../../assets/gltf/abb_irb52_7_120.glb", import.meta.url).href
 
 export const JOINT_LIMITS = [
   [-180*0.0174533, 180*0.0174533],
